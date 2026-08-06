@@ -1,0 +1,16 @@
+# Python build artifacts
+__pycache__/
+*.py[cod]
+.claude/settings.local.json
+
+# Local experiment artifacts; retained on this machine but excluded from the shared repository.
+local_artifacts/
+wandb/
+results/*
+!results/README.md
+
+# Local model/cache files
+.cache/
+*.pt
+*.pth
+*.ckpt
