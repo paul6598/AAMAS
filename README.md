@@ -66,6 +66,3 @@ PYTHONPATH=. python tests/test_permutation_data.py
 - [PEEL formal specification](docs/RELATIONAL_SET_CRITIC_FORMAL_SPEC.md)
 - [지속 연구노트](docs/RELATIONAL_SET_CRITIC_RESEARCH_NOTE.md)
 
-## Git에 포함하지 않는 항목
-
-실행 결과, W&B run, local checkpoint/cache는 `.gitignore`로 제외됩니다. 정리 전의 로컬 산출물은 이 작업 공간의 `local_artifacts/`에 보존되어 있으며 Git에 포함되지 않습니다.
