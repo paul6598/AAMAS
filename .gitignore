@@ -8,6 +8,7 @@ local_artifacts/
 wandb/
 results/*
 !results/README.md
+CLAUDE.md
 
 # Local model/cache files
 .cache/
