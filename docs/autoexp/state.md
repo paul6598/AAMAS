@@ -44,6 +44,13 @@ PHASE: MAIN_V2  (본 실험 LEHCA_2s3z_v2 5시드×1M — 04:27 시작, tmux 2:0
 - DIAG_C/D/E 단독 런: F 실패 시에만 세분화 진행.
 
 ## 의사결정 로그
+- [8/29 16:50] 판정: SWEEP F400 0.313, F800 0.352 (참조 F200 0.388±0.061) — F100·F∞
+  대기. **M4(rule commander+마스킹, forbid 없음·prefer w≤2) AUC 0.193 / final 0.31 —
+  H1(0.223)보다도 낮음** → LLM forbid 내용(가설 1-1)만이 아니라 **소프트 틸트 스케일
+  (가설 1-2: β·lnW 0.35 ≫ q_gap 0.05)** 자체가 주범. 결정: M3=LLM full 어휘+beta=0.1
+  (46), M6=rule commander+beta=0.1 (40, 내용 고정·스케일만 변경), F∞=첫 가이던스 영구
+  고정 (38, staleness 극단) 투입. M5(strategic 어휘, β=0.5)는 120k 진행 중 — 낮게
+  나오면 어휘가 아니라 스케일 문제로 확정.
 - [8/29 15:55] 연구 세션 지적 5건 검증·수정: ① 가이던스 덤프 경로 dirname 4회→3회
   (~/results→AAMAS/results/guidance); ② unique_token 1초 해상도 충돌 → 파일명에
   group/seed/pid 추가 (M4·M5 혼재 파일은 results/guidance/M4M5_mixed_*.jsonl로 보존,
