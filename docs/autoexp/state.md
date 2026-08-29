@@ -44,6 +44,14 @@ PHASE: MAIN_V2  (본 실험 LEHCA_2s3z_v2 5시드×1M — 04:27 시작, tmux 2:0
 - DIAG_C/D/E 단독 런: F 실패 시에만 세분화 진행.
 
 ## 의사결정 로그
+- [8/29 17:58] 판정: **M5(strategic 어휘, β=0.5) 0.143 — 어휘 가설 기각** (forbid는
+  attack_type만 62/1251건인데도 H1 0.223보다 나쁨; prefer는 attack_type:Stalker 1167·
+  이동방향 다수). **M6(rule commander, β=0.1) 0.362 vs M4(rule, β=0.5) 0.193 —
+  소프트 틸트 스케일 가설 확정**: β를 0.1로 낮추면 마스킹 on에서도 H6(0.388) 수준.
+  F∞(첫 가이던스 영구고정) 0.291 → staleness 비용 ~0.1 (F200 0.388 대비).
+  스윕 현황: F100 대기, F200 0.388, F400 0.313, F800 0.352, F∞ 0.291 — 범위 0.10으로
+  "약한 민감" (단일 시드). 확증 투입: M3 s1(38)·s2(40), M6 s1(45), 모두 dt_observable=False.
+  M3 s0 160k 진행 중, OBS_v4 100k.
 - [8/29 17:05] 사용자 지시로 **d_t 관측 기반화** 구현 (`dt_observable`, 기본 True):
   적 유닛은 생존 아군의 시야(unit_sight_range, 9)에 있을 때만 요약·캐시키에 포함,
   시야 밖이면 "no enemy in sight/position unknown". 셰이핑 술어는 학습 시점 전체
