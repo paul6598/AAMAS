@@ -1,0 +1,14 @@
+# experiment outputs (large / regenerable)
+results/
+wandb/
+*.log
+# copyrighted papers
+paper/*.pdf
+# python
+__pycache__/
+*.pyc
+*.egg-info/
+# editors / OS
+.vscode/
+.DS_Store
+.claude/

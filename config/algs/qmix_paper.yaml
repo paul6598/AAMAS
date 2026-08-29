@@ -1,0 +1,32 @@
+# --- QMIX baseline with the paper's common settings (Table 2) ---
+# Identical backbone/hyperparameters to lehca.yaml, no Commander guidance.
+
+action_selector: "epsilon_greedy"
+epsilon_start: 1.0
+epsilon_finish: 0.05
+epsilon_anneal_time: 50000
+
+runner: "episode"
+mac: "basic_mac"
+learner: "lehca_q_learner"   # QLearner + Adam support (no LEHCA logic in learner)
+
+batch_size: 128
+buffer_size: 5000
+lr: 0.001
+optimizer: "adam"
+gamma: 0.99
+
+target_update_interval: 200
+
+agent_output_type: "q"
+double_q: True
+mixer: "qmix"
+mixing_embed_dim: 32
+hypernet_layers: 2
+hypernet_embed: 64
+
+commander: "none"
+use_reward_shaping: False
+use_action_masking: False
+
+name: "qmix_paper"

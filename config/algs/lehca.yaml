@@ -1,0 +1,53 @@
+# --- LEHCA: QMIX backbone + LLM Commander guidance ---
+# QMIX/exploration settings follow the paper's Table 2 where given
+# (lr 0.001, Adam, batch 128, buffer 5000, gamma 0.99).
+
+action_selector: "epsilon_greedy"
+epsilon_start: 1.0
+epsilon_finish: 0.05
+epsilon_anneal_time: 50000
+
+runner: "lehca"
+mac: "lehca_mac"
+learner: "lehca_q_learner"
+
+batch_size: 128
+buffer_size: 5000
+lr: 0.001
+optimizer: "adam"
+gamma: 0.99
+
+target_update_interval: 200
+
+agent_output_type: "q"
+double_q: True
+mixer: "qmix"
+mixing_embed_dim: 32
+hypernet_layers: 2
+hypernet_embed: 64
+
+# --- LEHCA guidance layer ---
+commander: "llm"            # llm | rule | none
+f_update: 200               # Commander refresh interval (env steps)
+use_reward_shaping: True    # Eq. 1-2 semantic reward shaping
+use_action_masking: True    # Eq. 5-6 dynamic action masking
+use_masking_at_test: True   # apply guidance masks during greedy test episodes
+mask_anneal_t: 0            # >0: turn masking fully off after this many env steps
+shaping_in_learner: False   # True: compose r + lambda_now*F_t at train time
+explore_soft_bias: False    # True: bias epsilon-random draws by W_soft too
+mask_vocab: "full"          # full | strategic (no move-direction forbids, no micro tokens)
+beta: 0.5                   # soft-mask tilt coefficient (Eq. 5)
+lambda_start: 0.5           # initial shaping weight lambda_0
+lambda_min: 0.05            # lambda floor
+lambda_decay: 0.9995        # multiplicative decay per training update
+shaping_clip: 3.0           # |F_t| clip for stability
+
+# --- LLM Commander (Table 2: gpt-oss 20b, temperature 0.2, max_tokens 3072) ---
+llm_model: "openai/gpt-oss-20b"
+llm_api_base: "http://localhost:8355/v1"
+llm_temperature: 0.2
+llm_max_tokens: 3072
+llm_timeout: 90
+llm_cache: True
+
+name: "lehca"
