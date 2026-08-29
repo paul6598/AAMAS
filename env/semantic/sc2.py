@@ -59,6 +59,11 @@ class SC2SemanticInterface(SemanticInterface):
     def __init__(self, env, args):
         super().__init__(env, args)
         self._ally_type_names = None
+        # Paper: d_t is built from observable information only. When True the
+        # LLM summary/cache key see enemies only if some alive ally has them
+        # within sight range; shaping predicates (training-time, CTDE) still
+        # use the full snapshot.
+        self.observable_dt = getattr(args, "dt_observable", True)
 
     # ------------------------------------------------------------- helpers
     def _ally_types(self):
@@ -86,9 +91,29 @@ class SC2SemanticInterface(SemanticInterface):
             allies.append(self._unit_info(u, ally=True))
         for eid in range(self.env.n_enemies):
             u = self.env.enemies[eid]
-            enemies.append(self._unit_info(u, ally=False))
+            info = self._unit_info(u, ally=False)
+            info["visible"] = info["alive"] and self._in_ally_sight(u)
+            enemies.append(info)
         return {"allies": allies, "enemies": enemies,
                 "n_actions": N_BASE_ACTIONS + self.env.n_enemies}
+
+    def _in_ally_sight(self, enemy):
+        for aid in range(self.env.n_agents):
+            a = self.env.agents[aid]
+            if a.health <= 0:
+                continue
+            try:
+                sight = float(self.env.unit_sight_range(aid))
+            except Exception:
+                sight = 9.0
+            if math.hypot(a.pos.x - enemy.pos.x, a.pos.y - enemy.pos.y) <= sight:
+                return True
+        return False
+
+    def _dt_enemies(self, snap):
+        if not self.observable_dt:
+            return snap["enemies"]
+        return [e for e in snap["enemies"] if e.get("visible", True)]
 
     def _unit_info(self, u, ally):
         hp_max = float(u.health_max) + float(getattr(u, "shield_max", 0.0))
@@ -130,10 +155,19 @@ class SC2SemanticInterface(SemanticInterface):
         lines.append("Scenario: SMAC map '%s' (%d allied vs %d enemy units)."
                      % (self.env.map_name, self.env.n_agents, self.env.n_enemies))
 
-        for side, units in (("Allied", snap["allies"]), ("Enemy", snap["enemies"])):
+        dt_enemies = self._dt_enemies(snap)
+        for side, units in (("Allied", snap["allies"]), ("Enemy", dt_enemies)):
             prof = self._force_profile(units)
             n_alive = sum(1 for u in units if u["alive"])
-            lines.append("%s force: %d/%d alive." % (side, n_alive, len(units)))
+            if side == "Enemy" and self.observable_dt:
+                if n_alive == 0:
+                    lines.append("Enemy force: no enemy units currently in sight "
+                                 "(%d on the map at start)." % self.env.n_enemies)
+                    continue
+                lines.append("Enemy force: %d unit(s) currently in sight "
+                             "(%d on the map at start)." % (n_alive, self.env.n_enemies))
+            else:
+                lines.append("%s force: %d/%d alive." % (side, n_alive, len(units)))
             for tname, p in sorted(prof.items()):
                 if p["alive"] > 0:
                     frac = 100.0 * p["hp"] / max(p["hp_max"], 1e-6)
@@ -148,7 +182,7 @@ class SC2SemanticInterface(SemanticInterface):
                     s += " [%s]" % note
                 lines.append(s)
 
-        ca, ce = self._centroid(snap["allies"]), self._centroid(snap["enemies"])
+        ca, ce = self._centroid(snap["allies"]), self._centroid(dt_enemies)
         if ca and ce:
             dist = math.hypot(ca[0] - ce[0], ca[1] - ce[1])
             phase = "engaged (within typical attack range)" if dist < 8 else \
@@ -160,6 +194,8 @@ class SC2SemanticInterface(SemanticInterface):
             ns = "north" if dy > 0 else "south"
             major = ew if abs(dx) >= abs(dy) else ns
             lines.append("Enemy centroid lies to the %s of the allied force." % major)
+        elif ca and self.observable_dt:
+            lines.append("Spatial: enemy position unknown (none in sight).")
 
         if extra_stats:
             if "rolling_win_rate" in extra_stats:
@@ -170,7 +206,7 @@ class SC2SemanticInterface(SemanticInterface):
         return "\n".join(lines)
 
     def phase(self, snap):
-        ca, ce = self._centroid(snap["allies"]), self._centroid(snap["enemies"])
+        ca, ce = self._centroid(snap["allies"]), self._centroid(self._dt_enemies(snap))
         if not (ca and ce):
             return None
         return "engaged" if math.hypot(ca[0] - ce[0], ca[1] - ce[1]) < 8 else "approaching"
@@ -178,7 +214,7 @@ class SC2SemanticInterface(SemanticInterface):
     def cache_key(self, snap):
         # Coarse state: per-type alive counts + bucketed avg health + phase.
         parts = [self.env.map_name]
-        for side, units in (("A", snap["allies"]), ("E", snap["enemies"])):
+        for side, units in (("A", snap["allies"]), ("E", self._dt_enemies(snap))):
             prof = self._force_profile(units)
             for tname, p in sorted(prof.items()):
                 if p["alive"]:
@@ -186,9 +222,11 @@ class SC2SemanticInterface(SemanticInterface):
                 else:
                     bucket = -1
                 parts.append("%s:%s:%d:%d" % (side, tname, p["alive"], bucket))
-        ca, ce = self._centroid(snap["allies"]), self._centroid(snap["enemies"])
+        ca, ce = self._centroid(snap["allies"]), self._centroid(self._dt_enemies(snap))
         if ca and ce:
             parts.append("d%d" % int(math.hypot(ca[0] - ce[0], ca[1] - ce[1]) // 4))
+        elif self.observable_dt:
+            parts.append("nosight")
         return "|".join(parts)
 
     # ------------------------------------------------------- prompt context

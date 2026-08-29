@@ -35,6 +35,7 @@ use_masking_at_test: True   # apply guidance masks during greedy test episodes
 mask_anneal_t: 0            # >0: turn masking fully off after this many env steps
 shaping_in_learner: False   # True: compose r + lambda_now*F_t at train time
 explore_soft_bias: False    # True: bias epsilon-random draws by W_soft too
+dt_observable: True         # d_t from ally sight range only (paper: observable info); False = full state
 mask_vocab: "full"          # full | strategic (no move-direction forbids, no micro tokens)
 beta: 0.5                   # soft-mask tilt coefficient (Eq. 5)
 lambda_start: 0.5           # initial shaping weight lambda_0
