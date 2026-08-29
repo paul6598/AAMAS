@@ -210,3 +210,8 @@ AUC(200k, --frac 0.8). 참조: f_update=200 = DIAG_H6 (0.388±0.061, n=3).
 그룹명: SWEEP_F100 / SWEEP_F400 / SWEEP_F800. 로그 results/logs/sweepF*.log.
 판정: AUC가 F_update에 둔감하면 "언제" 축은 비용 절감용, "강도/게이팅" 축이 주
 기여. 민감하면 최적 주기가 맵/단계별로 다른지 후속(5m6m 스윕).
+
+
+## PHASE 5 결과 (2026-08-29 21:00)
+판정 문서: docs/masking-fupdate-verdict-20260829.md. 마스킹 해악=β 스케일(β≤0.1 권장),
+F_update 약한 민감(2s3z), 관측 d_t 비용 0. 다음: 저자 회신 반영 / 5m6m에서 F·β 재측정 / 새 연구 착수.

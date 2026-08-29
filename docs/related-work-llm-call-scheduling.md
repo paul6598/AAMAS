@@ -20,7 +20,7 @@ future work로 명시하고 F_update ablation이 없다 — 갭이 논문 자체
 | 논문 | 트리거 | 설정 | 우리와의 차이 |
 |---|---|---|---|
 | ★★ **When2Ask** (Hu et al., RLC 2024, 2306.03604) | RL로 학습한 asking policy; "물었는데 같은 플랜이 돌아오면" 페널티 λ. 베이스라인: Always / Random 50% / 하드코딩(옵션 종료·100스텝 타임아웃) / Never | 단일 에이전트, MiniGrid/Habitat, LLM=플래너, test-time | 학습 루프가 아니라 실행 시 플랜 요청. 단일 에이전트. 리플레이/셰이핑 없음. **redundant-query 페널티는 그대로 차용 가능** |
-| ★★ **LLM-MARL** (Li et al., 2506.04251) | 경량 게이트 π_gate가 매 스텝 호출 여부 결정, 보상 (R_LLM − R_noLLM) − α·C_query, 호출 캐시 | MARL(GRF, MAgent, SC2), Coordinator LLM이 에이전트별 서브골 | 가장 가까운 MARL 경쟁작. "불필요 호출 43% 감소, 성능 유지". 단 게이트 대상이 **스텝 단위 행동 서브골**이지 셰이핑/마스크 규칙이 아니고, off-policy 버퍼 staleness를 다루지 않음. 우리는 호출 주기 스윕·staleness·예산 Pareto로 차별화 |
+| ★ **LLM-MARL** (Li, Campos, Wang, 2506.04251 v4 2025-11; 원문 확인) | 기본 **매 스텝** Coordinator 호출(에이전트별 서브골 1개 + LLM 제안 행동). 게이트 π_gate = "reward differences with/without LLM guidance"로 **지도학습한 2×64 MLP 이진 분류기**, 목적식 E[(R^LLM − R^noLLM) − α·C_query] (R^noLLM 산출법 미기술). rolling cache | **PPO + 공유 critic(on-policy)**, GPT-3.5 T=0.7, GRF/MAgent/SC2(맵 미명시), 3시드. Communicator·Memory 포함한 넓은 프레임워크 논문 | 게이트 결과는 "불필요 호출 43%↓, 성능 유지" 한 문장뿐 — 표·ablation·주기 스윕 없음. on-policy라 리플레이 staleness 문제 부재. **스스로 "outdated subgoal commitments"로 인한 hesitation을 실패 사례로 보고하고 "finer temporal grounding or recurrent querying"을 future work로 남김** → 우리 H0·τ 프레임의 직접 motivation. 비용 레짐도 다름(매 스텝 호출에서 43% 절감 vs LEHCA는 이미 1/200). 베이스라인으로 "보상차 지도 게이트" 재현 가치 있음 |
 | ★★ **LLaPipe Advisor+** (Chang et al., 2507.13712) | 최근 에피소드 리턴에 선형회귀 → 기울기 < θ(=0.01)이면 호출 (**학습 정체 트리거**). 고정 주기 vs 적응 비용 모델 명시 | 단일 RL + LLM advisor, 데이터 준비 파이프라인 | 학습 루프 내 적응 호출로 우리와 구조가 가장 비슷. 도메인이 멀다. "정체 트리거" 베이스라인으로 구현 가치 |
 | ★ **MIRA** (Nourzad & Joe-Wong, ICLR 2026, 2602.17930) | 롤아웃 utility가 여러 에피소드 연속 ~0이면 호출; **명시적 쿼리 예산**; LLM 출력을 메모리 그래프로 상각. 예산 ablation(0/10/20) + stale guidance 실험 있음 | 단일 에이전트 DoorKey | 예산 ablation·staleness 실험 프로토콜 참고. |
 | ★ **Regime-Conditional Stabilisation** (2607.04470) | 매 에피소드 재질의 → PBRS 비정상성 + 버퍼 오염 → 붕괴. 처방: 페이즈 동결, EMA(α=0.2) | SMAC 3m 등, QMIX | 우리 G2(learner-λ) 발견의 독립 재발견. **"자주 부르면 해롭다"의 MARL 근거**. 그러나 해법이 정적 동결/EMA — 온라인 트리거 아님 |
@@ -76,6 +76,52 @@ future work로 명시하고 F_update ablation이 없다 — 갭이 논문 자체
 | 플랜 staleness 점수 | **Adaptive Online Replanning w/ Diffusion** (NeurIPS 2023, 2310.09629; 현 플랜의 우도 하락 시 재계획) | "현 가이던스 유효성" 점수 |
 | 실패/전제 위반 | LLM-Planner (ICCV 2023), DEPS (NeurIPS 2023), AdaPlanner, **DoReMi** (IROS 2024, 2307.00329; 플랜과 함께 전제조건 출력 → 위반 시 재계획), CoMuRoS (2511.22354) | 가이던스가 참조한 적 타입 전멸 등 "무효화" 이벤트 |
 | 미래 불확실성 | Interval-aware RL (2603.22384) | |
+
+## 4b. 멀티에이전트 시간 추상화: 팀 수준 상위 결정의 주기
+
+단일 에이전트 τ 문헌(§4)의 MARL 판. 결론: **QMIX 계열 계층 MARL에서 팀 공유 상위
+결정의 주기를 온라인으로 적응시킨 논문은 없다.** 전부 고정·동기 주기이며, 보고된
+ablation은 모두 내부 최적(너무 짧아도, 길어도 나쁨)을 보인다.
+
+| 논문 | 상위 결정 | 주기 | ablation | 종료 |
+|---|---|---|---|---|
+| ★ **COPA** (Liu et al., ICML 2021, 2105.08692) | 코치가 전략 벡터 z를 전 플레이어에 방송 | **T=4** | T ∈ {2,4,8,12,16,20,24}: **T=4 최적, "작을수록 좋다"는 직관 반박** ("코치는 에이전트가 시간적으로 일관되게 행동하게 할 때 가장 유용") | 동기 |
+| | §3.4 게이트: 주기 T마다 새 z를 계산하되 ‖z_new − z_old‖ ≥ β일 때만 전송, Thm 1로 손실 상계 | | β ∈ {0,2,3,5,8}: 통신 25%→13%로 줄여도 성능 유지 | **고정 T 격자 위에서만 판단 — 주기를 늘릴 뿐 줄이지 못함, β 수동** |
+| ★ **RODE** (ICLR 2021, 2010.01523) | 역할 선택기(QMIX 믹싱) | **c=5** | c ∈ {3,5,7,10} (App. D.1): "significant influence", 5–7 권장, 상호작용은 future work | 동기 |
+| ★ **HAVEN** (AAAI 2023, 2110.07246) | 상위 매크로 액션 믹싱 | **k=3** | k ∈ {3,4,5}: k 커질수록 하락 | 동기 |
+| **HMASD** (NeurIPS 2023) | 트랜스포머 코디네이터가 팀 스킬→개별 스킬 ("코치의 타임아웃") | k (값 미확인) | App. D: 너무 짧거나 길면 나쁨 | 동기 |
+| HSD (AAMAS 2020, 1912.03558) | 스킬 선택 | t_seg=10 | {5,10,20}: 10·20 > 5 | 동기; 비동기는 future work |
+| ALMA (NeurIPS 2022) | 서브태스크 할당 | N_t=3(SC2)/5 | 없음 | 동기 |
+| FMH (1901.08492) | 매니저 서브골 | 8 | 정성 스윕 | 동기 |
+| MASER (ICML 2022) | 버퍼 기반 서브골 | 에피소드당 1회 | 없음 | 동기 |
+| ROMA (ICML 2020) | 역할 임베딩 | 매 스텝 (k=1 끝점) | — | — |
+
+에이전트 수준 적응 종료 (팀 공유 신호는 아님):
+- ★ **Han et al., Dynamic Termination** (PRICAI 2019, 1910.09508): 옵션 종료를 상위
+  Q의 행동으로 두고 페널티 δ로 가격 매김 — 긴 옵션은 팀원 변화에 늦게 반응, 잦은
+  전환은 방송된 의도를 신뢰 불가하게 만듦(**MARL 고유의 트레이드오프**). 비동기.
+- **GMAH** (2408.11416): 서브골 달성 시 재생성 + 최대 주기 c 캡 — MARL 계층에서
+  유일한 달성-트리거 refresh.
+- DOC (AAMAS 2020, 1911.12825): 협동 MAS option-critic, 공동 옵션은 구성 옵션 중
+  하나라도 종료하면 종료. IAD (2605.24343): Overcooked에서 학습된 β(z,s).
+- 이벤트 트리거 통신(분산, 중앙 조정자 없음): ETCNet (TNNLS 2023, 2010.04978),
+  ET-MAPG (2509.20338), AsynCoMARL (AAMAS 2025, 2502.00558).
+
+비동기 매크로 액션 형식 틀: **MacDec-POMDP** (Amato et al., AAMAS 2014 / JAIR 2019),
+Xiao–Hoffman–Amato (CoRL 2019, 2004.08646), Mac-IAICC (NeurIPS 2022, 2209.10113),
+**ToMacVF** (2507.10251; QMIX식 값 분해 + 비동기 매크로 액션, temporal IGM). Tang et al.
+(1809.09332)은 동기 vs 비동기 종료를 설계 축으로 명시(비동기 3–5% 손실). 팀 수준
+가이던스 refresh는 동기 모델에 해당 → 에이전트 타입별 비동기 refresh는 QMIX 설정에서
+새롭다.
+
+제어이론: periodic event-triggered control(고정 격자에서 트리거만 검사 = COPA 구조;
+Nowzari et al., Automatica 2019)과 **self-triggered control**(제어기가 다음 갱신 시각을
+스스로 계산; Heemels et al., CDC 2012) — 후자가 "Commander가 다음 F_update를 스스로
+정한다"의 정확한 대응.
+
+포지셔닝 문장: "value-decomposition MARL에서 팀 공유 가이던스(LLM Commander)의
+refresh 주기를 학습/이벤트로 적응시키는 것"은 미개척. 최근접 = COPA(고정 T + skip
+게이트), HMASD(고정 k 주기적 중앙 실행), Han et al.(가격 매긴 동적 종료, 에이전트 수준).
 
 ## 5. 비용 인식 LLM 호출 (프레이밍용)
 

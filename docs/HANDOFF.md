@@ -16,6 +16,7 @@ LLM×MARL 연구(AAMAS 투고 목표). 1단계로 LEHCA(Bai et al., Sci. Rep. 20
   공용 인프라(`algorithm/src`, `env/`, `run.py`) 수정 시 docs/autoexp/state.md에 기록.
 - **C. 리뷰 세션**: 결과 교차검증, docs/analysis-*.md·feedback-*.md로 피드백.
 - 기준선 태그: git `lehca-baseline-v4` (재현 캠페인 종료 시점 코드).
+- 진단 완료 후 권장 기본: `beta=0.1`, `dt_observable=True`, `shaping_in_learner=True`.
 
 ## 확정 설정 (LEHCA 베이스라인)
 - **v3 (완전 구성, final 재현)**: beta=0.5 lambda_start=0.5 lambda_min=0
@@ -33,6 +34,14 @@ LLM×MARL 연구(AAMAS 투고 목표). 1단계로 LEHCA(Bai et al., Sci. Rep. 20
 | 5m_vs_6m | 0.194±0.137 / 0.365 (n=3) | v3 0.309±0.010 / 0.504 | **1.59× vs 논문 1.58×** ✓ |
 | 3s_vs_5z | 0.116 / 0.568 (n=1) | v3 0.017/0.021, v4 0.073/0.492 | ✗ |
 | 27m_vs_30m | 0.033 / 0.141 (n=1) | v4 0.013/0.073 | ✗ |
+
+## 2026-08-29 진단 결론 (docs/masking-fupdate-verdict-20260829.md)
+- **마스킹 해악 = β 스케일**: β=0.5→0.1이면 마스킹 on에서도 shaping-only 수준
+  (M3 0.342, M6 0.402 vs H6 0.388). 어휘 축소는 무효(M5 0.143). **권장 β ≤ 0.1.**
+- **F_update 민감도 약함(2s3z)**: F100 0.367, F200 0.388, F400 0.313, F800 0.352,
+  F∞ 0.326 — 본 무대는 5m6m.
+- **관측 d_t 비용 0**: OBS_v4 0.394 vs 전체상태 0.388 → `dt_observable=True` 확정.
+- 논문 완전구성 AUC 0.455는 미달성(β=0.1 완전구성 0.342); 저자 회신(β/F/술어) 대기.
 
 ## 핵심 발견 (연구 motivation)
 1. 마스킹이 우리 어휘·β 하에서 초반 드래그 (4회 일관) — 프로빙으로 인과 확인:
