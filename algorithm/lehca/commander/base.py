@@ -16,7 +16,7 @@ MAX_RULES = 6
 # "strategic" vocabulary mode (set from args.mask_vocab): forbids may only
 # name stop/attack_type/attack_all; per-step micro tokens are dropped.
 VOCAB_MODE = "full"
-STRATEGIC_FORBID_OK = ("attack_all", "attack_type:")
+STRATEGIC_FORBID_OK = ("attack_type:",)  # never allow forbidding all attacks
 STRATEGIC_DROP = ("attack_lowest_health", "attack_nearest")
 
 

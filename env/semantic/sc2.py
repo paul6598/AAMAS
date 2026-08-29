@@ -169,6 +169,12 @@ class SC2SemanticInterface(SemanticInterface):
                                 extra_stats.get("t_env", 0)))
         return "\n".join(lines)
 
+    def phase(self, snap):
+        ca, ce = self._centroid(snap["allies"]), self._centroid(snap["enemies"])
+        if not (ca and ce):
+            return None
+        return "engaged" if math.hypot(ca[0] - ce[0], ca[1] - ce[1]) < 8 else "approaching"
+
     def cache_key(self, snap):
         # Coarse state: per-type alive counts + bucketed avg health + phase.
         parts = [self.env.map_name]

@@ -65,11 +65,17 @@ class LehcaRunner:
         # Every Commander call is dumped so guidance content can be audited.
         self._guidance_log = None
         if self.commander is not None:
-            gdir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
-                os.path.dirname(os.path.abspath(__file__))))), "results", "guidance")
+            repo_root = os.path.dirname(os.path.dirname(os.path.dirname(
+                os.path.abspath(__file__))))
+            gdir = os.path.join(repo_root, "results", "guidance")
             os.makedirs(gdir, exist_ok=True)
-            self._guidance_log = open(os.path.join(
-                gdir, "%s.jsonl" % getattr(args, "unique_token", "run")), "a")
+            # unique_token has 1s resolution: runs launched in the same second
+            # collide, so disambiguate with group/seed/pid.
+            fname = "%s_%s_s%s_p%d.jsonl" % (
+                getattr(args, "unique_token", "run"),
+                getattr(args, "wandb_group", "nogroup"),
+                getattr(args, "seed", "x"), os.getpid())
+            self._guidance_log = open(os.path.join(gdir, fname), "a")
 
     def setup(self, scheme, groups, preprocess, mac):
         self.new_batch = partial(EpisodeBatch, scheme, groups, self.batch_size,
@@ -113,7 +119,8 @@ class LehcaRunner:
             self._guidance_log.write(json.dumps({
                 "t_env": self.t_env, "t_global": t_global, "cache_key": key,
                 "cache_hit": getattr(self.commander, "n_cache_hits", 0) > hits_before,
-                "phase": snap.get("phase"), "guidance": guidance}) + "\n")
+                "phase": self.iface.phase(snap) if hasattr(self.iface, "phase") else None,
+                "guidance": guidance}) + "\n")
             self._guidance_log.flush()
 
     def run(self, test_mode=False):

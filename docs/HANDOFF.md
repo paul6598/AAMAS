@@ -55,7 +55,8 @@ LLM×MARL 연구(AAMAS 투고 목표). 1단계로 LEHCA(Bai et al., Sci. Rep. 20
   commander=llm llm_api_base=... llm_model=openai/gpt-oss-20b test_interval=10000
   test_nepisode=32 <오버라이드>`
 - 지표: `python analysis/auc_early.py <wandb그룹> [--frac f]` (frac: T_early/t_max).
-- 가이던스 덤프: results/guidance/<run>.jsonl. 마스크 통계: wandb mask_* / q_gap_mean.
+- 가이던스 덤프: results/guidance/<unique_token>_<group>_s<seed>_p<pid>.jsonl (2026-08-29 15:55
+  이후 런만; 그 전 M4/M5는 M4M5_mixed_*.jsonl에 혼재). 마스크 통계: wandb mask_* / q_gap_mean.
 - wandb: project AAMAS-LEHCA, entity joonhuk6598-university-of-seoul.
 
 ## 미결/진행 중 (2026-08-29)

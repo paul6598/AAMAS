@@ -44,6 +44,13 @@ PHASE: MAIN_V2  (본 실험 LEHCA_2s3z_v2 5시드×1M — 04:27 시작, tmux 2:0
 - DIAG_C/D/E 단독 런: F 실패 시에만 세분화 진행.
 
 ## 의사결정 로그
+- [8/29 15:55] 연구 세션 지적 5건 검증·수정: ① 가이던스 덤프 경로 dirname 4회→3회
+  (~/results→AAMAS/results/guidance); ② unique_token 1초 해상도 충돌 → 파일명에
+  group/seed/pid 추가 (M4·M5 혼재 파일은 results/guidance/M4M5_mixed_*.jsonl로 보존,
+  strategy 문자열로 분리 가능); ③ phase 항상 None → iface.phase() 신설; ④ strategic
+  어휘가 attack_all forbid 허용 → attack_type만 허용으로 수정 (진행 중 M5는 구코드:
+  attack_all forbid 7회 발생 — 판정 시 confound로 명시); ⑤ F 스윕 3런은 로깅 추가
+  전 시작이라 덤프 없음(참고). 스모크 검증 완료.
 - [8/29 15:31] 리뷰(feedback-masking-20260829.md) 대응: Commander 프로빙으로 가설 1-1
   실측 확인(stop 9/9 금지, 교전 시 move_all 금지 → 카이팅 봉쇄; 셰이핑 retreat와 모순),
   스모크에서 q_gap≈0.05 vs 틸트 0.35-0.55(가설 1-2 근거). 가이던스 JSONL 로깅 +
