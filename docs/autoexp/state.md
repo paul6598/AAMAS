@@ -44,6 +44,13 @@ PHASE: MAIN_V2  (본 실험 LEHCA_2s3z_v2 5시드×1M — 04:27 시작, tmux 2:0
 - DIAG_C/D/E 단독 런: F 실패 시에만 세분화 진행.
 
 ## 의사결정 로그
+- [8/29 17:05] 사용자 지시로 **d_t 관측 기반화** 구현 (`dt_observable`, 기본 True):
+  적 유닛은 생존 아군의 시야(unit_sight_range, 9)에 있을 때만 요약·캐시키에 포함,
+  시야 밖이면 "no enemy in sight/position unknown". 셰이핑 술어는 학습 시점 전체
+  상태 유지(논문 CTDE). 실행 시 d_t→마스크 경로의 privileged 누수 제거. 검증 런
+  DIAG_OBS_v4(34, v4 설정, 250k) 투입 — 참조 H6 0.388(전체 상태). **주의**: 이전 모든
+  런(H/M/F 시리즈, v3/v4)은 전체 상태 d_t였음. 진행 중 M/F 캠페인의 확증 시드는
+  비교 일관성을 위해 dt_observable=False로 실행할 것.
 - [8/29 16:50] 판정: SWEEP F400 0.313, F800 0.352 (참조 F200 0.388±0.061) — F100·F∞
   대기. **M4(rule commander+마스킹, forbid 없음·prefer w≤2) AUC 0.193 / final 0.31 —
   H1(0.223)보다도 낮음** → LLM forbid 내용(가설 1-1)만이 아니라 **소프트 틸트 스케일

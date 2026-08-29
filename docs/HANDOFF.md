@@ -23,6 +23,8 @@ LLM×MARL 연구(AAMAS 투고 목표). 1단계로 LEHCA(Bai et al., Sci. Rep. 20
 - **v4 (shaping-only, 초반 가속 재현; ablation 라인)**: v3 + use_action_masking=False
   lambda_decay=0.9993
 - QMIX: `--config=qmix_paper` (Table 2 값). 논문 명시값·ε-anneal은 절대 변경 금지.
+- **d_t 정보원**: 2026-08-29 17:05부터 기본 `dt_observable=True`(아군 시야 내 적만).
+  그 이전 모든 결과(v3/v4/H/M/F)는 전체 상태 d_t → 비교 시 `dt_observable=False` 명시.
 
 ## 핵심 수치 (2s3z 1M / hard map 1.2M 단축, AUC_early = 예산 첫 20%)
 | 맵 | QMIX AUC/final | LEHCA AUC/final | 논문 비율 재현 |
