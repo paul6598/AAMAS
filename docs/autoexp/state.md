@@ -1,6 +1,15 @@
 # 자율 실험 상태 (루프가 매 wakeup마다 갱신)
 
 ## 현재 단계
+PHASE 6: 마스킹 이득 재현 캠페인 (8/31 15:05 시작) — docs/autoexp/plan-phase6-masking.md
+전 세션 재할당(2일): 2,34=n023 / 37=n020(vLLM :8356) / 38,40,45,46=n026.
+라운드1 (seed0, 250k, 관측 d_t, 마스킹 on, 어닐 없음): P1 β=0.05 (2), P2 β=0.1+2단계
+프롬프트 (34), P3 β=0.1 (38), P4 β=0.1+consistency (40), P5 β=0.1+paper 프롬프트 (45),
+P6 β=0.1+reasoning medium (46). 참조 = OBS_v4 0.394±0.061 (shaping-only, 관측 d_t).
+프로빙: paper 프롬프트는 forbid=[] 출력 확인(위험회피 한정 프레이밍 작동), prefer_weight
+1.8-2.0. 2단계 파이프라인 정상 동작(plan_text는 results/guidance 덤프에 기록).
+
+## (이전)
 PHASE: MAIN_V3 (01:32 시작 — G3 설정 5시드×1M, 그룹 LEHCA_2s3z_v3)
 설정: use_masking_at_test=True beta=0.5 lambda_start=0.5 lambda_min=0.0
 lambda_decay=0.998 shaping_in_learner=True mask_anneal_t=150000
