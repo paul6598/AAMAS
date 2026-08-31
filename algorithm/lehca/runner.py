@@ -59,6 +59,10 @@ class LehcaRunner:
         # r + lambda_now * F_t at train time (avoids stale-lambda rewards
         # lingering in the replay buffer)
         self.shaping_in_learner = getattr(args, "shaping_in_learner", False)
+        # True: only refresh at episode start (first refresh after >= f_update
+        # steps elapsed), so guidance never carries mid-episode context into
+        # the next episode. f_update=1 with this flag = refresh every episode.
+        self.refresh_at_episode_start = getattr(args, "refresh_at_episode_start", False)
         self.last_refresh_t = None
         self.recent_wins = deque(maxlen=32)
         self._shaping_sums = []
@@ -99,6 +103,8 @@ class LehcaRunner:
 
     def _maybe_refresh_commander(self, snap, test_mode):
         if self.commander is None or test_mode:
+            return
+        if self.refresh_at_episode_start and self.t != 0:
             return
         t_global = self.t_env + self.t  # t_env only advances at episode end
         due = (self.last_refresh_t is None
