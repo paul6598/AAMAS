@@ -120,6 +120,8 @@ class LehcaRunner:
                 "t_env": self.t_env, "t_global": t_global, "cache_key": key,
                 "cache_hit": getattr(self.commander, "n_cache_hits", 0) > hits_before,
                 "phase": self.iface.phase(snap) if hasattr(self.iface, "phase") else None,
+                "plan_text": getattr(self.commander, "last_plan_text", None)
+                if not getattr(self.commander, "n_cache_hits", 0) > hits_before else None,
                 "guidance": guidance}) + "\n")
             self._guidance_log.flush()
 

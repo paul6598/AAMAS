@@ -106,6 +106,11 @@ ablation은 모두 내부 최적(너무 짧아도, 길어도 나쁨)을 보인�
   하나라도 종료하면 종료. IAD (2605.24343): Overcooked에서 학습된 β(z,s).
 - 이벤트 트리거 통신(분산, 중앙 조정자 없음): ETCNet (TNNLS 2023, 2010.04978),
   ET-MAPG (2509.20338), AsynCoMARL (AAMAS 2025, 2502.00558).
+- ETD-MAPPO (Jankowski, 2603.23722, arXiv 단독저자): 에이전트 수준 적응 frame-skip —
+  정책 엔트로피 ≤ τ_H AND twin-critic 차이 ≤ τ_V이면 고정 N프레임 수면, SMDP식
+  γ^N 부트스트랩. 임계값 환경별 수동 어닐링, 시드 수·게이트별 ablation 없음,
+  TempoRL 등 학습 skip 비교 없음, LBF에선 절감 0%. 팀 수준 가이던스와 무관 —
+  "에이전트 수준 불확실성 게이트" 사례로만 인용.
 
 비동기 매크로 액션 형식 틀: **MacDec-POMDP** (Amato et al., AAMAS 2014 / JAIR 2019),
 Xiao–Hoffman–Amato (CoRL 2019, 2004.08646), Mac-IAICC (NeurIPS 2022, 2209.10113),

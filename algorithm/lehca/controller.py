@@ -20,6 +20,12 @@ class LehcaMAC(BasicMAC):
         # True: bias epsilon-greedy RANDOM draws by W_soft as well (the paper
         # describes masking as "guiding exploration"; default only tilts greedy)
         self.explore_soft_bias = getattr(args, "explore_soft_bias", False)
+        # Eq. 7 reading: masks may reference the last joint action u_t. When
+        # >1, an agent's previous attack target (if still available) gets this
+        # soft weight -> focus-fire consistency.
+        self.consistency_w = getattr(args, "mask_consistency_w", 0.0)
+        self.n_base_actions = 6
+        self._last_actions = None
         self._hard = None
         self._soft = None
         self._st = {"q_gap_mean": [], "mask_forbid_frac": [],
@@ -50,6 +56,10 @@ class LehcaMAC(BasicMAC):
             tilt_arg = tilted[0].masked_fill(~al, -1e9).argmax(-1)
             self._st["mask_override_rate"].append(float((raw_arg != tilt_arg).float().mean()))
 
+    def init_hidden(self, batch_size):
+        super(LehcaMAC, self).init_hidden(batch_size)
+        self._last_actions = None
+
     def set_guidance(self, hard, soft):
         """hard/soft: (n_agents, n_actions) numpy arrays, or None to disable."""
         self._hard = hard
@@ -69,6 +79,13 @@ class LehcaMAC(BasicMAC):
                             device=avail_actions.device).unsqueeze(0)
         soft = th.as_tensor(self._soft, dtype=agent_outputs.dtype,
                             device=agent_outputs.device).unsqueeze(0)
+        if self.consistency_w > 1.0 and self._last_actions is not None:
+            soft = soft.clone()
+            la = self._last_actions
+            for i in range(la.shape[0]):
+                a = int(la[i])
+                if a >= self.n_base_actions and avail_actions[0, i, a] > 0 and hard[0, i, a] > 0:
+                    soft[0, i, a] = max(float(soft[0, i, a]), self.consistency_w)
 
         allowed = avail_actions * hard
         # Non-emptiness fallback: ignore hard constraints for agents whose
@@ -83,5 +100,7 @@ class LehcaMAC(BasicMAC):
             # Categorical over avail weights in the selector -> W_soft-biased
             # random exploration; -inf mask and greedy argmax are unaffected.
             allowed = allowed.float() * soft
-        return self.action_selector.select_action(
+        chosen = self.action_selector.select_action(
             tilted_q[bs], allowed[bs], t_env, test_mode=test_mode)
+        self._last_actions = chosen[0].detach()
+        return chosen

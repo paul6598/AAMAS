@@ -37,6 +37,9 @@ shaping_in_learner: False   # True: compose r + lambda_now*F_t at train time
 explore_soft_bias: False    # True: bias epsilon-random draws by W_soft too
 dt_observable: True         # d_t from ally sight range only (paper: observable info); False = full state
 mask_vocab: "full"          # full | strategic (no move-direction forbids, no micro tokens)
+mask_consistency_w: 0.0     # >1: soft weight for keeping last attack target (Eq.7 u_t)
+prompt_style: "default"      # default | paper (CoT+risk-only forbid, JSON) | twostage (free plan -> grounding module)
+llm_reasoning_effort: "low"  # gpt-oss reasoning effort: low | medium | high
 beta: 0.5                   # soft-mask tilt coefficient (Eq. 5)
 lambda_start: 0.5           # initial shaping weight lambda_0
 lambda_min: 0.05            # lambda floor
