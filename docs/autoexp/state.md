@@ -53,6 +53,11 @@ PHASE: MAIN_V2  (본 실험 LEHCA_2s3z_v2 5시드×1M — 04:27 시작, tmux 2:0
 - DIAG_C/D/E 단독 런: F 실패 시에만 세분화 진행.
 
 ## 의사결정 로그
+- [8/31 18:50] 사용자 결정: **전역 스텝 갱신(논문 의미) 유지, F_update만 합리적 값으로**.
+  새 기본값 f_update=50 (에피소드당 ≥1회), refresh_at_episode_start=False. 에피소드 정렬
+  1M 런(FINAL_*) 중단·삭제. 경량 비교(250k, seed0): F50_full(34) vs F50_shaping(46)
+  투입; 2/38 프리 시 F25 페어. EP 페어(에피소드 정렬, 40/45)는 부가 데이터로 완주.
+  판정 후 선택된 F로 1M×3시드 full/shaping 확정 런(FINAL_*) 진행 — 오늘 밤.
 - [8/31 18:45] **베이스라인 확정 캠페인 개시** (사용자: 오늘 중 확정). 확정 설정 =
   에피소드 정렬 갱신(refresh_at_episode_start=True f_update=50) + 관측 d_t + learner-λ
   (0.5→0, 0.9993) + masked-test + β=0.1. 두 변형: FINAL_full_2s3z(마스킹 on, 논문 완전
