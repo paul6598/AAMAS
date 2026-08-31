@@ -56,7 +56,7 @@ LLM×MARL 연구(AAMAS 투고 목표). 1단계로 LEHCA(Bai et al., Sci. Rep. 20
 
 ## 인프라
 - conda `aamas`(학습), `vllm`(서빙). SC2PATH=/gpfs/home1/paul6598/StarCraftII.
-- GPU: tmux 세션 2,34,37,38,40,45,46에서 `cd ~/AAMAS && srun --pty -p gpu6 -c 2
+- GPU: tmux 세션 2,34,37,38,40,45,46,47,48에서 `cd ~/AAMAS && srun --pty -p gpu6 -c 2
   --gres=gpu:1 /bin/bash` (2일 한도). 노드 이름은 매번 바뀜 — squeue로 확인.
 - vLLM: `export VLLM_USE_FLASHINFER_SAMPLER=0 CUDA_HOME=/usr/local/cuda-12.7;
   HF_HUB_OFFLINE=1 vllm serve openai/gpt-oss-20b --port 8356 --max-model-len 8192

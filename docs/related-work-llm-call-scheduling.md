@@ -128,6 +128,45 @@ Nowzari et al., Automatica 2019)과 **self-triggered control**(제어기가 다�
 refresh 주기를 학습/이벤트로 적응시키는 것"은 미개척. 최근접 = COPA(고정 T + skip
 게이트), HMASD(고정 k 주기적 중앙 실행), Han et al.(가격 매긴 동적 종료, 에이전트 수준).
 
+## 4c. 국면·전황 변화를 "감지"하는 연구 (regret 외 — A축 ① 트리거 후보의 뿌리)
+
+우리 문제의 트리거는 "가이던스가 낡았는가"이며, 이는 결국 **변화 감지(change
+detection)** 문제다. MARL/RL/게임 AI에서 변화를 감지하는 계열은 다섯 갈래.
+
+| 계열 | 대표 | 무엇을 감지 | 통계량 | 우리와의 거리 |
+|---|---|---|---|---|
+| **① 비정상성 변화점 감지 (RL)** | Alegre, Bazzan, da Silva **AAMAS 2021** MBCD; Hadoux 2014 (HS3MDP); Padakandla 2020 (Context Q-learning + ODCP); Banerjee 2017 (QCD-MDP) | 환경 동역학 MDP 전환 | 동역학 예측 모델 앙상블의 로그우도 **CUSUM** — 검출 지연 최소화·오경보율 상한 (Lorden/Page 최적성) | 가장 이론적으로 정돈됨. **검출 지연 ↔ 낡음 비용, 오경보율 ↔ 호출 예산**으로 정확히 대응 |
+| **② 상대 전략 전환 감지 (MARL)** | Hernandez-Leal 2016–17 MDP-CL/**DriftER** (concept drift, 고확률 검출 보장); Deep BPR+ (Zheng NeurIPS 2018); SAM (Everett & Roberts 2018); Bayes-ToMoP (Yang IJCAI 2019); OPS-DeMo (2024, running error decay); BADA (IJCAI 2024, Wasserstein 행동 거리, 임계값 없음) | 상대 정책 스위치 | 상대 모델의 예측 오차/사후확률의 급변 | 감지 대상이 "상대"이지 "아군 전황"은 아님. 통계량 설계는 차용 가능 |
+| **③ 실행 감시 / 계획 수리 (plan execution monitoring)** | Fikes 1972 triangle tables; Pettersson 2005 서베이; Fox 2006 plan stability(수리 vs 재계획); Borrajo & Veloso 2024; LLM 계열 DoReMi 2023, Inner Monologue | 계획의 **전제조건 위반** | 기호적: 남은 계획의 precondition이 현 상태에서 거짓인가 | 우리 규칙은 기호적(attack_type:X, applies_to:type:Y)이라 **직접 적용 가능**: 참조 적 타입 전멸, 마스크 resolve 공집합 = 확실한 무효화. 노이즈 없고 비용 0 |
+| **④ 게임 국면 인식 (RTS/MOBA)** | Tencent HMS (AAAI 2019): 게임 phase 모델링이 macro attention을 안내; Synnaeve & Bessière 2011 빌드 예측; Stanescu 2016 전투 상태 평가 CNN; Brood War 전략 스위칭 DQN | 개전/교전/추격 등 국면 | 지도학습 phase 분류기 또는 전투 결과 예측기 | phase가 macro 결정을 "언제" 갱신할지의 조건이 되는 선례. 다만 phase 라벨은 사람이 정의 |
+| **⑤ 이벤트 조건부 행동 (MARL)** | Büchi, Flageat, Sebastián, Prorok 2026 "Events as Triggers for Behavioral Diversity" (이벤트 = 과업의 질적 변화, 이벤트 기반 하이퍼넷이 LoRA로 팀 정책 재구성); ETCNet/ET-MAPG(통신 이벤트 트리거); open ad hoc teamwork(GPL, 팀원 출입 이벤트) | 팀 구성·과업 조건의 질적 변화 | 이벤트는 대체로 **정의**되고(사전 지정), 반응이 학습됨 | "이벤트 → 상위 재구성"이라는 프레임이 동일. 우리 이벤트 = 유닛 사망/타입 전멸/병력 역전 |
+
+**정리.** 규칙이 기호적이라는 우리 특성상 ③(전제조건 위반)이 가장 싸고 확실한
+1차 트리거이고, 전제조건은 살아 있지만 상황이 바뀐 경우(체력·거리·병력비)는
+①의 CUSUM을 요약 d_t의 특징 벡터 또는 "가이던스 모방 모델의 예측 오차"에 걸어
+검출 지연/오경보를 원리적으로 조절한다. 두 층을 합치면 "확실한 무효화는 즉시,
+통계적 변화는 지연-예산 트레이드오프로"라는 설계가 되고, 이는 S0 E1 로그로
+오프라인 재생해 비교할 수 있다. ②·④의 학습 분류기는 라벨(=언제 갱신해야
+했나)이 필요해 S0 이후 선택지.
+
+### 4c-1. CUSUM/QCD를 RL에 적용한 연구 (트리거 이론의 직접 선례)
+
+| 연구 | 무엇에 CUSUM을 걸었나 | 우리에게 주는 것 |
+|---|---|---|
+| Hadoux, Beynier, Weng 2014 (HS3MDP) | 관측 시퀀스의 우도비 CUSUM → 숨은 모드 전환 감지 후 모드별 정책 전환 | "모드 = 국면, 모드별 정책 = 가이던스" 구조 그대로 |
+| Banerjee, Liu, How ACC 2017 (QCD-MDP) | 동역학/보상 변화의 quickest change detection; **두 임계값** 전략으로 "탐지 즉시 전환 vs 보상 손실" 트레이드오프를 명시 분석 | 탐지 후 *언제 전환할지*도 비용이라는 관점 — 우리는 전환 비용 = LLM 호출 |
+| Alegre, Bazzan, da Silva **AAMAS 2021** (MBCD) | 동역학 예측 모델 앙상블의 **다변량 CUSUM**(로그우도비) → 고신뢰 변화점, 지연 최소·오경보 상한 | 가장 가까운 설계: 우리는 "가이던스 모방 모델"의 예측오차 또는 d_t 특징에 걸면 됨 |
+| Padakandla et al. 2020 (Context Q-learning + ODCP) | 경험 스트림의 온라인 변화점 검출 → 컨텍스트별 Q 테이블 | 모델 없이 경험 통계량에 거는 대안 |
+| Li, Shi, Wu, Fryzlewicz **NeurIPS 2025** (CUSUM-RL) | **최적 Q-함수의 정상성** 자체를 모델프리 검정, CUSUM으로 구조 변화점 → 정상 RL과 결합 | 검정 대상이 Q라는 점이 우리 "효과 공간" 관점과 부합. 오프라인 데이터로 가능 |
+| Liu, Lee, Shroff AAAI 2018 (CUSUM-UCB / PHT-UCB); Cao et al. 2019 (M-UCB); Besson & Kaufmann JMLR 2022 (GLR-klUCB, 파라미터 프리) | 밴딧 보상 분포 변화 → 인덱스 리셋 | 리셋 = 갱신. GLR은 변화 크기 k 사전지식 없이 동작 → k를 정하기 어려운 우리에게 유용 |
+| Arumugam, Fan, Liu 2025 (Option-Critic + CPD) | 트랜스포머 CPD를 옵션 **종료 신호**·옵션 발견에 사용(CUSUM 아님) | "변화점 = 옵션 종료 = 상위 재결정"이라는 매핑을 HRL에서 명시한 최신 선례 |
+| Amiri & Magnússon CDC 2026 (SNS-MDP) | 감지 없이 잠재 마르코프 스위칭의 평균 MDP로 수렴 분석 | 대조군 사고: 감지 없이 평균으로 학습하면 무엇을 잃는가 |
+
+**갭.** 위 전부 단일 에이전트이며, 감지 대상은 "환경 MDP의 변화"다. 우리는 (i)
+멀티에이전트 팀, (ii) 감지 대상이 환경이 아니라 **외부 조언자의 가이던스
+유효성**, (iii) 알람 비용이 명시적(LLM 호출)이라는 점이 다르다. 즉 CUSUM의
+ARL₀를 호출 예산으로 직접 해석하는 첫 사례가 될 수 있다.
+
 ## 5. 비용 인식 LLM 호출 (프레이밍용)
 
 - 캐스케이드/라우팅: FrugalGPT (2305.05176), Hybrid LLM (ICLR 2024), RouteLLM
