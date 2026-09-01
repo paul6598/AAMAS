@@ -258,3 +258,6 @@ PHASE: MAIN_V2  (본 실험 LEHCA_2s3z_v2 5시드×1M — 04:27 시작, tmux 2:0
   38 full s1(n023:8356), 48 shaping s1(n023:8357); 5m_vs_6m 1.2M — 40 full s0(n023:8357),
   45 shaping s0(n023:8356). 예상 완주 2s3z ~09:00, 5m6m ~12:00 (srun 만료 9/2 15시).
   그룹: FINAL_full_2s3z / FINAL_shaping_2s3z / FINAL_full_5m6m / FINAL_shaping_5m6m.
+- [9/1 20:20] FINAL 1h 경과: 2s3z 80–110k/h(완주 ~06:00–07:30), 5m6m 250k/h(완주 ~00:30).
+  전부 에러 0. 관찰: 5m6m은 캐시 적중률 ~94%(호출 134–272 vs 적중 ~2000) — 동종 마린 맵이라
+  거친 키 값이 적음 → 가이던스 사실상 정적. 2s3z는 적중 ~50%.
