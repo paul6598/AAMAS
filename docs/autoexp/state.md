@@ -253,3 +253,8 @@ PHASE: MAIN_V2  (본 실험 LEHCA_2s3z_v2 5시드×1M — 04:27 시작, tmux 2:0
 - [9/1 19:10] **QMIX 5m_vs_6m v2 seed2 완주**: AUC 0.268 / final 0.32. 3시드 합계
   AUC 0.127±0.107 (0.009/0.105/0.268), final 0.42±0.30 (0.11/0.83/0.32). 논문 QMIX≈0.187,
   LEHCA 0.295. 시드 분산이 평균과 같은 크기. 6 GPU 세션 전부 유휴; F 결정 대기.
+- [9/1 19:14] **F 결정: 사용자 승인 F=100 ("엉 해봐")** → FINAL 투입(β=0.1, 관측 d_t,
+  학습기 λ, F=100): 2s3z 1M — 34 full s0(n020:8356), 46 shaping s0(n020:8356),
+  38 full s1(n023:8356), 48 shaping s1(n023:8357); 5m_vs_6m 1.2M — 40 full s0(n023:8357),
+  45 shaping s0(n023:8356). 예상 완주 2s3z ~09:00, 5m6m ~12:00 (srun 만료 9/2 15시).
+  그룹: FINAL_full_2s3z / FINAL_shaping_2s3z / FINAL_full_5m6m / FINAL_shaping_5m6m.
