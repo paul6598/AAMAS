@@ -1,5 +1,9 @@
 from functools import partial
-from smac.env import MultiAgentEnv, StarCraft2Env
+try:
+    from smac.env import StarCraft2Env
+except ImportError:  # e.g. GRF-only environments without SMAC installed
+    StarCraft2Env = None
+from .multiagentenv import MultiAgentEnv
 import sys
 import os
 
@@ -7,7 +11,12 @@ def env_fn(env, **kwargs) -> MultiAgentEnv:
     return env(**kwargs)
 
 REGISTRY = {}
-REGISTRY["sc2"] = partial(env_fn, env=StarCraft2Env)
+if StarCraft2Env is not None:
+    REGISTRY["sc2"] = partial(env_fn, env=StarCraft2Env)
+
+# Google Research Football (gfootball imported lazily inside the wrapper)
+from .gfootball import GFootballEnv  # noqa: E402
+REGISTRY["gfootball"] = partial(env_fn, env=GFootballEnv)
 
 if sys.platform == "linux":
     os.environ.setdefault("SC2PATH", "/gpfs/home1/paul6598/StarCraftII")

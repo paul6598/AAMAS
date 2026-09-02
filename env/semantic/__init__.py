@@ -1,8 +1,10 @@
 from .sc2 import SC2SemanticInterface
+from .grf import GRFSemanticInterface
 
 # Keyed by the pymarl env name (args.env). Add new environments here.
 IFACE_REGISTRY = {
     "sc2": SC2SemanticInterface,
+    "gfootball": GRFSemanticInterface,
 }
 
 

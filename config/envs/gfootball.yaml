@@ -1,0 +1,17 @@
+env: gfootball
+
+env_args:
+  scenario: "5_vs_5"
+  n_agents: 4
+  episode_limit: 1000
+  rewards: "scoring,checkpoints"
+  right_difficulty: 0.6
+  seed: null
+
+test_greedy: True
+test_nepisode: 4
+test_interval: 20000
+log_interval: 10000
+runner_log_interval: 10000
+learner_log_interval: 10000
+t_max: 500000
