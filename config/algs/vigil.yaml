@@ -1,0 +1,65 @@
+# --- vigil: LEHCA(QMIX + LLM Commander, shaping-only) + adaptive refresh ---
+action_selector: "epsilon_greedy"
+epsilon_start: 1.0
+epsilon_finish: 0.05
+epsilon_anneal_time: 50000
+
+runner: "vigil"
+mac: "lehca_mac"
+learner: "lehca_q_learner"
+
+batch_size: 128
+buffer_size: 5000
+lr: 0.001
+optimizer: "adam"
+gamma: 0.99
+target_update_interval: 200
+agent_output_type: "q"
+double_q: True
+mixer: "qmix"
+mixing_embed_dim: 32
+hypernet_layers: 2
+hypernet_embed: 64
+
+# --- guidance layer (shaping channel only; masking off) ---
+commander: "llm"
+f_update: 100               # fixed period (scheduler=fixed) / hard ceiling (scheduler=vf)
+use_reward_shaping: True
+use_action_masking: False
+use_masking_at_test: False
+shaping_in_learner: True   # HANDOFF: replay-time lambda composition (prevents stale-lambda buffer rot)
+dt_observable: True
+mask_vocab: "full"
+prompt_style: "default"
+llm_reasoning_effort: "low"
+beta: 0.0
+lambda_start: 0.5
+lambda_min: 0.05
+lambda_decay: 0.9995
+shaping_clip: 3.0
+
+# --- adaptive refresh scheduler ---
+scheduler: "vf"             # fixed | vf
+sched_k: 0.6                # normal fraction of issuance value
+sched_h: 3.0                # CUSUM threshold (calls budget knob)
+sched_min_interval: 10
+sched_gamma: 0.8            # critic horizon
+sched_eps_frac: 0.25        # issuance value < frac * buffer-mean guidance value -> undecidable
+sched_warmup_episodes: 20   # fixed-period only until critic has data
+sched_trusted_weight_min: 0.5
+sched_target_early_per_ep: 0.0  # >0: adapt h to hit this many early refreshes/ep
+sched_h_adapt_episodes: 20
+sched_fail_retry: 5         # steps before retrying a failed LLM call
+critic_lr: 0.001
+critic_iters: 50
+critic_buffer: 60000
+
+# --- LLM Commander ---
+llm_model: "openai/gpt-oss-20b"
+llm_api_base: "http://localhost:8355/v1"
+llm_temperature: 0.0
+llm_max_tokens: 3072
+llm_timeout: 90
+llm_cache: True
+
+name: "vigil"

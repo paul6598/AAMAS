@@ -7,3 +7,4 @@ create algorithm/<name>/ and import it here.
 """
 import algorithm.lehca  # noqa: F401  (registers lehca runner/mac/learner)
 import algorithm.qmix   # noqa: F401  (native pymarl components; no-op)
+import algorithm.vigil  # noqa: F401  (registers vigil runner)
