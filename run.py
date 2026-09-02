@@ -45,10 +45,26 @@ def run(_run, _config, _log):
     logger.setup_sacred(_run)
 
     if getattr(args, "use_wandb", False):
-        run_name = "{}_{}_seed{}".format(
-            args.name, args.env_args.get("map_name", args.env), args.seed)
-        logger.setup_wandb(_config, args.wandb_project, args.wandb_entity,
-                           args.wandb_group, run_name)
+        wandb_run = getattr(args, "wandb_run", "")
+        if wandb_run:
+            # convention (2026-09-02): project AAMAS_<ENV>_<MAP>, group = algo(_detail),
+            # run = <group>_seed<k>; explicit wandb_project still wins if customised.
+            if args.env == "sc2":
+                auto_proj = "AAMAS_SMAC_%s" % args.env_args.get("map_name", "unknown")
+            elif args.env == "gfootball":
+                scen = str(args.env_args.get("scenario", "unknown")).replace("_vs_", "v").replace("_", "")
+                auto_proj = "AAMAS_GRF_%s" % scen
+            else:
+                auto_proj = "AAMAS_%s" % args.env
+            project = args.wandb_project if args.wandb_project not in ("", "AAMAS-LEHCA") else auto_proj
+            group = wandb_run
+            run_name = "%s_seed%s" % (wandb_run, args.seed)
+        else:
+            project = args.wandb_project
+            group = args.wandb_group
+            run_name = "{}_{}_seed{}".format(
+                args.name, args.env_args.get("map_name", args.env), args.seed)
+        logger.setup_wandb(_config, project, args.wandb_entity, group, run_name)
 
     # Run and train
     run_sequential(args=args, logger=logger)

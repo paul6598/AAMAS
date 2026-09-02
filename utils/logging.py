@@ -37,7 +37,8 @@ class Logger:
         self.stats[key].append((t, value))
 
         if self.use_wandb:
-            self._wandb.log({key: value, "t_env": t})
+            wkey = "test/" + key[5:] if key.startswith("test_") else "train/" + key
+            self._wandb.log({wkey: value, "t_env": t})
 
         if self.use_tb:
             self.tb_logger(key, value, t)

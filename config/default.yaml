@@ -21,6 +21,7 @@ use_wandb: False # Log results to Weights & Biases
 wandb_project: "AAMAS-LEHCA"
 wandb_entity: "joonhuk6598-university-of-seoul"
 wandb_group: "default"
+wandb_run: "" # new naming: group=<this>, run=<this>_seed<k>, project=AAMAS_<ENV>_<MAP> (legacy path when empty)
 use_tensorboard: False # Log results to tensorboard
 save_model: False # Save the models to disk
 save_model_interval: 2000000 # Save models after this many timesteps
