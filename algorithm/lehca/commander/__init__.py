@@ -1,9 +1,13 @@
 from .llm_commander import LLMCommander
 from .rule_commander import RuleCommander
+from .shuffled_commander import ShuffledCommander
+from .aligned_commander import AlignedCommander
 
 REGISTRY = {
     "llm": LLMCommander,
     "rule": RuleCommander,
+    "shuffle": ShuffledCommander,
+    "aligned": AlignedCommander,
 }
 
 
@@ -17,4 +21,8 @@ def make_commander(args, iface, logger=None):
         return LLMCommander(args, iface, logger)
     if kind == "rule":
         return RuleCommander()
+    if kind == "shuffle":
+        return ShuffledCommander(args)
+    if kind == "aligned":
+        return AlignedCommander()
     raise ValueError("Unknown commander type: %s" % kind)

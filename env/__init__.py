@@ -18,5 +18,9 @@ if StarCraft2Env is not None:
 from .gfootball import GFootballEnv  # noqa: E402
 REGISTRY["gfootball"] = partial(env_fn, env=GFootballEnv)
 
+# PettingZoo SISL Pursuit (pettingzoo imported lazily inside the wrapper)
+from .pettingzoo_pursuit import PursuitEnv  # noqa: E402
+REGISTRY["pursuit"] = partial(env_fn, env=PursuitEnv)
+
 if sys.platform == "linux":
     os.environ.setdefault("SC2PATH", "/gpfs/home1/paul6598/StarCraftII")

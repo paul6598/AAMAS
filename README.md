@@ -1,11 +1,25 @@
 # AAMAS — LLM × MARL
 
+## RSVP
+
+**Residual Shaping-Value Prediction for On-Demand LLM Guidance Refresh**
+learns residual shaping-value estimates to schedule LLM Commander refreshes.
+Implementation: [algorithm/rsvp](algorithm/rsvp), configuration:
+[rsvp.yaml](config/algs/rsvp.yaml), research notes: [docs/research](docs/research/README.md).
+The former name VIGIL survives only in legacy entry points and immutable experiment IDs.
+
+```bash
+# From the repository root, inside an allocated compute job with aamas active:
+SEEDS="0" EXTRA="t_max=1200000 f_update=200 sched_target_early_per_ep=0.15" bash scripts/run_rsvp_sc2.sh 5m_vs_6m vf true rsvp_Fmax200_lam40 http://<server>:8357/v1
+```
+
 Research codebase for our AAMAS submission on applying LLMs to multi-agent
 reinforcement learning. Built on [oxwhirl/pymarl](https://github.com/oxwhirl/pymarl)
 (QMIX backbone). First milestone: reproducing the **LEHCA** baseline
 (Bai et al., Scientific Reports 2026, DOI 10.1038/s41598-026-54971-6) —
-no official code exists, so it is implemented from scratch here
-(see `docs/lehca-reproduction.md` for method mapping and decisions).
+no official code exists, so it is implemented from scratch here. Method mapping and
+known deviations are documented in
+[`docs/research/lehca-grounding-audit-20260907.md`](docs/research/lehca-grounding-audit-20260907.md).
 
 ## Layout
 
@@ -23,6 +37,8 @@ algorithm/            one folder per algorithm + shared infra; registration in
                       learner.py (QMIX+Adam+lambda decay), commander/ (LLM+rule),
                       shaping/, masking/, state.py
   qmix/               QMIX baseline (native src components; see its __init__.py)
+  rsvp/               RSVP adaptive guidance runner, shaping-value critic and diagnostics
+  vigil/              legacy import bridge only; no separate implementation
 env/                  environments: pymarl env registry (SMAC) +
   semantic/           LEHCA semantic interfaces (obs -> d_t text + grounding)
 config/               default.yaml, algs/ (lehca, qmix_paper), envs/ (sc2)

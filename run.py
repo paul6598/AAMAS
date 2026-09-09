@@ -34,7 +34,13 @@ def run(_run, _config, _log):
     _log.info("\n\n" + experiment_params + "\n")
 
     # configure tensorboard logger
-    unique_token = "{}__{}".format(args.name, datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+    # Several Slurm arms are commonly launched within the same second.  Include
+    # the process id so their model checkpoints cannot overwrite one another.
+    unique_token = "{}__{}__p{}".format(
+        args.name,
+        datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
+        os.getpid(),
+    )
     args.unique_token = unique_token
     if args.use_tensorboard:
         tb_logs_direc = os.path.join(dirname(abspath(__file__)), "results", "tb_logs")

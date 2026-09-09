@@ -1,5 +1,5 @@
-# Legacy config alias for queued commands; canonical config: rsvp.yaml.
-# Kept parameter-identical by analysis/test_rsvp_migration.py.
+# RSVP: Residual Shaping-Value Prediction for On-Demand LLM Guidance Refresh
+# LEHCA(QMIX + LLM Commander, shaping-only) + adaptive refresh
 action_selector: "epsilon_greedy"
 epsilon_start: 1.0
 epsilon_finish: 0.05

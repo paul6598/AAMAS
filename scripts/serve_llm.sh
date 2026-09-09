@@ -15,9 +15,11 @@ fi
 
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate vllm
+# vLLM 0.25/FlashInfer JIT-compiles sampling kernels during startup.
+# The cluster does not expose nvcc by default.
+module load cuda/13.1.1
 
 exec vllm serve "$MODEL" \
     --port "$PORT" \
     --max-model-len 8192 \
-    --gpu-memory-utilization 0.85 \
-    --disable-log-requests
+    --gpu-memory-utilization 0.85

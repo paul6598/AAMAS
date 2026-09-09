@@ -1,6 +1,19 @@
-"""Adaptive guidance scheduling (research track; imports LEHCA, never edits it)."""
+"""Legacy import bridge. New code must import algorithm.rsvp.
 
-from algorithm.src.runners import REGISTRY as RUNNER_REGISTRY  # noqa: E402
-from .runner import SchedRunner  # noqa: E402
+Retained for queued jobs and old analysis/checkpoints; implementation lives
+only in algorithm/rsvp. Core modules share identity with their RSVP versions.
+"""
+from importlib import import_module
+import sys
 
-RUNNER_REGISTRY["vigil"] = SchedRunner
+from algorithm import rsvp as _rsvp
+
+RSVPRunner = _rsvp.RSVPRunner
+SchedRunner = RSVPRunner
+__path__ = _rsvp.__path__
+for _name in ("runner", "critic", "predlib", "shaping", "shaping.grf",
+              "shaping.pursuit", "commander", "commander.grf", "commander.pursuit"):
+    _module = import_module("algorithm.rsvp." + _name)
+    sys.modules[__name__ + "." + _name] = _module
+    if "." not in _name:
+        globals()[_name] = _module

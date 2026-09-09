@@ -1,8 +1,8 @@
-# 코드 리딩 가이드 — LEHCA 재현과 VIGIL
+# 코드 리딩 가이드 — LEHCA 재현과 RSVP
 
 2026-09-02 (구조 개편 반영). 두 코드베이스를 처음 읽는 순서와, 각 파일이 무엇을 하고
 서로 어떻게 연결되는지 정리. 세션 규칙: `algorithm/lehca/`는 베이스라인 세션 소유
-(우리는 import만), `algorithm/vigil/`가 연구 코드.
+(우리는 import만), `algorithm/rsvp/`가 연구 코드.
 
 ---
 
@@ -15,22 +15,30 @@ env ─ snapshot ──→  │ semantic iface → d_t 요약 → LLM Commander 
                     │           └→ masks (compiler) → Q̃ = Q + β·logW        │
                     │ 갱신: 매 f_update 스텝 (고정)                          │
                     └────────────────────────────────────────────────────────┘
-VIGIL이 바꾸는 것: **갱신 시점 하나** (+ GRF 환경 지원). 나머지는 LEHCA 부품을 그대로
+RSVP이 바꾸는 것: **갱신 시점 하나** (+ GRF 환경 지원). 나머지는 LEHCA 부품을 그대로
 소비한다. 갱신 결정 = 잔여가치 크리틱 V_F(s;G)의 발급 대비 비율에 단측 CUSUM.
 ```
 
 ---
 
+**9/2~9/3 러너·학습기 변경 요약** (파일 주석에도 있음):
+① v_t 분모 재평가 — 발급 상태 x_ref 저장, 분자·분모를 매 스텝 현재 크리틱으로
+(estimator drift 상쇄). ② h 컨트롤러: 무장 에피소드만 적응 증거, 바닥 2.0.
+③ `sched_fallback_per_ep` 로깅(F_max 만기 vs CUSUM 조기 분해). ④ phase 로거
+(results/phase/*.jsonl — cache_key 변화 시각 = ν 라벨). ⑤ λ 지평 비례 스케줄
+(state.set_lambda_progress, `lambda_floor_frac`; 0=레거시).
+
 ## 1. 저장소 지도
 
 ```
 config/algs/lehca.yaml        LEHCA 하이퍼 (논문 Table 2)
-config/algs/vigil.yaml        우리 설정 (셰이핑만, 스케줄러 키 포함)
+config/algs/rsvp.yaml        우리 설정 (셰이핑만, 스케줄러 키 포함)
 config/envs/sc2.yaml          SMAC 환경 인자
 config/envs/gfootball.yaml    GRF 환경 인자 (우리 추가)
 
-env/__init__.py               env REGISTRY: sc2, gfootball (SMAC은 try/except로 선택적)
+env/__init__.py               env REGISTRY: sc2, gfootball, pursuit (SMAC은 선택적)
 env/gfootball.py              GRF pymarl 래퍼 (좌팀 4명, 19행동, 팀 보상)   [우리]
+env/pettingzoo_pursuit.py     PettingZoo Pursuit 래퍼 (8추격자, 5행동)      [우리, 9/3]
 env/semantic/sc2.py           SMAC snapshot/d_t/cache_key/토큰 접지        [LEHCA]
 env/semantic/grf.py           GRF   〃  + tick(스텝 시계; snapshot은 무부수효과) [우리]
 
@@ -45,8 +53,8 @@ algorithm/lehca/
   learner.py                  QMIX 학습 + λ 감쇠 (+ shaping_in_learner 경로)
   state.py                    guidance/λ 전역 상태
 
-algorithm/vigil/                (lehca와 같은 배치; 런타임 5개 + analysis/)
-  runner.py                   ★ 본체 SchedRunner: LehcaRunner 적응 복사 + vf 스케줄러
+algorithm/rsvp/                (lehca와 같은 배치; 런타임 5개 + analysis/)
+  runner.py                   ★ 본체 RSVPRunner: LehcaRunner 적응 복사 + vf 스케줄러
   critic.py                   ★ 멀티헤드 잔여가치 V_j(s) + 온라인 학습
   predlib.py                  ★ 환경 디스패치(SMAC/GRF): 헤드·f-벡터·특징·셰이핑
   commander/grf.py            GRF 프롬프트·sanitize (LLMCommander 전송 상속)
@@ -62,8 +70,8 @@ algorithm/vigil/                (lehca와 같은 배치; 런타임 5개 + analys
 runner가 서브클래스가 아니라 복사인 이유: lehca `run()`이 셰이핑을 self 경유가 아닌
 모듈 전역 호출로 하기 때문(동결 규칙상 seam 불가). 베이스라인 세션에 동작 불변 seam
 2개(self 경유 셰이핑 호출, 스텝 훅) 패치를 제안하면 ~80줄 서브클래스로 축소 가능 —
-전달 예정. 등록: `algorithm/vigil/__init__.py`가 RUNNER_REGISTRY["vigil"]에 SchedRunner를
-올리고, `algorithm/__init__.py`가 vigil을 import한다.
+전달 예정. 등록: `algorithm/rsvp/__init__.py`가 RUNNER_REGISTRY["rsvp"]에 RSVPRunner를
+올리고, `algorithm/__init__.py`가 RSVP를 import한다.
 
 ---
 
@@ -81,17 +89,17 @@ runner가 서브클래스가 아니라 복사인 이유: lehca `run()`이 셰이
    reasoning_effort 처리, 실패 시 이전 guidance 유지.
 5. **shaping/predicates.py** — f_j 정의 8종. `compute_shaping` = Σ w_j f_j (클립).
 6. **masking/compiler.py** + **controller.py** — 규칙→마스크(매 스텝 재접지), Q 틸트.
-   vigil은 β=0이라 소비하지 않지만 효과 거리(analysis/effect.py)가 이 컴파일러를 씀.
+   RSVP는 β=0이라 소비하지 않지만 효과 거리(analysis/effect.py)가 이 컴파일러를 씀.
 7. **learner.py** — λ 감쇠 위치(업데이트마다), shaping_in_learner(리플레이 시점 재합성;
-   vigil 기본 True — HANDOFF 발견 2).
+   RSVP 기본 True — replay buffer의 오래된 lambda 고착 방지).
 8. **env/semantic/sc2.py** — snapshot(유닛 dict), summary(d_t 문장), cache_key(거친 키),
    resolve_action_token(토큰→행동 인덱스). LLM이 보고 접지되는 모든 것.
 
 ---
 
-## 3. vigil 읽는 순서 (우리 코드)
+## 3. RSVP 읽는 순서 (우리 코드)
 
-1. **config/algs/vigil.yaml** — lehca.yaml과의 diff만 보면 됨:
+1. **config/algs/rsvp.yaml** — lehca.yaml과의 diff만 보면 됨:
    `use_action_masking False, beta 0, llm_temperature 0, shaping_in_learner True`
    + 스케줄러 블록.
 
@@ -118,7 +126,7 @@ runner가 서브클래스가 아니라 복사인 이유: lehca `run()`이 셰이
    `predict`, `trusted`(타깃 분산이 0에 가까운 헤드 = 신호 없음).
 4. **runner.py** — LehcaRunner의 **적응 복사**. diff 포인트만 읽으면 됨:
 
-   | 위치 | LEHCA | vigil |
+   | 위치 | LEHCA | RSVP |
    |---|---|---|
    | 커맨더 생성 | make_commander | env=gfootball이면 commander/grf의 GRFLLMCommander |
    | 갱신 판정 | 경과 ≥ f_update | `_maybe_refresh`: 상한 주기 ∨ (vf: S≥h ∧ 최소간격) |
@@ -152,7 +160,7 @@ runner가 서브클래스가 아니라 복사인 이유: lehca `run()`이 셰이
 
 ## 4. 프로브·분석 스크립트 (학습 없는 실험층)
 
-(모두 `algorithm/vigil/analysis/`; repo 루트 기준 실행, 학습 코드와 의존 격리)
+(모두 `algorithm/rsvp/analysis/`; repo 루트 기준 실행, 학습 코드와 의존 격리)
 
 | 스크립트 | 만든다 | 읽는다 |
 |---|---|---|
@@ -172,20 +180,20 @@ critic R²는 구 의미론 — 새 결정에 쓰려면 vf_replay를 재실행�
 ```bash
 # SMAC (aamas env)
 conda activate aamas; export SC2PATH=~/StarCraftII
-python main.py --config=vigil --env-config=sc2 with env_args.map_name=2s3z \
+python main.py --config=rsvp --env-config=sc2 with env_args.map_name=2s3z \
     scheduler=vf llm_api_base=http://<node>:8356/v1 use_wandb=True wandb_group=<GN> seed=0
 # scheduler=fixed 로 두면 셰이핑-only LEHCA 재현(비교군)
 
 # GRF (aamas 가능 — GPU 학습용; grf env는 CPU 프로브용)
 conda activate aamas; export LD_LIBRARY_PATH=$CONDA_PREFIX/lib
-python main.py --config=vigil --env-config=gfootball with scheduler=vf ...
+python main.py --config=rsvp --env-config=gfootball with scheduler=vf ...
 
-# 배치: scripts/run_vigil_sc2.sh <MAP> <SCHED>, scripts/run_vigil_grf.sh <SCHED>
+# 배치: scripts/run_rsvp_sc2.sh <MAP> <SCHED>, scripts/run_rsvp_grf.sh <SCHED>
 
 # 프로브/재생 (grf env)
-python algorithm/vigil/analysis/probe_grf.py --episodes 10 --api http://<node>:8356/v1
-python algorithm/vigil/analysis/analyze_probe.py results/vigil/probe_grf_*.jsonl
-python algorithm/vigil/analysis/vf_replay.py results/vigil/probe_grf_*.jsonl
+python algorithm/rsvp/analysis/probe_grf.py --episodes 10 --api http://<node>:8356/v1
+python algorithm/rsvp/analysis/analyze_probe.py results/vigil/probe_grf_*.jsonl
+python algorithm/rsvp/analysis/vf_replay.py results/vigil/probe_grf_*.jsonl
 ```
 
 ## 6. 알려진 미완·주의 (2026-09-02 갱신)
@@ -206,5 +214,5 @@ python algorithm/vigil/analysis/vf_replay.py results/vigil/probe_grf_*.jsonl
 - 리뷰(9/2) 보류 항목: controller n_base_actions=6은 lehca 동결 코드(=mask_consistency_w
   0 유지 조건), _sc2_features는 visible-only 고정(dt_observable=True 운용 전제), GRF
   `shot` 접지는 x<0.5에서 forbid도 무력화됨, GRF 커맨더의 전송 로직 ~40줄 중복(베이스라인에
-  base 헬퍼 추가 제안 전달 예정), vigil guidance jsonl에 phase/plan_text 미기록, yaml 기본
+  base 헬퍼 추가 제안 전달 예정), RSVP guidance jsonl에 phase/plan_text 미기록, yaml 기본
   포트 8355(스크립트가 덮어씀).

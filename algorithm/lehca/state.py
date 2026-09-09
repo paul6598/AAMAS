@@ -15,12 +15,20 @@ class LehcaState:
         self.lambda_decay = 1.0
 
     def configure(self, args):
-        self.lambda_val = getattr(args, "lambda_start", 0.5)
+        self.lambda_start = getattr(args, "lambda_start", 0.5)
+        self.lambda_val = self.lambda_start
         self.lambda_min = getattr(args, "lambda_min", 0.05)
         self.lambda_decay = getattr(args, "lambda_decay", 0.9995)
 
     def decay_lambda(self):
         self.lambda_val = max(self.lambda_min, self.lambda_val * self.lambda_decay)
+
+    def set_lambda_progress(self, t_env, t_floor):
+        # horizon-proportional exponential: lambda_start at t=0, lambda_min
+        # exactly at t_floor, independent of t_max and of update cadence
+        p = min(1.0, t_env / max(1.0, t_floor))
+        ratio = max(self.lambda_min, 1e-8) / self.lambda_start
+        self.lambda_val = max(self.lambda_min, self.lambda_start * ratio ** p)
 
 
 _STATE = LehcaState()

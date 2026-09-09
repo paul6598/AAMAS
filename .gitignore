@@ -2,6 +2,8 @@
 results/
 wandb/
 *.log
+# generated research plots and snapshots
+docs/research/figs/
 # copyrighted papers
 paper/*.pdf
 # python

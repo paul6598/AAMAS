@@ -1,8 +1,8 @@
 # 관련연구 노트: LLM 호출(F_update)의 동적 스케줄링 (2026-08-29)
 
 목적: LEHCA의 고정 F_update(매 F 스텝 Commander 호출)를 **적응적 호출 정책**으로
-바꾸는 연구(A축)의 포지셔닝. 선행 노트 docs/related-work-adaptive-guidance.md의
-확장. 4개 영역(LLM-guided RL/MARL · action advising · 계층 RL/재계획 주기 ·
+바꾸는 연구(A축)의 포지셔닝. 초기 관련연구 메모를 이 문서에 통합·확장했다.
+4개 영역(LLM-guided RL/MARL · action advising · 계층 RL/재계획 주기 ·
 비용 인식 LLM 호출)을 웹 검색으로 조사, URL 확인된 논문만 수록.
 ★ = 우리 설정에 가장 직접적. 연도는 arXiv 기준.
 

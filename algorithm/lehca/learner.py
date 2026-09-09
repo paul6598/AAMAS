@@ -14,8 +14,14 @@ class LehcaQLearner(QLearner):
             self.optimiser = Adam(params=self.params, lr=args.lr)
         self.state = get_state()
         self.shaping_in_learner = getattr(args, "shaping_in_learner", False)
+        # > 0: lambda follows a horizon-proportional exponential that reaches
+        # lambda_min at (lambda_floor_frac * t_max) env steps; 0 = legacy
+        # per-update multiplicative decay
+        self.lambda_floor_frac = getattr(args, "lambda_floor_frac", 0.0)
 
     def train(self, batch, t_env, episode_num):
+        if self.lambda_floor_frac > 0:
+            self.state.set_lambda_progress(t_env, self.lambda_floor_frac * self.args.t_max)
         if self.shaping_in_learner:
             # Compose r + lambda_now * F_t on the sampled copy so every
             # replayed transition uses the CURRENT lambda, not the one at
@@ -23,4 +29,5 @@ class LehcaQLearner(QLearner):
             batch.data.transition_data["reward"] = (
                 batch["reward"] + self.state.lambda_val * batch["shaping_f"])
         super(LehcaQLearner, self).train(batch, t_env, episode_num)
-        self.state.decay_lambda()
+        if self.lambda_floor_frac <= 0:
+            self.state.decay_lambda()
