@@ -81,6 +81,9 @@ class LehcaRunner:
         self.last_refresh_t = None
         self.recent_wins = deque(maxlen=32)
         self._shaping_sums = []
+        self._reward_diag = {k: 0.0 for k in (
+            "n", "env_abs", "env_sq", "env_nonzero", "f_abs", "f_sq",
+            "f_nonzero", "f_at_clip", "lambda_f_abs")}
         # Every Commander call is dumped so guidance content can be audited.
         self._guidance_log = None
         if self.commander is not None:
@@ -229,6 +232,18 @@ class LehcaRunner:
                 if not self.shaping_in_learner:
                     stored_reward = reward + self.state.lambda_val * f_t
                 shaped_return += self.state.lambda_val * f_t
+            if not test_mode:
+                d = self._reward_diag
+                d["n"] += 1
+                d["env_abs"] += abs(reward)
+                d["env_sq"] += reward * reward
+                d["env_nonzero"] += int(abs(reward) > 1e-12)
+                d["f_abs"] += abs(f_t)
+                d["f_sq"] += f_t * f_t
+                d["f_nonzero"] += int(abs(f_t) > 1e-12)
+                d["f_at_clip"] += int(abs(f_t) >=
+                                      getattr(self.args, "shaping_clip", 3.0) - 1e-8)
+                d["lambda_f_abs"] += abs(self.state.lambda_val * f_t)
 
             post_transition_data = {
                 "actions": actions,
@@ -280,6 +295,27 @@ class LehcaRunner:
                 self.logger.log_stat("shaped_return_mean",
                                      float(np.mean(self._shaping_sums)), self.t_env)
                 self._shaping_sums = []
+            d = self._reward_diag
+            if d["n"]:
+                n = d["n"]
+                self.logger.log_stat("shaping_f_abs_mean", d["f_abs"] / n, self.t_env)
+                self.logger.log_stat("shaping_f_rms", np.sqrt(d["f_sq"] / n), self.t_env)
+                self.logger.log_stat("shaping_f_nonzero_frac", d["f_nonzero"] / n,
+                                     self.t_env)
+                self.logger.log_stat("shaping_f_at_clip_frac", d["f_at_clip"] / n,
+                                     self.t_env)
+                self.logger.log_stat("lambda_shaping_abs_mean",
+                                     d["lambda_f_abs"] / n, self.t_env)
+                self.logger.log_stat("env_reward_abs_mean", d["env_abs"] / n,
+                                     self.t_env)
+                self.logger.log_stat("env_reward_rms", np.sqrt(d["env_sq"] / n),
+                                     self.t_env)
+                self.logger.log_stat("env_reward_nonzero_frac",
+                                     d["env_nonzero"] / n, self.t_env)
+                self.logger.log_stat("lambda_shaping_to_env_abs",
+                                     d["lambda_f_abs"] / max(d["env_abs"], 1e-12),
+                                     self.t_env)
+                self._reward_diag = {k: 0.0 for k in d}
             if self.commander is not None:
                 for k, v in self.commander.stats().items():
                     self.logger.log_stat(k, v, self.t_env)
