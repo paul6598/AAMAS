@@ -48,6 +48,7 @@ lambda_start: 0.5           # initial shaping weight lambda_0
 lambda_min: 0.05            # lambda floor
 lambda_decay: 0.9995        # multiplicative decay per training update
 lambda_floor_frac: 0        # 0 = legacy decay above; >0 = horizon-proportional (paper gives no schedule)
+lambda_zero_t: 0            # >0: cosine decay to exact zero here; overrides floor_frac
 shaping_clip: 3.0           # |F_t| clip for stability
 
 # --- LLM Commander (Table 2: gpt-oss 20b, temperature 0.2, max_tokens 3072) ---

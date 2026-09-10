@@ -119,7 +119,22 @@ class LehcaRunner:
         self.env.reset()
         self.t = 0
 
+    def _guidance_needed(self, test_mode):
+        """Whether Commander output can still affect this rollout."""
+        masking = getattr(self, "use_masking", True)
+        if masking and getattr(self, "mask_anneal_t", 0) > 0:
+            masking = self.t_env < self.mask_anneal_t
+        if test_mode:
+            # Shaping is training-only. With no test mask, evaluation guidance
+            # is behaviorally inert and must not consume LLM calls.
+            return masking and getattr(self, "mask_at_test", True)
+        shaping = (getattr(self, "use_shaping", True)
+                   and getattr(self.state, "lambda_val", 0.0) > 0.0)
+        return masking or shaping
+
     def _maybe_refresh_commander(self, snap, test_mode):
+        if not self._guidance_needed(test_mode):
+            return
         if test_mode:
             if self.test_guidance_mode != "fresh" or self.eval_commander is None:
                 return
@@ -224,7 +239,8 @@ class LehcaRunner:
 
             stored_reward = reward
             f_t = 0.0
-            if self.use_shaping and guidance is not None and not test_mode:
+            if (self.use_shaping and self.state.lambda_val > 0.0
+                    and guidance is not None and not test_mode):
                 snap_post = self.iface.snapshot()
                 f_t = compute_shaping(guidance.get("subgoals"), snap_pre,
                                       snap_post, actions[0].tolist(),

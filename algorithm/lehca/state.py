@@ -30,6 +30,14 @@ class LehcaState:
         ratio = max(self.lambda_min, 1e-8) / self.lambda_start
         self.lambda_val = max(self.lambda_min, self.lambda_start * ratio ** p)
 
+    def set_lambda_cosine_zero(self, t_env, t_off):
+        """Cosine anneal from lambda_start to exactly zero at t_off."""
+        import math
+        p = min(1.0, max(0.0, t_env / max(1.0, t_off)))
+        self.lambda_val = self.lambda_start * 0.5 * (1.0 + math.cos(math.pi * p))
+        if p >= 1.0:
+            self.lambda_val = 0.0
+
 
 _STATE = LehcaState()
 

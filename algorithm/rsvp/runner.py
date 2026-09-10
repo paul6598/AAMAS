@@ -153,6 +153,15 @@ class RSVPRunner:
             self.iface.reset_episode()
         self.t = 0
 
+    def _guidance_needed(self, test_mode):
+        """Whether guidance can affect actions or the current training reward."""
+        masking = getattr(self, "use_masking", False)
+        if test_mode:
+            return masking and getattr(self, "mask_at_test", False)
+        shaping = (getattr(self, "use_shaping", True)
+                   and getattr(self.state, "lambda_val", 0.0) > 0.0)
+        return masking or shaping
+
     # ------------------------------------------------------------ scheduler
     def _lazy_init(self, snap):
         if self.lib is not None:
@@ -184,7 +193,7 @@ class RSVPRunner:
         return float(sum(w * pred[hi] for hi, w in heads))
 
     def _maybe_refresh(self, snap, x, test_mode):
-        if self.commander is None or test_mode:
+        if self.commander is None or test_mode or not self._guidance_needed(test_mode):
             return
         t_global = self.t_env + self.t
         since = None if self.last_refresh_t is None else t_global - self.last_refresh_t
@@ -275,9 +284,12 @@ class RSVPRunner:
 
         while not terminated:
             snap_pre = self.iface.snapshot()
-            self._lazy_init(snap_pre)
-            x_pre = self.fx(snap_pre)
-            self._maybe_refresh(snap_pre, x_pre, test_mode)
+            guidance_active = self._guidance_needed(test_mode)
+            x_pre = None
+            if guidance_active:
+                self._lazy_init(snap_pre)
+                x_pre = self.fx(snap_pre)
+                self._maybe_refresh(snap_pre, x_pre, test_mode)
 
             guidance = self.state.guidance
             mask_active = self.use_masking and guidance is not None \
@@ -306,7 +318,8 @@ class RSVPRunner:
             snap_post = self.iface.snapshot()
             if hasattr(self.iface, "tick"):
                 self.iface.tick(snap_post)
-            if not test_mode and getattr(self, "_phase_log", None) is not None:
+            if (not test_mode and guidance_active
+                    and getattr(self, "_phase_log", None) is not None):
                 pkey = self.iface.cache_key(snap_post)
                 if pkey != self._last_phase_key:
                     self._phase_log.write(json.dumps(
@@ -316,10 +329,12 @@ class RSVPRunner:
             stored_reward = reward
             f_t = 0.0
             if not test_mode:
-                self._ep_X.append(x_pre)
-                self._ep_F.append(predlib.f_vector(self.args.env, self.lib,
-                                                   snap_pre, snap_post, acts))
-                if self.use_shaping and guidance is not None:
+                if guidance_active:
+                    self._ep_X.append(x_pre)
+                    self._ep_F.append(predlib.f_vector(self.args.env, self.lib,
+                                                       snap_pre, snap_post, acts))
+                if (self.use_shaping and self.state.lambda_val > 0.0
+                        and guidance is not None):
                     f_t = predlib.shaping(self.args.env, guidance.get("subgoals"),
                                           snap_pre, snap_post, acts,
                                           clip=getattr(self.args, "shaping_clip", 3.0))

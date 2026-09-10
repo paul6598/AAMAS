@@ -17,6 +17,8 @@ from algorithm.lehca.commander.llm_commander import (
 )
 from algorithm.lehca.masking.compiler import build_masks
 from algorithm.lehca.runner import LehcaRunner
+from algorithm.lehca.state import LehcaState
+from algorithm.rsvp.runner import RSVPRunner
 from env.semantic.grf import GRFSemanticInterface
 from env.semantic.sc2 import SC2SemanticInterface
 
@@ -125,6 +127,50 @@ class PaperAlignmentTests(unittest.TestCase):
         self.assertEqual(runner.state.guidance, {"strategy": "train"})
         self.assertEqual(runner._test_guidance["strategy"], "eval")
         self.assertEqual(summaries, [None])
+
+    def test_cosine_lambda_reaches_exact_zero(self):
+        state = LehcaState()
+        state.configure(SimpleNamespace(
+            lambda_start=0.5, lambda_min=0.05, lambda_decay=0.9995))
+        state.set_lambda_cosine_zero(0, 300_000)
+        self.assertEqual(state.lambda_val, 0.5)
+        state.set_lambda_cosine_zero(150_000, 300_000)
+        self.assertAlmostEqual(state.lambda_val, 0.25)
+        state.set_lambda_cosine_zero(300_000, 300_000)
+        self.assertEqual(state.lambda_val, 0.0)
+        state.set_lambda_cosine_zero(400_000, 300_000)
+        self.assertEqual(state.lambda_val, 0.0)
+
+    def test_shaping_only_zero_lambda_skips_train_and_eval_guidance(self):
+        class Spy:
+            def __init__(self):
+                self.calls = 0
+
+            def __call__(self, *args):
+                self.calls += 1
+                return {"strategy": "unused", "subgoals": [], "action_rules": []}
+
+        for runner_class, method_name in (
+                (LehcaRunner, "_maybe_refresh_commander"),
+                (RSVPRunner, "_maybe_refresh")):
+            with self.subTest(runner=runner_class.__name__):
+                runner = object.__new__(runner_class)
+                runner.use_shaping = True
+                runner.use_masking = False
+                runner.mask_at_test = False
+                runner.state = SimpleNamespace(lambda_val=0.0, guidance=None)
+                runner.commander = Spy()
+                if runner_class is LehcaRunner:
+                    runner.eval_commander = Spy()
+                    runner.test_guidance_mode = "fresh"
+                    runner.mask_anneal_t = 0
+                    runner._maybe_refresh_commander({}, test_mode=False)
+                    runner._maybe_refresh_commander({}, test_mode=True)
+                    self.assertEqual(runner.eval_commander.calls, 0)
+                else:
+                    runner._maybe_refresh({}, None, test_mode=False)
+                    runner._maybe_refresh({}, None, test_mode=True)
+                self.assertEqual(runner.commander.calls, 0)
 
 
 if __name__ == "__main__":

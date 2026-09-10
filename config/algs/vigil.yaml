@@ -41,6 +41,7 @@ lambda_start: 0.5
 lambda_min: 0.05
 lambda_decay: 0.9995        # legacy per-update decay (used only when floor_frac = 0)
 lambda_floor_frac: 0.4      # lambda hits lambda_min at 40% of t_max (horizon-proportional)
+lambda_zero_t: 0            # >0: cosine decay to exact zero here; overrides floor_frac
 sched_trace: False          # opt-in per-step scheduler trace (diagnostics only)
 shaping_clip: 3.0
 

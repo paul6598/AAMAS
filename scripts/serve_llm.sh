@@ -22,4 +22,4 @@ module load cuda/13.1.1
 exec vllm serve "$MODEL" \
     --port "$PORT" \
     --max-model-len 8192 \
-    --gpu-memory-utilization 0.85
+    --gpu-memory-utilization "${VLLM_GPU_MEMORY_UTILIZATION:-0.85}"
