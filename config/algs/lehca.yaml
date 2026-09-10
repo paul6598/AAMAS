@@ -5,7 +5,7 @@
 action_selector: "epsilon_greedy"
 epsilon_start: 1.0
 epsilon_finish: 0.05
-epsilon_anneal_time: 50000
+epsilon_anneal_time: 300000  # official LEHCA supplement
 
 runner: "lehca"
 mac: "lehca_mac"
@@ -39,7 +39,9 @@ explore_soft_bias: False    # True: bias epsilon-random draws by W_soft too
 dt_observable: True         # d_t from ally sight range only (paper: observable info); False = full state
 mask_vocab: "full"          # full | strategic (no move-direction forbids, no micro tokens)
 mask_consistency_w: 0.0     # >1: soft weight for keeping last attack target (Eq.7 u_t)
-prompt_style: "default"      # default | paper (CoT+risk-only forbid, JSON) | twostage (free plan -> grounding module)
+prompt_style: "paper"        # paper-aligned staged reasoning + risk-only hard constraints
+commander_include_training_stats: False  # paper: Commander receives d_t, not rolling win/t_env
+test_guidance_mode: "fresh"  # fresh | frozen (legacy) | off; eval state never contaminates training
 llm_reasoning_effort: "low"  # gpt-oss reasoning effort: low | medium | high
 beta: 0.5                   # soft-mask tilt coefficient (Eq. 5)
 lambda_start: 0.5           # initial shaping weight lambda_0
@@ -54,6 +56,6 @@ llm_api_base: "http://localhost:8355/v1"
 llm_temperature: 0.2
 llm_max_tokens: 3072
 llm_timeout: 90
-llm_cache: True
+llm_cache: False             # reported runs invoke Commander on every fixed refresh
 
 name: "lehca"

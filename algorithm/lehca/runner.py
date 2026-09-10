@@ -6,8 +6,9 @@ Extends pymarl's EpisodeRunner with:
   * per-step action-mask compilation from the current symbolic rules
   * semantic reward shaping r_total = r_env + lambda * F_t at collection time
 
-Test episodes use the latest guidance for masked greedy execution but never
-trigger LLM calls and are never reward-shaped.
+Test episodes use an isolated Commander/guidance timeline by default, so the
+reported fixed refresh schedule is applied without contaminating training.
+They are never reward-shaped.
 """
 import json
 import os
@@ -49,6 +50,18 @@ class LehcaRunner:
         self.state.configure(args)
         self.iface = make_interface(args.env, self.env, args)
         self.commander = make_commander(args, self.iface, logger)
+        self.test_guidance_mode = getattr(args, "test_guidance_mode", "fresh")
+        if self.test_guidance_mode not in ("fresh", "frozen", "off"):
+            raise ValueError("test_guidance_mode must be fresh, frozen, or off")
+        # Evaluation calls must not mutate the training Commander's cache,
+        # counters, or current guidance. The legacy behaviour remains
+        # available as test_guidance_mode=frozen for old checkpoints/results.
+        self.eval_commander = make_commander(args, self.iface, logger) \
+            if self.commander is not None and self.test_guidance_mode == "fresh" else None
+        self._test_active = False
+        self._test_t_env = 0
+        self._test_last_refresh_t = None
+        self._test_guidance = None
         self.f_update = getattr(args, "f_update", 200)
         self.use_shaping = getattr(args, "use_reward_shaping", True)
         self.use_masking = getattr(args, "use_action_masking", True)
@@ -63,6 +76,8 @@ class LehcaRunner:
         # steps elapsed), so guidance never carries mid-episode context into
         # the next episode. f_update=1 with this flag = refresh every episode.
         self.refresh_at_episode_start = getattr(args, "refresh_at_episode_start", False)
+        self.include_training_stats = getattr(
+            args, "commander_include_training_stats", False)
         self.last_refresh_t = None
         self.recent_wins = deque(maxlen=32)
         self._shaping_sums = []
@@ -102,36 +117,72 @@ class LehcaRunner:
         self.t = 0
 
     def _maybe_refresh_commander(self, snap, test_mode):
-        if self.commander is None or test_mode:
-            return
+        if test_mode:
+            if self.test_guidance_mode != "fresh" or self.eval_commander is None:
+                return
+            commander = self.eval_commander
+            t_global = self._test_t_env + self.t
+            last_refresh_t = self._test_last_refresh_t
+        else:
+            if self.commander is None:
+                return
+            commander = self.commander
+            t_global = self.t_env + self.t  # t_env advances at episode end
+            last_refresh_t = self.last_refresh_t
         if self.refresh_at_episode_start and self.t != 0:
             return
-        t_global = self.t_env + self.t  # t_env only advances at episode end
-        due = (self.last_refresh_t is None
-               or t_global - self.last_refresh_t >= self.f_update)
+        due = (last_refresh_t is None
+               or t_global - last_refresh_t >= self.f_update)
         if not due:
             return
-        self.last_refresh_t = t_global
-        stats = {"t_env": self.t_env}
-        if self.recent_wins:
-            stats["rolling_win_rate"] = float(np.mean(self.recent_wins))
+        if test_mode:
+            self._test_last_refresh_t = t_global
+        else:
+            self.last_refresh_t = t_global
+        # The reported architecture limits Commander input to observable d_t
+        # and its prompt. Preserve the old training-progress input only behind
+        # an explicit compatibility flag.
+        stats = None
+        if not test_mode and self.include_training_stats:
+            stats = {"t_env": self.t_env}
+            if self.recent_wins:
+                stats["rolling_win_rate"] = float(np.mean(self.recent_wins))
         summary = self.iface.summary(snap, stats)
         key = self.iface.cache_key(snap)
-        hits_before = getattr(self.commander, "n_cache_hits", 0)
-        guidance = self.commander(summary, key, self.iface)
+        hits_before = getattr(commander, "n_cache_hits", 0)
+        guidance = commander(summary, key, self.iface)
         if guidance is not None:
-            self.state.guidance = guidance
-        if self._guidance_log is not None:
+            if test_mode:
+                self._test_guidance = guidance
+            else:
+                self.state.guidance = guidance
+        if not test_mode and self._guidance_log is not None:
             self._guidance_log.write(json.dumps({
                 "t_env": self.t_env, "t_global": t_global, "cache_key": key,
-                "cache_hit": getattr(self.commander, "n_cache_hits", 0) > hits_before,
+                "cache_hit": getattr(commander, "n_cache_hits", 0) > hits_before,
                 "phase": self.iface.phase(snap) if hasattr(self.iface, "phase") else None,
-                "plan_text": getattr(self.commander, "last_plan_text", None)
-                if not getattr(self.commander, "n_cache_hits", 0) > hits_before else None,
+                "plan_text": getattr(commander, "last_plan_text", None)
+                if not getattr(commander, "n_cache_hits", 0) > hits_before else None,
                 "guidance": guidance}) + "\n")
             self._guidance_log.flush()
 
+    def _guidance_for_rollout(self, test_mode):
+        if not test_mode:
+            return self.state.guidance
+        if self.test_guidance_mode == "fresh":
+            return self._test_guidance
+        if self.test_guidance_mode == "frozen":
+            return self.state.guidance
+        return None
+
     def run(self, test_mode=False):
+        if test_mode and not self._test_active:
+            self._test_active = True
+            self._test_t_env = 0
+            self._test_last_refresh_t = None
+            self._test_guidance = None
+        elif not test_mode:
+            self._test_active = False
         self.reset()
 
         terminated = False
@@ -143,7 +194,7 @@ class LehcaRunner:
             snap_pre = self.iface.snapshot()
             self._maybe_refresh_commander(snap_pre, test_mode)
 
-            guidance = self.state.guidance
+            guidance = self._guidance_for_rollout(test_mode)
             mask_active = self.use_masking and guidance is not None \
                 and (not test_mode or self.mask_at_test) \
                 and (self.mask_anneal_t <= 0 or self.t_env < self.mask_anneal_t)
@@ -212,6 +263,8 @@ class LehcaRunner:
             self.t_env += self.t
             self.recent_wins.append(1.0 if env_info.get("battle_won", False) else 0.0)
             self._shaping_sums.append(shaped_return)
+        else:
+            self._test_t_env += self.t
 
         cur_returns.append(episode_return)
 

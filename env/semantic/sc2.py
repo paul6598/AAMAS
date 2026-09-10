@@ -241,8 +241,10 @@ class SC2SemanticInterface(SemanticInterface):
             "move_west, and attack_enemy_i for each enemy unit i "
             "(Medivacs heal allies instead of attacking).\n"
             "Allied unit types: %s. Enemy unit types: %s.\n"
-            "Victory requires eliminating all enemy units; the environment "
-            "reward is sparse and mainly given for damage, kills and winning."
+            "The task objective is to eliminate all enemy units while keeping "
+            "the allied team effective. Do not assume or infer the simulator's "
+            "true reward function; reason only from the observable situation "
+            "and this task objective."
             % (", ".join(types_ally), ", ".join(types_enemy))
         )
 
@@ -250,7 +252,13 @@ class SC2SemanticInterface(SemanticInterface):
     def resolve_action_token(self, token, agent_idx, snap):
         """Return concrete action indices for a symbolic token; [] if empty."""
         n_actions = snap["n_actions"]
-        enemies = snap["enemies"]
+        # Action guidance is an execution-time interface and must not use
+        # privileged enemy state.  The semantic summary exposes the union of
+        # enemies currently visible to the allied team; ground target tokens
+        # against that same set.  Environment avail_actions remains the final
+        # feasibility authority.
+        enemies = [(i, e) for i, e in enumerate(snap["enemies"])
+                   if e["alive"] and e.get("visible", True)]
         is_medivac = snap["allies"][agent_idx]["type"] == "Medivac"
 
         if token == "noop":
@@ -273,20 +281,20 @@ class SC2SemanticInterface(SemanticInterface):
         if is_medivac:
             return []
         if token == "attack_all":
-            return [N_BASE_ACTIONS + i for i, e in enumerate(enemies) if e["alive"]]
+            return [N_BASE_ACTIONS + i for i, _ in enemies]
         if token.startswith("attack_type:"):
             tname = token.split(":", 1)[1].strip().lower()
-            return [N_BASE_ACTIONS + i for i, e in enumerate(enemies)
-                    if e["alive"] and e["type"].lower() == tname]
+            return [N_BASE_ACTIONS + i for i, e in enemies
+                    if e["type"].lower() == tname]
         if token == "attack_lowest_health":
-            alive = [(e["hp"], i) for i, e in enumerate(enemies) if e["alive"]]
+            alive = [(e["hp"], i) for i, e in enemies]
             if not alive:
                 return []
             return [N_BASE_ACTIONS + min(alive)[1]]
         if token == "attack_nearest":
             me = snap["allies"][agent_idx]
             alive = [(math.hypot(e["x"] - me["x"], e["y"] - me["y"]), i)
-                     for i, e in enumerate(enemies) if e["alive"]]
+                     for i, e in enemies]
             if not alive:
                 return []
             return [N_BASE_ACTIONS + min(alive)[1]]

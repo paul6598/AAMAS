@@ -32,6 +32,12 @@ VALID_TOKEN_PREFIXES = (
     "attack_nearest",
 )
 
+# Broad hard constraints are unsafe in SMAC: the environment availability
+# mask already removes infeasible actions, while these tokens can erase an
+# entire tactical action class.  The paper describes hard constraints as
+# exceptional safety constraints, not as blanket tactical commands.
+UNSAFE_FORBID_TOKENS = {"noop", "stop", "move_all", "attack_all"}
+
 
 def _valid_token(tok):
     return isinstance(tok, str) and any(
@@ -62,8 +68,14 @@ def sanitize_guidance(g):
     for r in (g.get("action_rules") or [])[:MAX_RULES]:
         if not isinstance(r, dict):
             continue
-        forbid = [t for t in (r.get("forbid") or []) if _valid_token(t)]
+        forbid = [t for t in (r.get("forbid") or [])
+                  if _valid_token(t) and t not in UNSAFE_FORBID_TOKENS]
         prefer = [t for t in (r.get("prefer") or []) if _valid_token(t)]
+        # A soft preference and a hard prohibition for the same symbolic
+        # action are semantically contradictory.  Preserve the preference and
+        # discard the prohibition rather than silently letting -inf win.
+        preferred = set(prefer)
+        forbid = [t for t in forbid if t not in preferred]
         if VOCAB_MODE == "strategic":
             forbid = [t for t in forbid if any(t == p or (p.endswith(":") and t.startswith(p))
                                                for p in STRATEGIC_FORBID_OK)]

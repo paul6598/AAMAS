@@ -36,4 +36,21 @@ def build_masks(rules, snap, iface, n_agents, n_actions):
             for token in rule.get("prefer", []) or []:
                 for a in iface.resolve_action_token(token, i, snap):
                     soft[i, a] = max(soft[i, a], w)
+
+    # Semantic safety net.  Even individually valid rules can jointly remove
+    # every attack (e.g. attack_type:Marine on a homogeneous map) or every
+    # movement action.  Such category-wide prohibitions contradict the
+    # intended coarse guidance role and do not trigger the controller's
+    # all-actions-empty fallback.  A preference/prohibition collision is
+    # resolved in favour of the non-binding preference.
+    hard[(hard == 0.0) & (soft > 1.0)] = 1.0
+    for i in range(n_agents):
+        if not snap["allies"][i]["alive"]:
+            continue
+        attack_actions = list(range(6, n_actions))
+        if attack_actions and not hard[i, attack_actions].any():
+            hard[i, attack_actions] = 1.0
+        move_actions = [a for a in range(2, min(6, n_actions))]
+        if move_actions and not hard[i, move_actions].any():
+            hard[i, move_actions] = 1.0
     return hard, soft

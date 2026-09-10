@@ -34,6 +34,7 @@ shaping_in_learner: True   # replay-time lambda composition (prevents stale-lamb
 dt_observable: True
 mask_vocab: "full"
 prompt_style: "default"
+commander_include_training_stats: False
 llm_reasoning_effort: "low"
 beta: 0.0
 lambda_start: 0.5

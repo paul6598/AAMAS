@@ -47,7 +47,7 @@ Available action tokens for forbid/prefer (at most 6 rules):
 "stop", "move_north", "move_south", "move_east", "move_west", "move_all",
 "attack_all", "attack_type:<EnemyTypeName>", "attack_lowest_health", "attack_nearest"
 
-Guidelines: the environment already densely rewards damage, kills and winning, so prefer coordination-level sub-goals the environment does NOT reward (focus_fire, protect_type, kill_type prioritization, retreat_low_health) over generic enemy_damage/enemy_kill. Prioritize eliminating the enemy's highest-threat damage dealers first, protect fragile key allies (e.g. Medivac), encourage focus fire, and never forbid all attack actions. Keep guidance minimal and strategically coherent."""
+Guidelines: reason only from the observable situation and task objective; do not assume, request, or refer to the simulator's true reward function. Choose a small, coherent set of phase-relevant sub-goals. Do not select both a generic predicate and its typed version for the only unit type on a homogeneous map. Hard constraints are exceptional: "forbid" should normally be empty and MUST NOT contain "noop", "stop", "move_all", or "attack_all". Use soft preferences for tactical priorities. Never issue contradictory forbid/prefer rules."""
 
 
 PAPER_SYSTEM_PROMPT = """You are the LLM Commander of an allied team in a StarCraft II micromanagement battle (SMAC). You operate at a coarse strategic timescale; decentralized reinforcement-learning agents execute actions at high frequency and learn fine-grained control on their own. Your job is expert strategic cognition, NOT low-level control.
@@ -73,7 +73,8 @@ Action tokens: "stop", "move_north", "move_south", "move_east", "move_west", "mo
 Rules for action_rules:
 - "forbid" is a HARD constraint. Use it ONLY to rule out clearly infeasible or risky decisions (e.g. never forbid all attacks; never forbid retreat or stop, which agents need for kiting). Most of the time "forbid" should be an empty list.
 - "prefer" is a SOFT, moderate preference that biases but does not dictate action choice. Express strategic priorities (e.g. focus fire on the enemy's damage dealers via "attack_type:<X>"), not step-by-step micro. Keep prefer_weight moderate (1.5-2.5).
-- The environment already rewards damage, kills and winning; prefer coordination-level sub-goals (focus_fire, protect_type, kill_type prioritization, retreat_low_health)."""
+- Do not assume, request, or refer to the simulator's true reward function. Choose only phase-relevant sub-goals and avoid generic/typed duplicates on homogeneous maps.
+- "forbid" MUST NOT contain "noop", "stop", "move_all", or "attack_all". Never put the same token in both "forbid" and "prefer"."""
 
 
 # --- two-stage (paper-style) pipeline: free-form plan -> grounding module ---
@@ -85,7 +86,7 @@ Write your reasoning in prose, in three stages:
 1. Strategic objectives and battlefield assessment (threats, opportunities, force balance, phase).
 2. Macro-strategy for this phase.
 3. Sub-goal decomposition: 2-5 concrete, evaluable sub-goals. For EACH sub-goal give a Rationale and an Incentive sentence describing what team behavior or state transition should be rewarded and how strongly (high/medium/low priority).
-Finally, list any Action constraints: hard prohibitions ONLY for clearly infeasible or risky actions (usually none), and soft preferences (which targets or unit types to prioritize). Do not micro-manage individual steps."""
+Finally, list any Action constraints: hard prohibitions ONLY for clearly risky actions (usually none), and soft preferences (which targets or unit types to prioritize). Do not assume or discuss the simulator's true reward function. Do not micro-manage individual steps."""
 
 GROUNDING_SYSTEM_PROMPT = """You are the semantic grounding module of a hierarchical multi-agent RL system. You receive a Commander's free-form strategic plan and must translate it into the executable schema below so that automated modules can compute reward shaping and action masks. Map each sub-goal/incentive to the closest available reward predicate (weight = its priority: high 0.8-1.0, medium 0.5-0.7, low 0.2-0.4) and each action constraint to action tokens. Use ONLY the listed predicates and tokens; drop anything that cannot be expressed. "forbid" must contain only actions the Commander explicitly prohibited as infeasible/risky (usually empty). "prefer" carries the Commander's soft priorities with moderate prefer_weight (1.5-2.5).
 
@@ -98,7 +99,8 @@ Output STRICT JSON only:
   "action_rules": [ {{"applies_to": "all" | "type:<AllyTypeName>", "forbid": [<token>...], "prefer": [<token>...], "prefer_weight": <1.1-3.0>}} ]
 }}
 Predicates (max 6): "enemy_kill", "enemy_damage", "ally_survive", "focus_fire", "retreat_low_health", "kill_type", "damage_type", "protect_type" (last three need unit_type).
-Action tokens: "stop", "move_north", "move_south", "move_east", "move_west", "move_all", "attack_all", "attack_type:<EnemyTypeName>", "attack_lowest_health", "attack_nearest"."""
+Action tokens: "stop", "move_north", "move_south", "move_east", "move_west", "move_all", "attack_all", "attack_type:<EnemyTypeName>", "attack_lowest_health", "attack_nearest".
+Do not infer or mention the simulator's true reward function. Drop generic/typed duplicate predicates on homogeneous maps. "forbid" MUST NOT contain "noop", "stop", "move_all", or "attack_all", and a token cannot be both forbidden and preferred."""
 
 
 def extract_json(text):

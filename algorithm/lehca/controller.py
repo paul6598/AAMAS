@@ -29,7 +29,10 @@ class LehcaMAC(BasicMAC):
         self._hard = None
         self._soft = None
         self._st = {"q_gap_mean": [], "mask_forbid_frac": [],
-                    "mask_override_rate": [], "mask_fallback_rate": []}
+                    "mask_override_rate": [], "hard_mask_override_rate": [],
+                    "attack_category_removed_rate": [],
+                    "move_category_removed_rate": [],
+                    "mask_fallback_rate": []}
 
     def pop_mask_stats(self):
         out = {k: float(sum(v) / len(v)) for k, v in self._st.items() if v}
@@ -52,9 +55,23 @@ class LehcaMAC(BasicMAC):
             self._st["mask_forbid_frac"].append(float(((av & ~h).sum(-1).float() / n_av).mean()))
             self._st["mask_fallback_rate"].append(float(empty[0].float().mean()))
             al = allowed[0] > 0
+            env_arg = q0.masked_fill(~av, -1e9).argmax(-1)
             raw_arg = q0.masked_fill(~al, -1e9).argmax(-1)
             tilt_arg = tilted[0].masked_fill(~al, -1e9).argmax(-1)
+            self._st["hard_mask_override_rate"].append(
+                float((env_arg != raw_arg).float().mean()))
             self._st["mask_override_rate"].append(float((raw_arg != tilt_arg).float().mean()))
+            if av.shape[-1] > self.n_base_actions:
+                attack_av = av[:, self.n_base_actions:].any(-1)
+                attack_allowed = al[:, self.n_base_actions:].any(-1)
+                self._st["attack_category_removed_rate"].append(
+                    float((attack_av & ~attack_allowed).float().mean()))
+            if av.shape[-1] > 2:
+                move_hi = min(self.n_base_actions, av.shape[-1])
+                move_av = av[:, 2:move_hi].any(-1)
+                move_allowed = al[:, 2:move_hi].any(-1)
+                self._st["move_category_removed_rate"].append(
+                    float((move_av & ~move_allowed).float().mean()))
 
     def init_hidden(self, batch_size):
         super(LehcaMAC, self).init_hidden(batch_size)

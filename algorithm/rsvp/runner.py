@@ -65,6 +65,8 @@ class RSVPRunner:
         self.use_masking = getattr(args, "use_action_masking", False)
         self.mask_at_test = getattr(args, "use_masking_at_test", False)
         self.shaping_in_learner = getattr(args, "shaping_in_learner", False)
+        self.include_training_stats = getattr(
+            args, "commander_include_training_stats", False)
 
         # ---- scheduler ----
         self.scheduler = getattr(args, "scheduler", "fixed")
@@ -216,9 +218,11 @@ class RSVPRunner:
             return
         if t_global < getattr(self, "_retry_after", -1):
             return
-        stats = {"t_env": self.t_env}
-        if self.recent_wins:
-            stats["rolling_win_rate"] = float(np.mean(self.recent_wins))
+        stats = None
+        if self.include_training_stats:
+            stats = {"t_env": self.t_env}
+            if self.recent_wins:
+                stats["rolling_win_rate"] = float(np.mean(self.recent_wins))
         summary = self.iface.summary(snap, stats)
         key = self.iface.cache_key(snap)
         hits_before = getattr(self.commander, "n_cache_hits", 0)

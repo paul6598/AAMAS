@@ -195,7 +195,9 @@ class GRFSemanticInterface(SemanticInterface):
             "long_pass, high_pass, short_pass, shot (only meaningful for the ball carrier); "
             "sprint / release_sprint; dribble / release_dribble (carrier only); slide (tackle, "
             "foul risk).\n"
-            "The environment already rewards goals and forward ball progress."
+            "The task objective is to outscore the opposing team. Do not assume or "
+            "infer the simulator's true reward function; reason only from the "
+            "observable situation and this task objective."
             % ", ".join("%s(#%d)" % (a["role"], a["idx"]) for a in roles))
 
     # ------------------------------------------------------------ grounding
