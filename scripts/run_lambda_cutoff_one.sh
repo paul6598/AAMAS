@@ -4,7 +4,9 @@ set -euo pipefail
 ENV_NAME=${1:?usage: run_lambda_cutoff_one.sh ENV ARM SEED}
 ARM=${2:?usage: run_lambda_cutoff_one.sh ENV ARM SEED}
 SEED=${3:?usage: run_lambda_cutoff_one.sh ENV ARM SEED}
-PORT=8356
+# Multiple allocations can land on the same host. Derive a job-unique port so
+# this run never attaches to an unrelated, shorter-lived server by accident.
+PORT=${LLM_PORT:-$((20000 + ${SLURM_JOB_ID:-0} % 20000))}
 
 cd /gpfs/home1/paul6598/AAMAS
 
