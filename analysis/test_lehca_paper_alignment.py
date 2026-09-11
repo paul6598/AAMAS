@@ -159,6 +159,9 @@ class PaperAlignmentTests(unittest.TestCase):
                 runner.use_masking = False
                 runner.mask_at_test = False
                 runner.state = SimpleNamespace(lambda_val=0.0, guidance=None)
+                runner.args = SimpleNamespace(lambda_zero_t=300_000)
+                runner.t_env = 300_000
+                runner.t = 0
                 runner.commander = Spy()
                 if runner_class is LehcaRunner:
                     runner.eval_commander = Spy()
@@ -171,6 +174,20 @@ class PaperAlignmentTests(unittest.TestCase):
                     runner._maybe_refresh({}, None, test_mode=False)
                     runner._maybe_refresh({}, None, test_mode=True)
                 self.assertEqual(runner.commander.calls, 0)
+
+    def test_cutoff_boundary_skips_guidance_before_learner_updates_lambda(self):
+        for runner_class in (LehcaRunner, RSVPRunner):
+            with self.subTest(runner=runner_class.__name__):
+                runner = object.__new__(runner_class)
+                runner.use_shaping = True
+                runner.use_masking = False
+                runner.state = SimpleNamespace(lambda_val=0.01)
+                runner.args = SimpleNamespace(lambda_zero_t=300_000)
+                runner.t_env = 299_950
+                runner.t = 49
+                self.assertTrue(runner._guidance_needed(False))
+                runner.t = 50
+                self.assertFalse(runner._guidance_needed(False))
 
 
 if __name__ == "__main__":

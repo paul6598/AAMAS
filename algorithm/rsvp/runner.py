@@ -153,14 +153,20 @@ class RSVPRunner:
             self.iface.reset_episode()
         self.t = 0
 
+    def _shaping_active(self, test_mode=False):
+        if test_mode or not getattr(self, "use_shaping", True):
+            return False
+        cutoff = getattr(getattr(self, "args", None), "lambda_zero_t", 0)
+        now = getattr(self, "t_env", 0) + getattr(self, "t", 0)
+        return ((cutoff <= 0 or now < cutoff)
+                and getattr(self.state, "lambda_val", 0.0) > 0.0)
+
     def _guidance_needed(self, test_mode):
         """Whether guidance can affect actions or the current training reward."""
         masking = getattr(self, "use_masking", False)
         if test_mode:
             return masking and getattr(self, "mask_at_test", False)
-        shaping = (getattr(self, "use_shaping", True)
-                   and getattr(self.state, "lambda_val", 0.0) > 0.0)
-        return masking or shaping
+        return masking or self._shaping_active(test_mode)
 
     # ------------------------------------------------------------ scheduler
     def _lazy_init(self, snap):
@@ -333,7 +339,7 @@ class RSVPRunner:
                     self._ep_X.append(x_pre)
                     self._ep_F.append(predlib.f_vector(self.args.env, self.lib,
                                                        snap_pre, snap_post, acts))
-                if (self.use_shaping and self.state.lambda_val > 0.0
+                if (self._shaping_active(test_mode)
                         and guidance is not None):
                     f_t = predlib.shaping(self.args.env, guidance.get("subgoals"),
                                           snap_pre, snap_post, acts,
