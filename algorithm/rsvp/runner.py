@@ -1,8 +1,8 @@
 """RSVP: Residual Shaping-Value Prediction for On-Demand LLM Guidance Refresh.
 
-Adapted from algorithm/lehca/runner.py (kept untouched per session rules).
+Adapted from algorithm/lehca/runner.py.
 Differences:
-  * env dispatch: works for SMAC ("sc2") and GRF ("gfootball") — commander,
+  * env dispatch: works for SMAC ("sc2") and Pursuit ("pursuit") — commander,
     predicate library, shaping and state features chosen per env.
   * refresh schedule: scheduler="fixed" reproduces LEHCA (period f_update);
     scheduler="vf" adds value-based early refreshes under a hard ceiling —
@@ -51,11 +51,7 @@ class RSVPRunner:
         self.state = get_state()
         self.state.configure(args)
         self.iface = make_interface(args.env, self.env, args)
-        if args.env == "gfootball":
-            from algorithm.rsvp.commander.grf import GRFLLMCommander
-            self.commander = GRFLLMCommander(args, self.iface, logger) \
-                if getattr(args, "commander", "llm") == "llm" else None
-        elif args.env == "pursuit":
+        if args.env == "pursuit":
             from algorithm.rsvp.commander.pursuit import PursuitLLMCommander
             self.commander = PursuitLLMCommander(args, self.iface, logger) \
                 if getattr(args, "commander", "llm") == "llm" else None

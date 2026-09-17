@@ -29,9 +29,6 @@ def _wandb_metadata(args):
 
     if args.env == "sc2":
         auto_proj = "AAMAS_SMAC_%s" % args.env_args.get("map_name", "unknown")
-    elif args.env == "gfootball":
-        scen = str(args.env_args.get("scenario", "unknown")).replace("_vs_", "v").replace("_", "")
-        auto_proj = "AAMAS_GRF_%s" % scen
     else:
         auto_proj = "AAMAS_%s" % args.env
     project = args.wandb_project if args.wandb_project not in ("", "AAMAS-LEHCA") else auto_proj

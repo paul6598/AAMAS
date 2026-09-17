@@ -15,6 +15,8 @@
 
 `llm-output/`의 다섯 파일은 기존 출력·원응답·직접 검토·프롬프트 재구성 기록으로 보존했다.
 `archive/`에는 상세 backbone/grounding/trace 감사와 고정된 결과·제출 JSON을 남겼다.
+실행 분석은 핵심 집계기3개와 별도 `analysis/audits/`만 남겼고 회귀 테스트는 `tests/`로 옮겼다.
+GRF 소스는 공유본에서 제외했으며 Git `f138bf0`과 서버 백업에 보존했다.
 현재 결과와 해석은 종합 보고서가 기준이며, 과거 계획·Markdown 초안은 유지하지 않는다.
 LaTeX 작성물은 [AAMAS_draft/main.tex](../../AAMAS_draft/main.tex)만 편집 진입점으로 사용한다.
 

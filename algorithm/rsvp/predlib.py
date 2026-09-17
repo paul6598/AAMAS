@@ -14,16 +14,11 @@ import numpy as np
 from algorithm.lehca.shaping.predicates import (SIMPLE_PREDICATES, TYPED_PREDICATES,
                                                 evaluate_predicate as sc2_pred,
                                                 compute_shaping as sc2_shaping)
-from algorithm.rsvp.shaping.grf import (ALL_PREDICATES as GRF_PREDICATES,
-                                              evaluate_predicate as grf_pred,
-                                              compute_shaping as grf_shaping)
 from algorithm.rsvp.shaping import pursuit as pu
 
 
 # 환경과 병종 구성에 맞는 고정 predicate head 목록을 만든다.
 def build_library(env_name, snap):
-    if env_name == "gfootball":
-        return [(p, None) for p in GRF_PREDICATES]
     if env_name == "pursuit":
         return ([(p, s) for p in pu.SECTOR_PREDICATES for s in pu.SECTORS]
                 + [(p, None) for p in pu.GLOBAL_PREDICATES])
@@ -47,8 +42,6 @@ def head_index(lib, sg):
 
 # 같은 환경 전이에서 전체 head의 실제 predicate 신호를 계산한다.
 def f_vector(env_name, lib, pre, post, actions):
-    if env_name == "gfootball":
-        return np.array([grf_pred(p, pre, post, actions) for p, _ in lib], dtype=np.float32)
     if env_name == "pursuit":
         return np.array([pu.evaluate_predicate(p, s, pre, post) for p, s in lib],
                         dtype=np.float32)
@@ -57,29 +50,12 @@ def f_vector(env_name, lib, pre, post, actions):
 
 # 환경에 맞는 셰이핑 함수를 호출한다.
 def shaping(env_name, subgoals, pre, post, actions, clip=3.0):
-    if env_name == "gfootball":
-        return grf_shaping(subgoals, pre, post, actions, clip)
     if env_name == "pursuit":
         return pu.compute_shaping(subgoals, pre, post, actions, clip)
     return sc2_shaping(subgoals or [], pre, post, actions, clip)
 
 
 # ------------------------------------------------------------------ features
-def _grf_features(snap):
-    poss = {"ours": 0, "loose": 1, "theirs": 2}[snap["possession"]]
-    onehot = [0.0, 0.0, 0.0]
-    onehot[poss] = 1.0
-    sh = snap["shape"]
-    n_field = max(1, len(snap.get("controlled", [])) or 4)
-    n_opp = max(1, len(snap["enemies"]) - 1)
-    return np.array(onehot + [
-        snap["ball"]["x"], snap["ball"]["y"], snap["ball"]["dx"] * 50, snap["ball"]["dy"] * 50,
-        sh["ours_behind_ball"] / n_field, sh["theirs_in_our_third"] / n_opp,
-        min(1.0, sh["nearest_enemy_to_ball"] * 5), min(1.0, sh["nearest_ally_to_ball"] * 5),
-        1.0 if snap["game_mode"] != "normal" else 0.0, snap["time_frac"],
-    ], dtype=np.float32)
-
-
 def _profile(units, types, visible_only=False):
     out = []
     for t in types:
@@ -129,14 +105,12 @@ def _pursuit_features(snap):
 class FeatureExtractor:
     def __init__(self, env_name, snap):
         self.env_name = env_name
-        if env_name not in ("gfootball", "pursuit"):
+        if env_name != "pursuit":
             self.ally_types = sorted({u["type"] for u in snap["allies"]})
             self.enemy_types = sorted({u["type"] for u in snap["enemies"]})
 
     # 환경 상태를 critic 입력용 고정 길이 수치 특징으로 변환한다.
     def __call__(self, snap):
-        if self.env_name == "gfootball":
-            return _grf_features(snap)
         if self.env_name == "pursuit":
             return _pursuit_features(snap)
         return _sc2_features(snap, self.ally_types, self.enemy_types)

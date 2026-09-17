@@ -24,7 +24,7 @@ import numpy as np
 import requests
 import yaml
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from algorithm.lehca.commander.base import sanitize_guidance
 from algorithm.lehca.commander.llm_commander import LLMCommander
@@ -42,7 +42,7 @@ def save(path, obj):
 def provenance():
     files = ['env/semantic/sc2.py', 'algorithm/lehca/commander/llm_commander.py',
              'algorithm/lehca/commander/base.py', 'algorithm/lehca/shaping/predicates.py',
-             'algorithm/rsvp/runner.py', 'analysis/audit_lehca_grounding.py']
+             'algorithm/rsvp/runner.py', 'analysis/audits/audit_lehca_grounding.py']
     return dict(utc=datetime.now(timezone.utc).isoformat(),
                 sha256={p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in files})
 

@@ -29,9 +29,10 @@ conda activate vllm
 bash scripts/serve_llm.sh openai/gpt-oss-20b 8355
 ```
 
-GRF/Pursuit는 선택적 환경이며 SMAC-only 설치에서 필수는 아니다. 당시 패키지는
-`gfootball==2.10.2`, `pettingzoo==1.27.0`, `gymnasium==1.3.0`, `pygame==2.6.1`이었다.
-GRF의 native 의존성은 별도로 준비해야 한다. MPE 구현이나 MPE 실험은 포함하지 않는다.
+Pursuit는 실제 학습 결과가 있는 선택적 환경이며 SMAC-only 설치에서 필수는 아니다.
+당시 패키지는 `pettingzoo==1.27.0`, `gymnasium==1.3.0`, `pygame==2.6.1`이었다.
+GRF의 초기 탐색 코드는 공유본에서 제외했고 Git `f138bf0`에 보존했다.
+MPE 구현이나 MPE 실험은 포함하지 않는다.
 
 ## 실행 흐름과 읽는 순서
 
@@ -138,39 +139,46 @@ python analysis/summarize_rsvp_validation.py results/validation/<audit>.jsonl.gz
 python analysis/summarize_rsvp_validation.py results/validation/<trial>.jsonl.gz --trials-only
 python analysis/summarize_refresh_replacement.py results/validation/<audit>.jsonl.gz \
   --horizon 5 --gamma .8 --bootstrap 10000 --output results/replacement.json
-python analysis/audit_shaping_objective.py
 ```
 
 `--jobs`를 생략하면 로컬 Sacred의 명시적 COMPLETED만 완료로 인정한다. Slurm이 없는
 장비에서 과거 RUNNING 메타데이터를 step 수만으로 완료로 바꾸지 않는다.
-지침 중복·상태 의존성은 `audit_guidance_duplicates.py`, `audit_guidance_state_dependence.py`,
-세부 trace 감사는 `audit_rsvp_mechanism.py`, functional grounding 감사는
-`audit_lehca_grounding.py`에 있다. `smoke_llm_pipeline.py`는 명시적으로 실행할 때 실제
-SC2/LLM 요청을 만들므로 순수 오프라인 분석과 구분한다.
+`analysis/`에는 위의 결과·예측력·교체 효과 집계기3개를 남겼다.
+`analysis/audits/`의 `verify_lehca_backbone.py`, `audit_lehca_grounding.py`,
+`smoke_llm_pipeline.py`는 기반선 재현과 실제 LLM 출력 확인에 사용한 도구다.
+backbone 및 grounding의 rollout 옵션은 SC2를 시작하고, pipeline 점검은 SC2/LLM
+요청을 만든다. 순수 오프라인 집계와 구분해 명시적으로 실행한다.
+과거 중복·상태 의존성·trace·보상 진단의 일회성 분석기는 Git `f138bf0`에 보존했다.
 
 ## 검증과 논문 초안
 
 ```bash
-python -m unittest discover -s analysis -p 'test_*.py'
-python -m algorithm.rsvp.analysis.test_pursuit_pred
+python -m unittest discover -s tests -p 'test_*.py'
+python tests/check_pursuit.py
 bash AAMAS_draft/build.sh
 ```
 
-선택적 pre-rename archive AST 검사는 `RSVP_PRE_RENAME_ARCHIVE`를 지정해야 수행한다.
 LaTeX는 XeLaTeX/BibTeX와 packages.tex의 한글 폰트를 필요로 한다. main.tex가 section
 파일을 조립하고 build/에 PDF·중간 파일을 모은다. 초안은 미완성 역사 자료로 보존했다.
 
-인계 시점의 기존 aamas 환경에서 회귀 테스트32개 통과/선택적 archive 검사1개 skip,
-Pursuit 검사 통과, LaTeX PDF 빌드를 확인했다. Python93파일의 AST, YAML17개와
-공유 JSON7개 파싱, Bash11개 문법과 문서 링크도 확인했다. 일반 실행기·ablation·
-최종 배치의 인자 전달은 stub으로 검사했으며 새 성능 실험이나 LLM 호출은 실행하지 않았다.
+추가 축소 후 현재 경로의 회귀 테스트32개와 Pursuit 검사가 모두 통과했다.
+Python77파일 AST, YAML16개·공유 JSON7개 파싱, Bash9개 문법 및 문서 링크도 확인했다.
+SMAC/Pursuit 환경 등록과 GRF를 로드하지 않는 import를 확인했고, 환경 선택 외 RSVP
+메서드와 SMAC/Pursuit 특징 계산 함수가 이전 commit과 같은지도 검사했다.
+LaTeX PDF 빌드는 최초 인계 정리에서 확인했으며 이번 축소에서는 TeX 소스를 변경하지 않았다.
+예전 구현의 AST 전체가 같음을 요구하던 migration 검사는 이후 기능 변경에 적용되지
+않아 제외했으며, VIGIL 설정·import 호환과 grounding 회귀 검사는 유지했다.
+일반 실행기·ablation·최종 배치의 인자 전달도 stub으로 확인했다.
+새 성능 실험이나 LLM 호출은 실행하지 않았다.
 
 ## 정리와 보존
 
 끝난 제출·monitor·private-server 예약 wrapper와 cohort 고정 일회성 집계기는 공유 코드에서
 정리했다. 일반 진입점, 실제 검증 계측, 그 회귀 테스트, 중요한 감사 재현기는 유지했다.
-VIGIL 호환 및 공유 registry의 COMA/QTRAN/VDN, GRF/Pursuit는 실제 의존성이 있어 남겼다.
+VIGIL 호환 및 공유 registry의 COMA/QTRAN/VDN, 선택적 Pursuit는 유지했다.
 정리 전 authored source/document 백업과 이동 원장은 서버의
 `results/diagnostics/repository-handoff-20260917/`에 있다. raw 실험 자료를 삭제하지 않았다.
 `before-cleanup.tar.gz`의 SHA256은
 `406594ca371f4700f0e4afb4fda02c7e330f24009b7c6bbe8caaf29bdbe9cf2a`다.
+GRF와 보조 분석기를 추가로 제외하기 전 소스와 이동 원장은
+`results/diagnostics/repository-trim-20260917/`에도 보존했다.

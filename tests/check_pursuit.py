@@ -1,10 +1,13 @@
 """Standalone unit tests for the Pursuit predicate library (Q-003 P3).
 
-Run: python -m algorithm.rsvp.analysis.test_pursuit_pred
+Run: python tests/check_pursuit.py
 Covers sign correctness, the telescoping (anti-reward-hacking) property of
 delta predicates, sanitisation, and library head resolution.
 """
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from algorithm.rsvp.shaping.pursuit import evaluate_predicate, compute_shaping
 from algorithm.rsvp.commander.pursuit import sanitize_pursuit

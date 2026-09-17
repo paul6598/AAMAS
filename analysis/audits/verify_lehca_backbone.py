@@ -16,7 +16,7 @@ from types import SimpleNamespace
 import numpy as np
 import torch
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from algorithm.src.components.episode_buffer import EpisodeBatch, ReplayBuffer
 from algorithm.src.components.transforms import OneHot

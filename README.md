@@ -28,8 +28,10 @@ algorithm/src/       PyMARL 기반 공유 네트워크·리플레이·학습 인
 algorithm/vigil/     RSVP의 옛 이름에 대한 import 호환 모듈
 config/             알고리즘·환경 설정
 scripts/            일반 실행 및 최종 실험 재실행 스크립트
-analysis/           예측·지침·실험 분석과 회귀 테스트
-env/                SMAC, GRF, PettingZoo Pursuit 및 의미 인터페이스
+analysis/           결과·예측력·교체 효과의 핵심 집계기 3개
+analysis/audits/    backbone·grounding 감사와 실제 LLM pipeline 점검
+tests/              회귀 테스트와 Pursuit predicate 검사
+env/                SMAC, 선택적 PettingZoo Pursuit 및 의미 인터페이스
 docs/research/      공유용 보고서, LLM 원문, 검증 방법, 실험 원장
 AAMAS_draft/        섹션별 LaTeX 초안; 미완성 과거 연구 자료
 ```
@@ -37,6 +39,10 @@ AAMAS_draft/        섹션별 LaTeX 초안; 미완성 과거 연구 자료
 `results/`, `wandb/`, 참조 논문 PDF와 LaTeX 빌드 생성물은 Git에 포함하지 않는다.
 서버의 원자료·checkpoint·동결 소스는 보존했다. Git에는 최종 곡선·설정 요약·SHA256과
 실제 검토한 LLM 요청·응답을 함께 제공한다.
+
+GRF의 초기 탐색 구현과 일회성 분석기는 공유본에서 제외했다. 과거 결과는 연구 보고서에
+남겼으며, 소스는 Git의 `f138bf0` 및 서버 정리 백업에 보존돼 있다. Pursuit는 실제 학습
+결과가 있어 선택적 환경으로 유지했다.
 
 ## 빠른 실행
 
@@ -56,7 +62,7 @@ python main.py --config=lehca --env-config=sc2 with \
   t_max=400 test_nepisode=4 use_wandb=False
 
 # 회귀 테스트: 환경 프로세스나 LLM 요청을 시작하지 않음
-python -m unittest discover -s analysis -p 'test_*.py'
+python -m unittest discover -s tests -p 'test_*.py'
 ```
 
 LLM 실험은 할당된 GPU 작업 안에서 실행하며 이미 준비된 OpenAI 호환 API를 사용한다.

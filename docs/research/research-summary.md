@@ -109,6 +109,8 @@ GRF에서는 bot trajectory shadow/replay·LOO로 gamma=.8의 예측 R²=.662,
 gamma=.97에서 약-.16이라는 초기 기록이 있었다. SMAC 온라인 효용의 증거로 대체하지 않는다.
 PettingZoo SISL Pursuit도 구현했다. 초기 가짜 catch semantic 오류는 수정하고 v2를 분리했다.
 이 저장소의 Pursuit는 MPE가 아니며 MPE 결과는 없다.
+GRF는 초기 탐색 결과만 보고서에 남겼고 인계 공유본의 구현에서는 제외했다.
+해당 소스와 당시 분석기는 Git `f138bf0` 및 서버 정리 백업에서 확인할 수 있다.
 
 ## 4. 최종 실험 결과
 
@@ -256,10 +258,11 @@ lambda_floor_frac=.4는1M에서400k, 300k에서120k이므로, 이전 corrected30
 ## 8. 공유 범위와 종료 시점
 
 공유 코드에는 LEHCA/RSVP, predicate/grounding, 실제 prompt, 검증 logger, 일반 실행기,
-주요 분석기와 회귀 테스트를 남겼다. LLM 원문·원 API 응답과 검토는5파일을 유지했다.
+핵심 집계기3개와 별도 audits/·tests/를 남겼다. LLM 원문·원 API 응답과 검토는5파일을 유지했다.
 끝난 예약·watcher·일회성 집계와 중복 MD는 로컬 backup으로 옮겼다.
 LaTeX는 번호별 section의 미완성 초안으로 보존하며 최신 결론의 출처는 본 보고서다.
 
 rawdata, W&B, checkpoint, 당시 source snapshot은 Git 밖에서 서버에 보존했다.
 로컬 백업과 이동 원장은 `results/diagnostics/repository-handoff-20260917/`에 있다.
+GRF와 보조 분석기 추가 축소의 백업은 `results/diagnostics/repository-trim-20260917/`에 있다.
 이번 정리에서 새 성능 실험을 시작하지 않았다. 환경·실행·검증 방법은 [코드 안내](code-guide.md)에 있다.

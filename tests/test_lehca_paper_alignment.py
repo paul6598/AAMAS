@@ -1,5 +1,4 @@
 """Fast regression tests for paper-alignment fixes; no env/LLM launch."""
-import inspect
 from pathlib import Path
 import sys
 from types import SimpleNamespace
@@ -19,7 +18,6 @@ from algorithm.lehca.masking.compiler import build_masks
 from algorithm.lehca.runner import LehcaRunner
 from algorithm.lehca.state import LehcaState
 from algorithm.rsvp.runner import RSVPRunner
-from env.semantic.grf import GRFSemanticInterface
 from env.semantic.sc2 import SC2SemanticInterface
 
 
@@ -32,8 +30,6 @@ class PaperAlignmentTests(unittest.TestCase):
                               PLAN_SYSTEM_PROMPT, GROUNDING_SYSTEM_PROMPT))
         self.assertNotIn("environment already", prompts.lower())
         self.assertIn("true reward function", prompts.lower())
-        grf_source = inspect.getsource(GRFSemanticInterface.prompt_context)
-        self.assertNotIn("already rewards", grf_source.lower())
 
     def test_sanitizer_removes_unsafe_and_contradictory_forbids(self):
         raw = {

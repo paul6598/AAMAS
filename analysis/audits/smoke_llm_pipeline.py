@@ -11,7 +11,7 @@ from pathlib import Path
 import sys
 from types import SimpleNamespace
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from env import sc2_env_fn
