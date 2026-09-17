@@ -3,7 +3,7 @@
 snapshot()  : possession / ball / both teams / shape summary (numeric)
 summary()   : d_t text for the Commander (deterministic function of snapshot)
 cache_key() : possession x ball zone x game mode x score sign x time tercile
-grounding   : GRF tokens -> action indices (see docs/grf-semantic-design.md §6)
+grounding   : GRF tokens -> action indices (see resolve_action_token below)
 
 Action indices: 0 idle, 1 left, 2 top_left, 3 top, 4 top_right, 5 right,
 6 bottom_right, 7 bottom, 8 bottom_left, 9 long_pass, 10 high_pass,

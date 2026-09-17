@@ -1,0 +1,604 @@
+[
+  {
+    "path": "results/diagnostics/rsvp_e1_20260913_v2/queue-manifest.json",
+    "manifest": {
+      "campaign": "rsvp_e1_20260913_v2",
+      "created_at": "2026-09-13T06:29:27.706473+09:00",
+      "source": "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_e1_20260913_v2",
+      "stage": "E0 then E1 pilot; not confirmation",
+      "smoke_job": 976088,
+      "existing_preserved_jobs": [
+        973175,
+        973176
+      ],
+      "plan": "docs/research/research-plan-aamas2027-20260913.md",
+      "max_new_pilot_concurrency": 4,
+      "common": {
+        "map": "2s3z",
+        "reward_sparse": false,
+        "horizon": 1000000,
+        "epsilon_anneal_time": 300000,
+        "lambda_floor_step": 400000,
+        "use_action_masking": false,
+        "shaping_in_learner": true,
+        "deduplicate_subgoals": true,
+        "llm_model": "openai/gpt-oss-20b",
+        "prompt_style": "paper",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "f_update": 200,
+        "rsvp_validation_every": 10,
+        "confirmation_seeds_not_submitted": [
+          10,
+          11,
+          12,
+          13,
+          14
+        ]
+      },
+      "jobs": [
+        {
+          "job_id": 976091,
+          "mode": "audit",
+          "seed": 0,
+          "nice": 0,
+          "dependency": "afterok:976088",
+          "submission_argv": [
+            "sbatch",
+            "--parsable",
+            "--partition=gpu6",
+            "--qos=node10_cpu640_gpu12",
+            "--account=uos",
+            "--nodes=1",
+            "--ntasks=1",
+            "--cpus-per-task=8",
+            "--gres=gpu:a10:1",
+            "--mem=18G",
+            "--time=48:00:00",
+            "--nice=0",
+            "--dependency=afterok:976088",
+            "--kill-on-invalid-dep=yes",
+            "--job-name=rv_e1_audit_s0",
+            "--output=/gpfs/home1/paul6598/AAMAS/results/slurm/rv_e1_audit_s0_%j.log",
+            "--chdir=/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_e1_20260913_v2",
+            "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_e1_20260913_v2/scripts/run_rsvp_pilot_job.sh",
+            "pilot",
+            "audit",
+            "0",
+            "rsvp_e1_20260913_v2"
+          ],
+          "expected_wandb_run": "rsvp_e1_20260913_v2_pilot_audit_shape_F200_H1000000_seed0"
+        },
+        {
+          "job_id": 976092,
+          "mode": "fixed",
+          "seed": 0,
+          "nice": 0,
+          "dependency": "afterok:976088",
+          "submission_argv": [
+            "sbatch",
+            "--parsable",
+            "--partition=gpu6",
+            "--qos=node10_cpu640_gpu12",
+            "--account=uos",
+            "--nodes=1",
+            "--ntasks=1",
+            "--cpus-per-task=8",
+            "--gres=gpu:a10:1",
+            "--mem=18G",
+            "--time=48:00:00",
+            "--nice=0",
+            "--dependency=afterok:976088",
+            "--kill-on-invalid-dep=yes",
+            "--job-name=rv_e1_fixed_s0",
+            "--output=/gpfs/home1/paul6598/AAMAS/results/slurm/rv_e1_fixed_s0_%j.log",
+            "--chdir=/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_e1_20260913_v2",
+            "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_e1_20260913_v2/scripts/run_rsvp_pilot_job.sh",
+            "pilot",
+            "fixed",
+            "0",
+            "rsvp_e1_20260913_v2"
+          ],
+          "expected_wandb_run": "rsvp_e1_20260913_v2_pilot_fixed_shape_F200_H1000000_seed0"
+        },
+        {
+          "job_id": 976093,
+          "mode": "gate_timer",
+          "seed": 0,
+          "nice": 100,
+          "dependency": "afterok:976088",
+          "submission_argv": [
+            "sbatch",
+            "--parsable",
+            "--partition=gpu6",
+            "--qos=node10_cpu640_gpu12",
+            "--account=uos",
+            "--nodes=1",
+            "--ntasks=1",
+            "--cpus-per-task=8",
+            "--gres=gpu:a10:1",
+            "--mem=18G",
+            "--time=48:00:00",
+            "--nice=100",
+            "--dependency=afterok:976088",
+            "--kill-on-invalid-dep=yes",
+            "--job-name=rv_e1_gate_timer_s0",
+            "--output=/gpfs/home1/paul6598/AAMAS/results/slurm/rv_e1_gate_timer_s0_%j.log",
+            "--chdir=/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_e1_20260913_v2",
+            "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_e1_20260913_v2/scripts/run_rsvp_pilot_job.sh",
+            "pilot",
+            "gate_timer",
+            "0",
+            "rsvp_e1_20260913_v2"
+          ],
+          "expected_wandb_run": "rsvp_e1_20260913_v2_pilot_gate_timer_shape_F200_H1000000_seed0"
+        },
+        {
+          "job_id": 976094,
+          "mode": "audit",
+          "seed": 1,
+          "nice": 100,
+          "dependency": "afterok:976088",
+          "submission_argv": [
+            "sbatch",
+            "--parsable",
+            "--partition=gpu6",
+            "--qos=node10_cpu640_gpu12",
+            "--account=uos",
+            "--nodes=1",
+            "--ntasks=1",
+            "--cpus-per-task=8",
+            "--gres=gpu:a10:1",
+            "--mem=18G",
+            "--time=48:00:00",
+            "--nice=100",
+            "--dependency=afterok:976088",
+            "--kill-on-invalid-dep=yes",
+            "--job-name=rv_e1_audit_s1",
+            "--output=/gpfs/home1/paul6598/AAMAS/results/slurm/rv_e1_audit_s1_%j.log",
+            "--chdir=/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_e1_20260913_v2",
+            "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_e1_20260913_v2/scripts/run_rsvp_pilot_job.sh",
+            "pilot",
+            "audit",
+            "1",
+            "rsvp_e1_20260913_v2"
+          ],
+          "expected_wandb_run": "rsvp_e1_20260913_v2_pilot_audit_shape_F200_H1000000_seed1"
+        },
+        {
+          "job_id": 976095,
+          "mode": "fixed",
+          "seed": 1,
+          "nice": 200,
+          "dependency": "afterok:976088:976092",
+          "submission_argv": [
+            "sbatch",
+            "--parsable",
+            "--partition=gpu6",
+            "--qos=node10_cpu640_gpu12",
+            "--account=uos",
+            "--nodes=1",
+            "--ntasks=1",
+            "--cpus-per-task=8",
+            "--gres=gpu:a10:1",
+            "--mem=18G",
+            "--time=48:00:00",
+            "--nice=200",
+            "--dependency=afterok:976088:976092",
+            "--kill-on-invalid-dep=yes",
+            "--job-name=rv_e1_fixed_s1",
+            "--output=/gpfs/home1/paul6598/AAMAS/results/slurm/rv_e1_fixed_s1_%j.log",
+            "--chdir=/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_e1_20260913_v2",
+            "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_e1_20260913_v2/scripts/run_rsvp_pilot_job.sh",
+            "pilot",
+            "fixed",
+            "1",
+            "rsvp_e1_20260913_v2"
+          ],
+          "expected_wandb_run": "rsvp_e1_20260913_v2_pilot_fixed_shape_F200_H1000000_seed1"
+        },
+        {
+          "job_id": 976096,
+          "mode": "gate_timer",
+          "seed": 1,
+          "nice": 200,
+          "dependency": "afterok:976088:976093",
+          "submission_argv": [
+            "sbatch",
+            "--parsable",
+            "--partition=gpu6",
+            "--qos=node10_cpu640_gpu12",
+            "--account=uos",
+            "--nodes=1",
+            "--ntasks=1",
+            "--cpus-per-task=8",
+            "--gres=gpu:a10:1",
+            "--mem=18G",
+            "--time=48:00:00",
+            "--nice=200",
+            "--dependency=afterok:976088:976093",
+            "--kill-on-invalid-dep=yes",
+            "--job-name=rv_e1_gate_timer_s1",
+            "--output=/gpfs/home1/paul6598/AAMAS/results/slurm/rv_e1_gate_timer_s1_%j.log",
+            "--chdir=/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_e1_20260913_v2",
+            "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_e1_20260913_v2/scripts/run_rsvp_pilot_job.sh",
+            "pilot",
+            "gate_timer",
+            "1",
+            "rsvp_e1_20260913_v2"
+          ],
+          "expected_wandb_run": "rsvp_e1_20260913_v2_pilot_gate_timer_shape_F200_H1000000_seed1"
+        }
+      ]
+    }
+  },
+  {
+    "path": "results/diagnostics/rsvp_e1_fmatch136_20260914_v1/queue-manifest.json",
+    "manifest": {
+      "campaign": "rsvp_e1_fmatch136_20260914_v1",
+      "created_at": "2026-09-14T11:14:30.034561+09:00",
+      "source": "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_e1_fmatch136_20260914_v1",
+      "source_manifest_sha256": "d31fb1052e5824f87d3fda781a0e0cddb76d3c4f72da92b3c39faf91d7ee0661",
+      "question": "At an LLM-call budget matched to RSVP E1, does value-triggered refresh outperform periodic refresh on dense 2s3z?",
+      "derivation": {
+        "rsvp_mean_calls_seed01": 7362.5,
+        "horizon": 1000000,
+        "matched_period_raw": 135.8234,
+        "fixed_period": 136
+      },
+      "common_config": {
+        "map": "2s3z",
+        "reward_sparse": false,
+        "channel": "shaping-only",
+        "horizon": 1000000,
+        "lambda_floor_step": 400000,
+        "test_interval": 10000,
+        "test_nepisode": 32
+      },
+      "jobs": [
+        {
+          "job_id": 982780,
+          "mode": "fixed",
+          "period": 136,
+          "seed": 0,
+          "dependency": null,
+          "job_name": "rv_f136_s0"
+        },
+        {
+          "job_id": 982781,
+          "mode": "fixed",
+          "period": 136,
+          "seed": 1,
+          "dependency": null,
+          "job_name": "rv_f136_s1"
+        }
+      ],
+      "decision_rule": "Compare seed-paired AUC/final performance and actual successful LLM calls against RSVP E1; do not infer a scheduler advantage from fixed F200 alone because its call count differs by more than 10 percent."
+    }
+  },
+  {
+    "path": "results/diagnostics/rsvp_refresh_mrt_20260913_v1/queue-manifest.json",
+    "manifest": {
+      "campaign": "rsvp_refresh_mrt_20260913_v1",
+      "created_at": "2026-09-13T23:04:26.902784+09:00",
+      "source": "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/rsvp_refresh_mrt_20260913_v1",
+      "source_manifest_sha256": "75c1d811c8e79da0e441dbeb013fc49bfb1f37731a70afd15885239f482cec78",
+      "question": "Does the non-overlapping randomized immediate-vs-delay instrumentation work in real shaping-only SMAC without same-episode outcome leakage?",
+      "stage": "50k technical smoke; no efficacy claim",
+      "job": {
+        "job_id": 980094,
+        "mode": "trial",
+        "seed": 90,
+        "dependency": "afterany:976095",
+        "horizon": 50000,
+        "window_episodes": 2,
+        "control_probability": 1.0,
+        "max_per_kind": 3
+      },
+      "pilot_policy": "Submit seed0/1 1M only after smoke_check passes and the result channel is reviewed.",
+      "pilots": [
+        {
+          "job_id": 980098,
+          "mode": "trial",
+          "seed": 0,
+          "dependency": "afterok:980094",
+          "horizon": 1000000
+        },
+        {
+          "job_id": 980099,
+          "mode": "trial",
+          "seed": 1,
+          "dependency": "afterok:980094:979455",
+          "horizon": 1000000
+        }
+      ]
+    }
+  },
+  {
+    "path": "results/diagnostics/winonly_sparse_gate_20260913_v1/queue-manifest.json",
+    "manifest": {
+      "campaign": "winonly_sparse_gate_20260913_v1",
+      "created_at": "2026-09-13T20:26:28.787411+09:00",
+      "source": "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/winonly_sparse_gate_20260913_v1",
+      "question": "Does corrected full LEHCA reproduce an advantage over QMIX on 2s3z when sparse reward is win:+1 and defeat/timeout:0?",
+      "stage": "300k reproduction gate; RSVP not launched until the guidance-channel gate is read",
+      "common": {
+        "map": "2s3z",
+        "horizon": 300000,
+        "seeds": [
+          0,
+          1
+        ],
+        "reward_sparse": true,
+        "sparse_win_only": true,
+        "reward_scale": false,
+        "epsilon_anneal_time": 300000,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "checkpoint_interval": 100000
+      },
+      "lehca": {
+        "f_update": 50,
+        "use_reward_shaping": true,
+        "use_action_masking": true,
+        "use_masking_at_test": true,
+        "shaping_in_learner": false,
+        "deduplicate_subgoals": true,
+        "beta": 0.1,
+        "prompt_style": "paper",
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false
+      },
+      "jobs": [
+        {
+          "job_id": 979453,
+          "arm": "qmix",
+          "seed": 0,
+          "walltime": "08:00:00",
+          "nice": 0,
+          "submission_argv": [
+            "sbatch",
+            "--parsable",
+            "--partition=gpu6",
+            "--qos=node10_cpu640_gpu12",
+            "--account=uos",
+            "--nodes=1",
+            "--ntasks=1",
+            "--cpus-per-task=8",
+            "--gres=gpu:a10:1",
+            "--mem=18G",
+            "--time=08:00:00",
+            "--nice=0",
+            "--job-name=wo_qmix_s0",
+            "--output=/gpfs/home1/paul6598/AAMAS/results/slurm/wo_qmix_s0_%j.log",
+            "--chdir=/gpfs/home1/paul6598/AAMAS/results/source_snapshots/winonly_sparse_gate_20260913_v1",
+            "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/winonly_sparse_gate_20260913_v1/scripts/run_winonly_sparse_gate.sh",
+            "qmix",
+            "0",
+            "300000",
+            "winonly_sparse_gate_20260913_v1"
+          ],
+          "expected_wandb_run": "winonly_sparse_gate_20260913_v1_2s3z_qmix_H300000_seed0"
+        },
+        {
+          "job_id": 979454,
+          "arm": "qmix",
+          "seed": 1,
+          "walltime": "08:00:00",
+          "nice": 0,
+          "submission_argv": [
+            "sbatch",
+            "--parsable",
+            "--partition=gpu6",
+            "--qos=node10_cpu640_gpu12",
+            "--account=uos",
+            "--nodes=1",
+            "--ntasks=1",
+            "--cpus-per-task=8",
+            "--gres=gpu:a10:1",
+            "--mem=18G",
+            "--time=08:00:00",
+            "--nice=0",
+            "--job-name=wo_qmix_s1",
+            "--output=/gpfs/home1/paul6598/AAMAS/results/slurm/wo_qmix_s1_%j.log",
+            "--chdir=/gpfs/home1/paul6598/AAMAS/results/source_snapshots/winonly_sparse_gate_20260913_v1",
+            "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/winonly_sparse_gate_20260913_v1/scripts/run_winonly_sparse_gate.sh",
+            "qmix",
+            "1",
+            "300000",
+            "winonly_sparse_gate_20260913_v1"
+          ],
+          "expected_wandb_run": "winonly_sparse_gate_20260913_v1_2s3z_qmix_H300000_seed1"
+        },
+        {
+          "job_id": 979455,
+          "arm": "lehca",
+          "seed": 0,
+          "walltime": "24:00:00",
+          "nice": 50,
+          "submission_argv": [
+            "sbatch",
+            "--parsable",
+            "--partition=gpu6",
+            "--qos=node10_cpu640_gpu12",
+            "--account=uos",
+            "--nodes=1",
+            "--ntasks=1",
+            "--cpus-per-task=8",
+            "--gres=gpu:a10:1",
+            "--mem=18G",
+            "--time=24:00:00",
+            "--nice=50",
+            "--job-name=wo_lehca_s0",
+            "--output=/gpfs/home1/paul6598/AAMAS/results/slurm/wo_lehca_s0_%j.log",
+            "--chdir=/gpfs/home1/paul6598/AAMAS/results/source_snapshots/winonly_sparse_gate_20260913_v1",
+            "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/winonly_sparse_gate_20260913_v1/scripts/run_winonly_sparse_gate.sh",
+            "lehca",
+            "0",
+            "300000",
+            "winonly_sparse_gate_20260913_v1"
+          ],
+          "expected_wandb_run": "winonly_sparse_gate_20260913_v1_2s3z_lehca_H300000_seed0"
+        },
+        {
+          "job_id": 979456,
+          "arm": "lehca",
+          "seed": 1,
+          "walltime": "24:00:00",
+          "nice": 50,
+          "submission_argv": [
+            "sbatch",
+            "--parsable",
+            "--partition=gpu6",
+            "--qos=node10_cpu640_gpu12",
+            "--account=uos",
+            "--nodes=1",
+            "--ntasks=1",
+            "--cpus-per-task=8",
+            "--gres=gpu:a10:1",
+            "--mem=18G",
+            "--time=24:00:00",
+            "--nice=50",
+            "--job-name=wo_lehca_s1",
+            "--output=/gpfs/home1/paul6598/AAMAS/results/slurm/wo_lehca_s1_%j.log",
+            "--chdir=/gpfs/home1/paul6598/AAMAS/results/source_snapshots/winonly_sparse_gate_20260913_v1",
+            "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/winonly_sparse_gate_20260913_v1/scripts/run_winonly_sparse_gate.sh",
+            "lehca",
+            "1",
+            "300000",
+            "winonly_sparse_gate_20260913_v1"
+          ],
+          "expected_wandb_run": "winonly_sparse_gate_20260913_v1_2s3z_lehca_H300000_seed1"
+        }
+      ]
+    }
+  },
+  {
+    "path": "results/diagnostics/winonly_sparse_gate_20260913_v1_n4/queue-manifest.json",
+    "manifest": {
+      "campaign": "winonly_sparse_gate_20260913_v1_n4",
+      "created_at": "2026-09-13T22:25:41.733047+09:00",
+      "source": "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/winonly_sparse_gate_20260913_v1",
+      "source_manifest_sha256": "400b18252fb6956d52246d6ac47d4d8549013bac9452baca35d3d026b31cdd87",
+      "question": "Does the early win-only LEHCA signal replicate on seeds 2 and 3 while paired QMIX remains at zero?",
+      "relation_to_pilot": "Exact frozen-source extension of seeds 0/1 campaign; no setting changes.",
+      "common": {
+        "map": "2s3z",
+        "horizon": 300000,
+        "seeds": [
+          2,
+          3
+        ],
+        "reward_sparse": true,
+        "sparse_win_only": true,
+        "reward_scale": false,
+        "epsilon_anneal_time": 300000,
+        "test_interval": 10000,
+        "test_nepisode": 32
+      },
+      "jobs": [
+        {
+          "job_id": 979939,
+          "arm": "qmix",
+          "seed": 2,
+          "dependency": null
+        },
+        {
+          "job_id": 979940,
+          "arm": "qmix",
+          "seed": 3,
+          "dependency": null
+        },
+        {
+          "job_id": 979941,
+          "arm": "lehca",
+          "seed": 2,
+          "dependency": null
+        },
+        {
+          "job_id": 979942,
+          "arm": "lehca",
+          "seed": 3,
+          "dependency": "afterok:979939"
+        }
+      ]
+    }
+  },
+  {
+    "path": "results/diagnostics/winonly_soft_rsvp_gate_20260913_v1/queue-manifest.json",
+    "manifest": {
+      "campaign": "winonly_soft_rsvp_gate_20260913_v1",
+      "created_at": "2026-09-13T23:45:28.097375+09:00",
+      "source": "/gpfs/home1/paul6598/AAMAS/results/source_snapshots/winonly_soft_rsvp_gate_20260913_v1",
+      "source_manifest_sha256": "dea6295d34338bdc6d33545dd1855bebbde30cc77418166a578b0171a97d3b62",
+      "question": "Does training-time soft guidance open a win-only learning channel, and does RSVP improve its refresh timing over fixed F200?",
+      "common": {
+        "map": "2s3z",
+        "horizon": 300000,
+        "seeds": [
+          0,
+          1
+        ],
+        "reward_sparse": true,
+        "sparse_win_only": true,
+        "reward_scale": false,
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": true,
+        "soft_guidance_only": true,
+        "use_masking_at_test": false,
+        "beta": 0.1,
+        "shaping_in_learner": true,
+        "lambda_floor_step": 400000,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "test_interval": 10000,
+        "test_nepisode": 32
+      },
+      "jobs": [
+        {
+          "job_id": 980258,
+          "arm": "rsvp",
+          "seed": 0,
+          "dependency": null
+        },
+        {
+          "job_id": 980259,
+          "arm": "fixed200",
+          "seed": 0,
+          "dependency": "afterok:980258"
+        },
+        {
+          "job_id": 980260,
+          "arm": "fixed50",
+          "seed": 0,
+          "dependency": "afterok:980259"
+        },
+        {
+          "job_id": 980261,
+          "arm": "rsvp",
+          "seed": 1,
+          "dependency": null,
+          "priority_note": "dependency released 2026-09-13 23:45 KST so both RSVP seeds run before fixed controls"
+        },
+        {
+          "job_id": 980262,
+          "arm": "fixed200",
+          "seed": 1,
+          "dependency": "afterok:980261"
+        },
+        {
+          "job_id": 980263,
+          "arm": "fixed50",
+          "seed": 1,
+          "dependency": "afterok:980262"
+        }
+      ],
+      "interpretation": "RSVP-vs-fixed200 isolates scheduling under the same soft+shaping channel. Fixed50 is the frequent-update reference. Existing win-only QMIX seeds0-3 are the no-guidance reference.",
+      "execution_order": "RSVP seeds0/1 first; paired fixed200 after each RSVP; fixed50 last."
+    }
+  }
+]

@@ -29,6 +29,7 @@ class ValueCritic:
         self.head_var = np.zeros(n_heads)
         self.loss_ema = None
 
+    # 완료 에피소드의 predicate 할인 접미합을 계산해 최근 학습 버퍼에 추가한다.
     def add_episode(self, X, F):
         """X: list of feature vectors; F: list of per-head predicate values."""
         F = np.asarray(F, dtype=np.float32)
@@ -48,6 +49,7 @@ class ValueCritic:
         self.sd = torch.tensor(allY.std(0)).clamp(min=1e-3)
         self.head_var = allY.var(0)
 
+    # head별로 정규화한 타깃을 미니배치 MSE로 학습한다.
     def train(self, iters=100, batch=1024):
         if not self.X:
             return None
@@ -64,11 +66,13 @@ class ValueCritic:
         self.loss_ema = v if self.loss_ema is None else 0.9 * self.loss_ema + 0.1 * v
         return v
 
+    # 상태 특징에서 head별 잔여 가치를 예측하고 원래 타깃 단위로 복원한다.
     def predict(self, x):
         with torch.no_grad():
             out = self.net(torch.tensor(x, dtype=torch.float32,
                                         device=self.device).unsqueeze(0))[0].cpu()
         return (out * self.sd + self.mu).numpy()
 
+    # 타깃 분산이 임계값보다 큰지 확인한다. 예측 정확도 보장은 아니다.
     def trusted(self, head, min_var=1e-4):
         return self.head_var[head] > min_var

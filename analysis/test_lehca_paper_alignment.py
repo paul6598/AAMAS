@@ -51,6 +51,53 @@ class PaperAlignmentTests(unittest.TestCase):
         self.assertIsNotNone(clean)
         self.assertEqual(clean["action_rules"][0]["forbid"], [])
 
+    def test_sanitizer_deduplicates_semantically_identical_subgoals(self):
+        raw = {
+            "strategy": "focus fire",
+            "subgoals": [
+                {"predicate": "enemy_kill", "weight": 0.4},
+                {"predicate": "enemy_kill", "weight": 0.9},
+                {"predicate": "kill_type", "unit_type": " Stalker ",
+                 "weight": 0.6},
+                {"predicate": "kill_type", "unit_type": "stalker",
+                 "weight": 0.8},
+                {"predicate": "enemy_damage", "weight": 0.7},
+            ],
+            "action_rules": [],
+        }
+        clean = commander_base.sanitize_guidance(raw)
+        self.assertEqual(clean["subgoals"], [
+            {"predicate": "enemy_kill", "weight": 0.9},
+            {"predicate": "kill_type", "unit_type": "Stalker",
+             "weight": 0.8},
+            {"predicate": "enemy_damage", "weight": 0.7},
+        ])
+
+    def test_duplicate_subgoals_do_not_consume_unique_goal_limit(self):
+        repeated = [{"predicate": "enemy_kill", "weight": 0.5}] * 6
+        raw = {
+            "strategy": "retain later unique goal",
+            "subgoals": repeated + [
+                {"predicate": "enemy_damage", "weight": 0.7}],
+            "action_rules": [],
+        }
+        clean = commander_base.sanitize_guidance(raw)
+        self.assertEqual([x["predicate"] for x in clean["subgoals"]],
+                         ["enemy_kill", "enemy_damage"])
+
+    def test_sanitizer_can_replay_legacy_duplicate_semantics(self):
+        raw = {
+            "strategy": "legacy control",
+            "subgoals": [
+                {"predicate": "enemy_kill", "weight": 0.4},
+                {"predicate": "enemy_kill", "weight": 0.9},
+            ],
+            "action_rules": [],
+        }
+        clean = commander_base.sanitize_guidance(
+            raw, deduplicate_subgoals=False)
+        self.assertEqual(len(clean["subgoals"]), 2)
+
     def test_compiler_cannot_erase_entire_tactical_category(self):
         class Iface:
             @staticmethod

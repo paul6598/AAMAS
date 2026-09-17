@@ -119,6 +119,7 @@ class LehcaRunner:
         self.env.reset()
         self.t = 0
 
+    # 평가 여부와 셰이핑 종료 시점으로 보조 보상 사용 여부를 판단한다.
     def _shaping_active(self, test_mode=False):
         if test_mode or not getattr(self, "use_shaping", True):
             return False
@@ -138,6 +139,7 @@ class LehcaRunner:
             return masking and getattr(self, "mask_at_test", True)
         return masking or self._shaping_active(test_mode)
 
+    # 고정 갱신 주기에 맞춰 지침을 요청하며 평가용 상태는 학습 상태와 분리한다.
     def _maybe_refresh_commander(self, snap, test_mode):
         if not self._guidance_needed(test_mode):
             return
@@ -190,6 +192,7 @@ class LehcaRunner:
                 "guidance": guidance}) + "\n")
             self._guidance_log.flush()
 
+    # 학습·평가 모드에 맞는 지침을 선택한다.
     def _guidance_for_rollout(self, test_mode):
         if not test_mode:
             return self.state.guidance
@@ -199,6 +202,7 @@ class LehcaRunner:
             return self.state.guidance
         return None
 
+    # 환경 전이를 수집하고 지침의 셰이핑과 행동 제약을 적용해 배치를 만든다.
     def run(self, test_mode=False):
         if test_mode and not self._test_active:
             self._test_active = True

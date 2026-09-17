@@ -20,6 +20,7 @@ from algorithm.rsvp.shaping.grf import (ALL_PREDICATES as GRF_PREDICATES,
 from algorithm.rsvp.shaping import pursuit as pu
 
 
+# 환경과 병종 구성에 맞는 고정 predicate head 목록을 만든다.
 def build_library(env_name, snap):
     if env_name == "gfootball":
         return [(p, None) for p in GRF_PREDICATES]
@@ -35,6 +36,7 @@ def build_library(env_name, snap):
     return lib
 
 
+# 서브골의 predicate와 병종을 라이브러리 head 인덱스에 대응시킨다.
 def head_index(lib, sg):
     key = (sg.get("predicate"), sg.get("unit_type"))
     try:
@@ -43,6 +45,7 @@ def head_index(lib, sg):
         return None
 
 
+# 같은 환경 전이에서 전체 head의 실제 predicate 신호를 계산한다.
 def f_vector(env_name, lib, pre, post, actions):
     if env_name == "gfootball":
         return np.array([grf_pred(p, pre, post, actions) for p, _ in lib], dtype=np.float32)
@@ -52,6 +55,7 @@ def f_vector(env_name, lib, pre, post, actions):
     return np.array([sc2_pred(p, t, pre, post, actions or []) for p, t in lib], dtype=np.float32)
 
 
+# 환경에 맞는 셰이핑 함수를 호출한다.
 def shaping(env_name, subgoals, pre, post, actions, clip=3.0):
     if env_name == "gfootball":
         return grf_shaping(subgoals, pre, post, actions, clip)
@@ -129,6 +133,7 @@ class FeatureExtractor:
             self.ally_types = sorted({u["type"] for u in snap["allies"]})
             self.enemy_types = sorted({u["type"] for u in snap["enemies"]})
 
+    # 환경 상태를 critic 입력용 고정 길이 수치 특징으로 변환한다.
     def __call__(self, snap):
         if self.env_name == "gfootball":
             return _grf_features(snap)

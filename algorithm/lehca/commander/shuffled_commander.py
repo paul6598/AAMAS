@@ -21,7 +21,9 @@ class ShuffledCommander(Commander):
         with open(path) as f:
             for line in f:
                 row = json.loads(line)
-                guidance = sanitize_guidance(row.get("guidance"))
+                guidance = sanitize_guidance(
+                    row.get("guidance"),
+                    getattr(args, "deduplicate_subgoals", True))
                 if guidance is not None:
                     items.append(guidance)
         if not items:

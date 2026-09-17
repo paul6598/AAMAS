@@ -1,0 +1,110 @@
+% !TeX root = main.tex
+\section{Method: RSVP}
+
+\subsection{Predicate-Wise Residual Shaping Value}
+
+RSVP는 기본 MARL 학습기의 가치 함수와 별도로 보조 예측기 하나를 둔다. 먼저
+$x_t=\psi(s_t)$를 갱신 판단에 필요한 과업 상태의 저차원 수치 요약이라 하자.
+$x_t$는 LLM 입력용 텍스트 $d_t$와 구별되며, 현재 지침의 문장이나 가중치를 포함하지
+않는다. 이 수치 요약을 입력받아 $M$개 predicate의 값을 함께 예측하는 회귀 모델을
+이하 \emph{monitoring critic}이라 부른다. 여기서 critic은 저수준 행동을 선택하는
+action-value critic이 아니라 갱신 판단만을 위한 예측기이다. 각 출력 성분을 predicate
+$j$의 head라 부른다.
+
+head $j$가 예측하는 residual shaping value는 시점 $t$부터 episode가 끝날 때까지
+predicate $j$가 얼마나 더 발생할지를 나타내는 할인 누적량이다. 완료된 episode에서
+종료 직후의 인덱스를 $T$라 하면 학습 타깃은
+
+\begin{equation}
+Y_{j,t}=\sum_{\ell=t}^{T-1}\gamma_F^{\ell-t}f_{j,\ell}
+=f_{j,t}+\gamma_FY_{j,t+1},\qquad Y_{j,T}=0
+\label{eq:critic-target}
+\end{equation}
+
+이다. $\gamma_F\in[0,1)$는 모니터가 바라보는 시간 범위를 정하며, 환경 보상의
+할인율과 별도로 설정할 수 있다. monitoring critic의 $j$번째 출력
+$\widehat V_j(x_t)$은 $Y_{j,t}$를 회귀한다. 활성 집합 $\mathcal I_r$ 가운데 타깃
+분산이 충분해 학습 가능하다고 판단된 head의 집합을 $\mathcal H_r$라 하면, 현재
+지침과 관련된 예측값은
+
+\begin{equation}
+\widehat V_F(x;G_r)=
+\sum_{j\in\mathcal H_r}w_{r,j}\widehat V_j(x)
+\label{eq:guidance-value}
+\end{equation}
+
+로 합성한다. 이 값은 식~\eqref{eq:shaping}의 clip이나 식~\eqref{eq:reward}의
+$\lambda_t$를 적용하기 전의 가중 합이다. predicate별로 출력을 분리했기 때문에 같은
+monitoring critic을 서로 다른 지침에 재사용할 수 있다. 이 논문에서 \emph{residual}은
+현재 시점 뒤에 남은 누적량이라는 뜻이며 TD residual을 뜻하지 않는다. 또한
+$\widehat V_F$는 외부 return이나 지침을 유지했을 때의 반사실적 이득이 아니다. 현재
+정책 아래에서 지침에 대응하는 측정 신호가 더 발생할 가능성을 근사한다.
+
+\subsection{Issuance Guard and Cumulative Degradation Detection}
+
+새 지침이 발급된 시점 $r$의 수치 특징을 $x_r$라 하자. 온라인 초기의 임의 예측이나
+거의 항상 0인 predicate로 갱신이 발생하는 것을 막기 위해 발급 안전장치(issuance
+guard)를 둔다. 구체적으로, 모니터 학습 버퍼에서 $Y_j$의 경험적 분산이 최소값보다
+큰 head만 학습 가능하다고 간주한다. 활성 가중치 중 이러한 head에 연결된 비율
+
+\begin{equation}
+q_r=\frac{\sum_{j\in\mathcal H_r}w_{r,j}}
+{\sum_{(j,w_{r,j})\in\mathcal I_r}w_{r,j}}
+\label{eq:coverage}
+\end{equation}
+
+을 \emph{coverage}라 한다. 또한 버퍼에서 타깃 $Y_j$의 경험적 평균을 $\mu_j$라 하고,
+지침의 기준 크기를
+
+\begin{equation}
+b_r=\sum_{j\in\mathcal H_r}w_{r,j}\max(\mu_j,0)
+\label{eq:issuance-base}
+\end{equation}
+
+로 계산한다. 수집한 episode 수가 $n_{\min}$ 이상이고, $q_r\ge q_{\min}$이며,
+$b_r\ge b_{\min}$이고, 발급 시 예측값이
+$\widehat V_F(x_r;G_r)\ge\epsilon_I b_r$일 때만 조기 검출기를 활성화한다. 이 조건을
+통과하지 못하면 해당 지침에는 최대 갱신 간격만 적용한다.
+
+활성 구간에서는 현재 critic 파라미터로 현재 상태와 발급 상태를 함께 재평가하여
+
+\begin{equation}
+v_t=\min\!\left(1,
+\frac{\max(0,\widehat V_F(x_t;G_r))}
+{\max(\widehat V_F(x_r;G_r),\epsilon)}
+\right)
+\label{eq:ratio}
+\end{equation}
+
+를 계산한다. 분모도 발급 당시의 오래된 파라미터로 고정하지 않고, 매 스텝 현재
+monitoring critic으로 저장된 $x_r$를 다시 평가한다. 이는 학습 중 모델 파라미터가
+변한 효과가 비율에 직접 섞이는 것을 줄인다. $\epsilon>0$은 0에 가까운 분모를 막는
+상수이다. 정상적으로 남아 있다고 간주하는 비율을 $\kappa$, 검출 임계값을 $h$라 하고
+단측 누적합 통계량~\cite{page1954cusum}
+
+\begin{equation}
+S_t=\max(0,S_{t-1}+\kappa-v_t)
+\label{eq:cusum}
+\end{equation}
+
+을 갱신한다. $v_t<\kappa$인 상태가 이어지면 $S_t$가 증가한다. 최소 보유 간격을
+지난 뒤 $S_t\ge h$가 되면 Commander를 조기
+호출한다. 호출에 성공하면 새 지침과 기준 상태를 저장하고 $S_t$를 초기화한다.
+마지막 성공 호출 후 $F_{\max}$스텝이 지나면 검출 여부와 관계없이 강제 호출을
+시도한다. 따라서 $F_{\max}$는 정상 호출 조건에서 지침 보유 시간의 상한이며,
+$h$와 $\kappa$는 조기 호출의 민감도를 조절한다.
+
+CUSUM은 단일 스텝의 희소하고 변동성 큰 predicate 값에 반응하는 대신, 예측된 감소가
+지속될 때 증거를 누적하기 위해 사용한다. 그러나 식~\eqref{eq:cusum}은 알려진 두
+확률분포의 로그 우도비로 유도된 것이 아니다. 비정상적인 학습 과정에서 사용하는
+경험적 변화 감지 규칙이므로 고전적 CUSUM의 최적성을 주장하지 않는다.
+
+\subsection{Training and Computational Flow}
+
+각 환경 스텝에서 RSVP는 (1) $x_t$를 계산하고, (2) 조기 또는 강제 갱신 여부를
+판단하고, (3) 모든 접지 함수의 출력과 $F_t$를 계산하며, (4) 전이를 기본 MARL
+학습기의 재현 버퍼에 저장한다. Episode가 끝나면 식~\eqref{eq:critic-target}의 타깃을
+별도의 모니터 학습 버퍼에 추가하고 monitoring critic을 학습한다. Commander 호출
+사이에는 기존 지침을 재사용한다. 감시에는 접지 과정에서 이미 계산 가능한 신호를
+이용하므로 별도의 LLM 판정 호출이 필요하지 않지만, monitoring critic의 추론과
+학습에 따른 추가 계산은 발생한다.

@@ -16,6 +16,35 @@ from algorithm.src.components.episode_buffer import ReplayBuffer
 from algorithm.src.components.transforms import OneHot
 
 
+def _wandb_metadata(args):
+    """Return project, group, and run name with group kept seed-invariant."""
+    wandb_run = getattr(args, "wandb_run", "")
+    if not wandb_run:
+        return (
+            args.wandb_project,
+            args.wandb_group,
+            "{}_{}_seed{}".format(
+                args.name, args.env_args.get("map_name", args.env), args.seed),
+        )
+
+    if args.env == "sc2":
+        auto_proj = "AAMAS_SMAC_%s" % args.env_args.get("map_name", "unknown")
+    elif args.env == "gfootball":
+        scen = str(args.env_args.get("scenario", "unknown")).replace("_vs_", "v").replace("_", "")
+        auto_proj = "AAMAS_GRF_%s" % scen
+    else:
+        auto_proj = "AAMAS_%s" % args.env
+    project = args.wandb_project if args.wandb_project not in ("", "AAMAS-LEHCA") else auto_proj
+
+    explicit_group = getattr(args, "wandb_group", "")
+    if explicit_group and explicit_group != "default":
+        return project, explicit_group, wandb_run
+    # Backward-compatible shorthand: wandb_run names the condition and the
+    # concrete seed suffix is generated here.
+    return project, wandb_run, "%s_seed%s" % (wandb_run, args.seed)
+
+
+# 설정과 로거를 구성하고 학습 또는 평가 실행을 시작한다.
 def run(_run, _config, _log):
 
     # check args sanity
@@ -51,25 +80,7 @@ def run(_run, _config, _log):
     logger.setup_sacred(_run)
 
     if getattr(args, "use_wandb", False):
-        wandb_run = getattr(args, "wandb_run", "")
-        if wandb_run:
-            # convention (2026-09-02): project AAMAS_<ENV>_<MAP>, group = algo(_detail),
-            # run = <group>_seed<k>; explicit wandb_project still wins if customised.
-            if args.env == "sc2":
-                auto_proj = "AAMAS_SMAC_%s" % args.env_args.get("map_name", "unknown")
-            elif args.env == "gfootball":
-                scen = str(args.env_args.get("scenario", "unknown")).replace("_vs_", "v").replace("_", "")
-                auto_proj = "AAMAS_GRF_%s" % scen
-            else:
-                auto_proj = "AAMAS_%s" % args.env
-            project = args.wandb_project if args.wandb_project not in ("", "AAMAS-LEHCA") else auto_proj
-            group = wandb_run
-            run_name = "%s_seed%s" % (wandb_run, args.seed)
-        else:
-            project = args.wandb_project
-            group = args.wandb_group
-            run_name = "{}_{}_seed{}".format(
-                args.name, args.env_args.get("map_name", args.env), args.seed)
+        project, group, run_name = _wandb_metadata(args)
         logger.setup_wandb(_config, project, args.wandb_entity, group, run_name)
 
     # Run and train
@@ -95,6 +106,7 @@ def run(_run, _config, _log):
     os._exit(os.EX_OK)
 
 
+# 저장된 정책을 지정한 평가 에피소드 수만큼 실행한다.
 def evaluate_sequential(args, runner):
 
     for _ in range(args.test_nepisode):
@@ -105,6 +117,7 @@ def evaluate_sequential(args, runner):
 
     runner.close_env()
 
+# 에피소드 수집, 리플레이 학습, 주기 평가와 모델 저장을 순서대로 수행한다.
 def run_sequential(args, logger):
 
     # Init runner so we can get env info

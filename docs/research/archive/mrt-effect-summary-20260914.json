@@ -1,0 +1,110 @@
+{
+  "created_at": "2026-09-14T11:17:23.919155+09:00",
+  "estimand": "mean raw environment return over five post-decision training episodes; decision episode excluded",
+  "ci": "stratified nonparametric bootstrap within trial kind and randomized arm, 50,000 draws, seed 20260914",
+  "randomization_p": "one-sided sharp-null permutation test for positive refresh effect within trigger blocks, 50,000 draws",
+  "runs": [
+    {
+      "seed": 0,
+      "source_file": "rsvp__2026-09-14_00-16-34__p1278992_rsvp_refresh_mrt_20260913_v1_pilot_trial_shape_F200_H1000000_s0_p1278992.jsonl.gz",
+      "source_partial_at_read": false,
+      "completed_blocks": 100,
+      "candidate_failures": 0,
+      "all": {
+        "n": 100,
+        "apply_n": 46,
+        "hold_n": 54,
+        "apply_return_mean": 8.248987638533674,
+        "hold_return_mean": 8.38627450980392,
+        "apply_minus_hold": -0.13728687127024664,
+        "bootstrap_95_ci": [
+          -0.7330164819551025,
+          0.4704015108458825
+        ]
+      },
+      "trigger": {
+        "n": 50,
+        "apply_n": 19,
+        "hold_n": 31,
+        "apply_return_mean": 8.55797213622291,
+        "hold_return_mean": 8.876897533206831,
+        "apply_minus_hold": -0.3189253969839214,
+        "bootstrap_95_ci": [
+          -0.7328701230067595,
+          0.08882207297180506
+        ]
+      },
+      "control": {
+        "n": 50,
+        "apply_n": 27,
+        "hold_n": 23,
+        "apply_return_mean": 8.03155410312273,
+        "hold_return_mean": 7.724999999999998,
+        "apply_minus_hold": 0.3065541031227319,
+        "bootstrap_95_ci": [
+          -0.8043978126677439,
+          1.4371742287897449
+        ]
+      },
+      "timing_selectivity_gain": {
+        "estimate": -0.6254795001066533,
+        "bootstrap_95_ci": [
+          -1.8199508787395489,
+          0.5621724340885048
+        ]
+      },
+      "trigger_positive_randomization_p": 0.9214215715685686
+    },
+    {
+      "seed": 1,
+      "source_file": "rsvp__2026-09-14_04-45-08__p428106_rsvp_refresh_mrt_20260913_v1_pilot_trial_shape_F200_H1000000_s1_p428106.jsonl.gz",
+      "source_partial_at_read": true,
+      "completed_blocks": 100,
+      "candidate_failures": 0,
+      "all": {
+        "n": 100,
+        "apply_n": 44,
+        "hold_n": 56,
+        "apply_return_mean": 10.495922459893048,
+        "hold_return_mean": 10.486510854341736,
+        "apply_minus_hold": 0.009411605551312263,
+        "bootstrap_95_ci": [
+          -0.6442369135154061,
+          0.6605080412846945
+        ]
+      },
+      "trigger": {
+        "n": 50,
+        "apply_n": 22,
+        "hold_n": 28,
+        "apply_return_mean": 9.254612299465238,
+        "hold_return_mean": 9.290091036414564,
+        "apply_minus_hold": -0.035478736949325906,
+        "bootstrap_95_ci": [
+          -0.3639140883626163,
+          0.29596284536541534
+        ]
+      },
+      "control": {
+        "n": 50,
+        "apply_n": 22,
+        "hold_n": 28,
+        "apply_return_mean": 11.737232620320851,
+        "hold_return_mean": 11.682930672268908,
+        "apply_minus_hold": 0.05430194805194333,
+        "bootstrap_95_ci": [
+          -0.7600184619302262,
+          0.8553740132416627
+        ]
+      },
+      "timing_selectivity_gain": {
+        "estimate": -0.08978068500126923,
+        "bootstrap_95_ci": [
+          -0.9557720190348845,
+          0.7827806690858152
+        ]
+      },
+      "trigger_positive_randomization_p": 0.5778084438311234
+    }
+  ]
+}

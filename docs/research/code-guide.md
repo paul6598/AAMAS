@@ -1,218 +1,176 @@
-# 코드 리딩 가이드 — LEHCA 재현과 RSVP
+# 코드·환경·실행 안내
 
-2026-09-02 (구조 개편 반영). 두 코드베이스를 처음 읽는 순서와, 각 파일이 무엇을 하고
-서로 어떻게 연결되는지 정리. 세션 규칙: `algorithm/lehca/`는 베이스라인 세션 소유
-(우리는 import만), `algorithm/rsvp/`가 연구 코드.
+2026-09-17 인계용 정리. 연구는 보류됐고 실행·예약 중인 작업은 없다.
+일반 실행기는 API 서버나 Slurm 작업을 자동으로 시작하지 않는다.
 
----
+## 환경과 의존성
 
-## 0. 한눈에
-
-```
-                    ┌── LEHCA (베이스라인, 무수정) ──────────────────────────┐
-env ─ snapshot ──→  │ semantic iface → d_t 요약 → LLM Commander → guidance   │
-                    │ guidance ─┬→ shaping F_t (predicates) → r + λF → QMIX │
-                    │           └→ masks (compiler) → Q̃ = Q + β·logW        │
-                    │ 갱신: 매 f_update 스텝 (고정)                          │
-                    └────────────────────────────────────────────────────────┘
-RSVP이 바꾸는 것: **갱신 시점 하나** (+ GRF 환경 지원). 나머지는 LEHCA 부품을 그대로
-소비한다. 갱신 결정 = 잔여가치 크리틱 V_F(s;G)의 발급 대비 비율에 단측 CUSUM.
-```
-
----
-
-**9/2~9/3 러너·학습기 변경 요약** (파일 주석에도 있음):
-① v_t 분모 재평가 — 발급 상태 x_ref 저장, 분자·분모를 매 스텝 현재 크리틱으로
-(estimator drift 상쇄). ② h 컨트롤러: 무장 에피소드만 적응 증거, 바닥 2.0.
-③ `sched_fallback_per_ep` 로깅(F_max 만기 vs CUSUM 조기 분해). ④ phase 로거
-(results/phase/*.jsonl — cache_key 변화 시각 = ν 라벨). ⑤ λ 지평 비례 스케줄
-(state.set_lambda_progress, `lambda_floor_frac`; 0=레거시).
-
-## 1. 저장소 지도
-
-```
-config/algs/lehca.yaml        LEHCA 하이퍼 (논문 Table 2)
-config/algs/rsvp.yaml        우리 설정 (셰이핑만, 스케줄러 키 포함)
-config/envs/sc2.yaml          SMAC 환경 인자
-config/envs/gfootball.yaml    GRF 환경 인자 (우리 추가)
-
-env/__init__.py               env REGISTRY: sc2, gfootball, pursuit (SMAC은 선택적)
-env/gfootball.py              GRF pymarl 래퍼 (좌팀 4명, 19행동, 팀 보상)   [우리]
-env/pettingzoo_pursuit.py     PettingZoo Pursuit 래퍼 (8추격자, 5행동)      [우리, 9/3]
-env/semantic/sc2.py           SMAC snapshot/d_t/cache_key/토큰 접지        [LEHCA]
-env/semantic/grf.py           GRF   〃  + tick(스텝 시계; snapshot은 무부수효과) [우리]
-
-algorithm/lehca/
-  runner.py                   에피소드 루프 + 고정주기 갱신 + 셰이핑 합성
-  commander/base.py           guidance 스키마·sanitize·어휘 상수
-  commander/llm_commander.py  vLLM 호출·프롬프트 3종·캐시·통계
-  commander/rule_commander.py 고정 규칙 커맨더 (ablation용)
-  shaping/predicates.py       SMAC predicate 8종 + compute_shaping (Eq.1)
-  masking/compiler.py         규칙 → hard/soft 마스크 (Eq.7, 매 스텝 재접지)
-  controller.py               LehcaMAC: Q̃ = Q + β·log W (Eq.5-6) + 마스크 통계
-  learner.py                  QMIX 학습 + λ 감쇠 (+ shaping_in_learner 경로)
-  state.py                    guidance/λ 전역 상태
-
-algorithm/rsvp/                (lehca와 같은 배치; 런타임 5개 + analysis/)
-  runner.py                   ★ 본체 RSVPRunner: LehcaRunner 적응 복사 + vf 스케줄러
-  critic.py                   ★ 멀티헤드 잔여가치 V_j(s) + 온라인 학습
-  predlib.py                  ★ 환경 디스패치(SMAC/GRF): 헤드·f-벡터·특징·셰이핑
-  commander/grf.py            GRF 프롬프트·sanitize (LLMCommander 전송 상속)
-  shaping/grf.py              GRF predicate 9종 (+ applicable: 재생 분석용)
-  analysis/                   런타임 아님 — 오프라인 도구 격리 (REPO 경로 4단계)
-    probe_phase.py, probe_grf.py   봇 궤적 + LLM shadow 프로브 → jsonl
-    effect.py                      가이던스 쌍의 효과 공간 거리
-    analyze_probe.py               낡음·이벤트 정렬·재생표
-    analyze_guidance_quality.py    신선 가이던스의 국면 적합성
-    vf_replay.py                   크리틱 LOO 검증 + vf 트리거 재생
-```
-
-runner가 서브클래스가 아니라 복사인 이유: lehca `run()`이 셰이핑을 self 경유가 아닌
-모듈 전역 호출로 하기 때문(동결 규칙상 seam 불가). 베이스라인 세션에 동작 불변 seam
-2개(self 경유 셰이핑 호출, 스텝 훅) 패치를 제안하면 ~80줄 서브클래스로 축소 가능 —
-전달 예정. 등록: `algorithm/rsvp/__init__.py`가 RUNNER_REGISTRY["rsvp"]에 RSVPRunner를
-올리고, `algorithm/__init__.py`가 RSVP를 import한다.
-
----
-
-## 2. LEHCA 읽는 순서 (베이스라인 이해)
-
-1. **config/algs/lehca.yaml** — 키 이름이 곧 기능 목록. f_update/beta/lambda_*/prompt_style.
-2. **algorithm/lehca/runner.py** — 전부 여기서 시작.
-   - `run()`: 스텝 루프. `snapshot → _maybe_refresh_commander → build_masks →
-     select_actions → env.step → compute_shaping → batch에 (r+λF, shaping_f) 저장`.
-   - `_maybe_refresh_commander()`: `t_global − last_refresh ≥ f_update`면 d_t 요약을
-     만들어 커맨더 호출. **우리 연구가 바꾸는 지점이 이 함수 하나.**
-   - 테스트 에피소드: 갱신 없음·셰이핑 없음(주석 참고) — "훈련 시 주장"의 근거.
-3. **commander/base.py** — guidance JSON 스키마, sanitize(어휘 밖 토큰 제거), 어휘 상수.
-4. **commander/llm_commander.py** — 프롬프트 3종(default/paper/twostage), 캐시(cache_key),
-   reasoning_effort 처리, 실패 시 이전 guidance 유지.
-5. **shaping/predicates.py** — f_j 정의 8종. `compute_shaping` = Σ w_j f_j (클립).
-6. **masking/compiler.py** + **controller.py** — 규칙→마스크(매 스텝 재접지), Q 틸트.
-   RSVP는 β=0이라 소비하지 않지만 효과 거리(analysis/effect.py)가 이 컴파일러를 씀.
-7. **learner.py** — λ 감쇠 위치(업데이트마다), shaping_in_learner(리플레이 시점 재합성;
-   RSVP 기본 True — replay buffer의 오래된 lambda 고착 방지).
-8. **env/semantic/sc2.py** — snapshot(유닛 dict), summary(d_t 문장), cache_key(거친 키),
-   resolve_action_token(토큰→행동 인덱스). LLM이 보고 접지되는 모든 것.
-
----
-
-## 3. RSVP 읽는 순서 (우리 코드)
-
-1. **config/algs/rsvp.yaml** — lehca.yaml과의 diff만 보면 됨:
-   `use_action_masking False, beta 0, llm_temperature 0, shaping_in_learner True`
-   + 스케줄러 블록.
-
-   | 키 | 의미 |
-   |---|---|
-   | scheduler | fixed(=LEHCA 재현) / vf(잔여가치 CUSUM) |
-   | f_update | fixed의 주기이자 vf의 **상한 주기**(이보다 늦게 갱신하지 않음) |
-   | sched_k, sched_h | CUSUM 손잡이: 발급 가치의 k 미만이 저하, 누적 h에서 발화 |
-   | sched_min_interval | 연속 발화 방지 최소 간격 |
-   | sched_gamma | 크리틱 지평 (0.8 ≈ 5스텝; 0.97은 실패 — experiments-log §7) |
-   | sched_eps_frac | 발급 가치 < frac × 버퍼 평균 가이던스 가치 → 판단 불가(상한 주기만; 스케일 무관) |
-   | sched_warmup_episodes | 크리틱 워밍업 동안 fixed로 동작 |
-   | sched_trusted_weight_min | 신뢰 헤드의 가중 비중이 이보다 작으면 판단 불가 |
-   | sched_target_early_per_ep | >0이면 h를 피드백 조절해 조기 갱신/ep를 이 값에 맞춤(예산 보정 자동화) |
-   | sched_fail_retry | LLM 호출 실패 시 이 스텝 뒤 재시도(주기·CUSUM 상태는 보존) |
-
-2. **predlib.py** — 환경 추상화가 전부 여기.
-   - `build_library`: 헤드 목록. GRF=9 고정, SMAC=단순 5 + (kill/damage×적 타입) + (protect×아군 타입).
-   - `f_vector`: 한 스텝의 predicate 값 벡터(크리틱 타깃 재료).
-   - `FeatureExtractor`: 크리틱 입력 x(s). GRF 14차원(필드 인원으로 정규화), SMAC은
-     타입별 (생존비, hp비)+거리+교전.
-   - `shaping`: 환경별 compute_shaping 디스패치 (러너의 보상 합성이 이걸 씀).
-3. **critic.py** — `add_episode`(할인 접미합 타깃 생성 + 링버퍼), `train`(표준화 MSE),
-   `predict`, `trusted`(타깃 분산이 0에 가까운 헤드 = 신호 없음).
-4. **runner.py** — LehcaRunner의 **적응 복사**. diff 포인트만 읽으면 됨:
-
-   | 위치 | LEHCA | RSVP |
-   |---|---|---|
-   | 커맨더 생성 | make_commander | env=gfootball이면 commander/grf의 GRFLLMCommander |
-   | 갱신 판정 | 경과 ≥ f_update | `_maybe_refresh`: 상한 주기 ∨ (vf: S≥h ∧ 최소간격) |
-   | 실패 처리 | 다음 f_update까지 대기 | last_refresh·CUSUM 보존, sched_fail_retry 뒤 재시도 |
-   | vf 상태 | — | `_v_ref/_ref_heads`(발급 시 고정), `_S`, `_guidance_heads`(신뢰 필터) |
-   | 스텝 부가 | — | x_pre·f_vector 에피소드 누적 → 끝나면 critic.add+train; `iface.tick(snap_post)` 1회 |
-   | 셰이핑 | lehca compute_shaping | predlib.shaping (환경 디스패치) |
-   | 로깅 | 마스크 통계 | sched_refresh_per_ep/early_per_ep/v_mean, sched_ref_*(사유), critic_loss, sched_h_current |
-
-   결정 의사코드:
-   ```
-   due = (첫 호출) or (경과 ≥ f_update)                # 상한: LEHCA로의 지배
-   if not due and scheduler==vf and 워밍업 지남 and v_ref 유효:
-       v = clip( V_F(x_t; 발급시 헤드집합) / v_ref, 0, 1 )
-       S = max(0, S + k − v)
-       due |= (S ≥ h and 경과 ≥ min_interval)          # 조기 갱신
-   if due and 재시도 대기 아님:
-       g = 커맨더 호출
-       if g is None: retry_after = now + sched_fail_retry; return   # 상태 보존
-       guidance = g; S = 0
-       v_ref = V_F(x_t; 새 guidance의 신뢰 헤드)                    # 발급 가치 고정
-       (신뢰 비중 < wmin, 또는 v_ref < eps_frac×버퍼평균 → v_ref=None = 판단 불가,
-        상한 주기로만 동작; 사유는 sched_ref_{warmup,no_heads,low_vref,ok}에 집계)
-   ```
-5. **GRF 경로**: env/gfootball.py(래퍼) → env/semantic/grf.py(d_t·접지·tick) →
-   commander/grf.py(프롬프트·sanitize) → shaping/grf.py(predicate 9종; keep_possession은
-   이벤트 스케일 — 턴오버 −1, 유지 +0.1, 패스 비행 0). 각 파일 머리 주석에 좌표계·
-   행동 인덱스 등 규약 명시.
-
----
-
-## 4. 프로브·분석 스크립트 (학습 없는 실험층)
-
-(모두 `algorithm/rsvp/analysis/`; repo 루트 기준 실행, 학습 코드와 의존 격리)
-
-| 스크립트 | 만든다 | 읽는다 |
-|---|---|---|
-| probe_phase.py / probe_grf.py | 봇 궤적 + 10스텝마다 LLM shadow 2회 → results/vigil/*.jsonl | — |
-| analyze_probe.py | 노이즈/낡음/이벤트 정렬/**재생표**(고정F·이벤트·적용가능성·gp·keych) | 프로브 jsonl |
-| analyze_guidance_quality.py | 신선 가이던스의 국면 적합성 표 | 〃 |
-| vf_replay.py | 크리틱 LOO R² + vf 트리거 재생 | 〃 |
-
-재생표의 정의(열 계산·트리거 정의)는 experiments-log.md §3이 단일 출처.
-**주의**: keep_possession 의미 변경(9/2) 이전에 뽑은 프로브 jsonl 기반의 (k,h) 캘리브레이션·
-critic R²는 구 의미론 — 새 결정에 쓰려면 vf_replay를 재실행할 것.
-
----
-
-## 5. 실행 명령
+실제 SMAC 본실험은 Python3.10.20, torch2.5.1+cu121, numpy2.2.6, sacred0.8.7,
+SC2 4.10과 SMAC commit `d6aab33f76abc3849c50463a8592a84f59a5ef84`을 사용했다.
+핵심 Python 의존성은 [requirements.txt](../../requirements.txt)에 기록했다. PyPI의
+동명이인 `smac` 패키지를 설치하지 않도록 MARL 환경의 Git commit을 지정했다.
+새 장비의 전체 설치는 이번 정리에서 실행하지 않았으므로 CUDA wheel, SC2 실행 파일,
+SMAC 맵과 라이브러리 경로는 장비에 맞게 준비한다.
 
 ```bash
-# SMAC (aamas env)
-conda activate aamas; export SC2PATH=~/StarCraftII
-python main.py --config=rsvp --env-config=sc2 with env_args.map_name=2s3z \
-    scheduler=vf llm_api_base=http://<node>:8356/v1 use_wandb=True wandb_group=<GN> seed=0
-# scheduler=fixed 로 두면 셰이핑-only LEHCA 재현(비교군)
-
-# GRF (aamas 가능 — GPU 학습용; grf env는 CPU 프로브용)
-conda activate aamas; export LD_LIBRARY_PATH=$CONDA_PREFIX/lib
-python main.py --config=rsvp --env-config=gfootball with scheduler=vf ...
-
-# 배치: scripts/run_rsvp_sc2.sh <MAP> <SCHED>, scripts/run_rsvp_grf.sh <SCHED>
-
-# 프로브/재생 (grf env)
-python algorithm/rsvp/analysis/probe_grf.py --episodes 10 --api http://<node>:8356/v1
-python algorithm/rsvp/analysis/analyze_probe.py results/vigil/probe_grf_*.jsonl
-python algorithm/rsvp/analysis/vf_replay.py results/vigil/probe_grf_*.jsonl
+conda create -n aamas python=3.10
+conda activate aamas
+pip install -r requirements.txt
+export SC2PATH=/path/to/StarCraftII
 ```
 
-## 6. 알려진 미완·주의 (2026-09-02 갱신)
-- **gfootball은 aamas에도 설치됨**(9/2 15:58, --freeze-installed로 기존 패키지 무변경,
-  numpy 2.2.6 유지, torch cu121·smac 정상, GRF env 생성·스텝 검증). GRF 실행 시
-  `export LD_LIBRARY_PATH=$CONDA_PREFIX/lib` 필수(엔진 .so의 GLIBCXX). 설치 로그
-  results/vigil/aamas_gfootball_install.log, 사전 백업 aamas_pkgs_backup_20260902.txt.
-- grf env(CPU)는 프로브·재생 전용으로 유지.
-- **GRF 리플레이 버퍼 선할당**: buffer_size 5000 × (episode_limit+1) ≈ 16GB RAM.
-  t_max 500k면 에피소드 ~500개라 실사용 ~10% — GRF 런은 buffer_size 500–1000 권장
-  (오버라이드로; yaml 기본은 SMAC 겸용이라 미변경).
-- SMAC 스모크는 2s3z로 플러밍만 검증 — 방법 효과 검증은 이질 맵(MMM2)·GRF에서.
-- vf의 오프라인 성적: 고정 F는 이김, 이벤트류엔 미달 (experiments-log §7). 즉시 임계
-  변형·분모 처리 개선이 열린 항목. 오프라인(vf_replay: γ=0.97, 절대 게이트 EPS_DEN)과
-  온라인(runner: γ=0.8, 상대 게이트 eps_frac)의 파라미터가 다름 — 오프라인 (k,h)를
-  온라인에 그대로 이식하지 말 것.
-- 크리틱 신뢰(trusted)는 타깃 분산 기준의 소극적 판정 — 헤드별 검증 R²로 강화 여지.
-- 리뷰(9/2) 보류 항목: controller n_base_actions=6은 lehca 동결 코드(=mask_consistency_w
-  0 유지 조건), _sc2_features는 visible-only 고정(dt_observable=True 운용 전제), GRF
-  `shot` 접지는 x<0.5에서 forbid도 무력화됨, GRF 커맨더의 전송 로직 ~40줄 중복(베이스라인에
-  base 헬퍼 추가 제안 전달 예정), RSVP guidance jsonl에 phase/plan_text 미기록, yaml 기본
-  포트 8355(스크립트가 덮어씀).
+LLM 서버는 별도 환경을 사용했다: Python3.11.15, vLLM0.25.1,
+`openai/gpt-oss-20b`, max model length8192. 서버 환경을 활성화한 GPU job에서
+아래 명령을 실행한다. 기존 클러스터에서는 FlashInfer JIT에 nvcc가 필요해
+`module load cuda/13.1.1`을 사용했다. 실행기는 conda나 cluster module을 강제하지 않는다.
+
+```bash
+conda activate vllm
+bash scripts/serve_llm.sh openai/gpt-oss-20b 8355
+```
+
+GRF/Pursuit는 선택적 환경이며 SMAC-only 설치에서 필수는 아니다. 당시 패키지는
+`gfootball==2.10.2`, `pettingzoo==1.27.0`, `gymnasium==1.3.0`, `pygame==2.6.1`이었다.
+GRF의 native 의존성은 별도로 준비해야 한다. MPE 구현이나 MPE 실험은 포함하지 않는다.
+
+## 실행 흐름과 읽는 순서
+
+```text
+main.py → run.py → runner.run() → episode batch → replay → learner.train()
+                      ├─ semantic summary → Commander → sanitized guidance
+                      ├─ grounded predicate → shaping
+                      └─ 선택적 action masking
+
+RSVP: predicate별 MC suffix target → ValueCritic → issuance gate → CUSUM/Fmax
+```
+
+| 경로·함수 | 역할 |
+|---|---|
+| `main.py`, `run.py:run_sequential` | Sacred 설정, 수집·리플레이 학습·평가·모델 저장 |
+| `algorithm/lehca/runner.py:run` | LEHCA 전이 수집과 보상·행동 지침 통합 |
+| `algorithm/lehca/runner.py:_maybe_refresh_commander` | 고정 F 갱신과 평가용 Commander 분리 |
+| `env/semantic/sc2.py:summary` | 관측 가능한 정보를 LLM용 텍스트로 요약 |
+| `algorithm/lehca/commander/llm_commander.py:__call__` | API 요청, 재시도, JSON 추출·정제 |
+| `algorithm/lehca/commander/base.py:sanitize_guidance` | 어휘·범위 검사, 의미상 동일 subgoal 중복 제거 |
+| `algorithm/lehca/shaping/predicates.py:compute_shaping` | grounded 전이 신호의 가중합과 clipping |
+| `algorithm/lehca/masking/compiler.py:build_masks` | 행동 token을 현재 행동 인덱스에 접지 |
+| `algorithm/lehca/controller.py:select_actions` | hard mask와 Q + β log W soft preference |
+| `algorithm/lehca/learner.py:train` | QMIX/Adam 학습과 lambda 스케줄 |
+| `algorithm/rsvp/predlib.py` | 환경별 head library, predicate 벡터, 특징 추출 |
+| `algorithm/rsvp/critic.py:add_episode` | 완료 episode의 MC 할인 접미합 타깃 생성 |
+| `algorithm/rsvp/critic.py:train`, `predict` | 정규화 MSE 학습과 원 단위의 가치 예측 |
+| `algorithm/rsvp/runner.py:_maybe_refresh` | 가치 비율, issuance gate, CUSUM/timer, 요청 실패 처리 |
+| `algorithm/rsvp/validation.py:ValidationLog` | 현재 episode 학습 전 prediction과 종료 후 target 기록 |
+| `algorithm/rsvp/validation.py:RefreshTrial` | 무작위 immediate/hold block, refresh lockout, 후속 outcome |
+| `env/__init__.py:_WinOnlyRewardEnv` | native sparse의 음의 reward를0으로 바꾸는 opt-in wrapper |
+
+주요 함수에 한국어 역할 주석을 유지했다. `trusted()`는 target variance 검사이며 예측
+정확도 검사가 아니다. `shaping_in_learner=True`는 저장된 scalar F에 현재 lambda를
+곱하는 옵션으로, replay를 최신 guidance로 relabel하는 기능은 아니다.
+
+## 일반 실행
+
+아래 명령은 저장소 root에서 할당된 compute 작업 안에서 실행한다. API는 이미 준비돼
+있어야 한다. `AAMAS_PYTHON`으로 Python executable을 지정할 수 있고,
+`SEEDS`는 일반 실행기의 순차 seed 목록, `EXTRA`는 Sacred override다.
+
+```bash
+SEEDS=0 bash scripts/run_qmix.sh 2s3z False qmix_demo
+SEEDS=0 bash scripts/run_lehca.sh 2s3z False lehca_demo llm http://localhost:8355/v1
+SEEDS=0 bash scripts/run_ablation.sh 2s3z True False False shape_demo http://localhost:8355/v1
+SEEDS=0 bash scripts/run_rsvp_sc2.sh 2s3z vf False rsvp_demo http://localhost:8355/v1
+```
+
+일반 YAML과 demo는 역사적 캠페인의 모든 override를 자동으로 맞추지 않는다. 정확한
+비교를 재실행하려면 다음 배치 명령 또는 Sacred 실제 config를 사용한다.
+
+## 최종 실험 조건의 재실행
+
+E1 공통값: dense 2s3z, epsilon300k, paper prompt/temp.2/cache off,
+shaping-only, learner-time lambda, 절대 floor400k, dedup, Fmax200, test masking off,
+평가10k/32 episodes다. fixed 기본 period는200이고 F136은 명시한다.
+
+```bash
+bash scripts/run_rsvp_validation.sh audit 0 http://localhost:8355/v1 1000000 shape
+FIXED_PERIOD=200 bash scripts/run_rsvp_validation.sh fixed 0 http://localhost:8355/v1 1000000 shape
+FIXED_PERIOD=136 bash scripts/run_rsvp_validation.sh fixed 0 http://localhost:8355/v1 1000000 shape
+bash scripts/run_rsvp_validation.sh gate_timer 0 http://localhost:8355/v1 1000000 shape
+
+# MRT 개입 run: 일반 RSVP 성능 seed와 합산하지 않음
+bash scripts/run_rsvp_validation.sh trial 0 http://localhost:8355/v1 1000000 shape
+
+# win-only 300k: qmix/full LEHCA 또는 training-only soft guidance
+bash scripts/run_winonly_sparse.sh qmix 0
+bash scripts/run_winonly_sparse.sh lehca 0 http://localhost:8355/v1
+bash scripts/run_winonly_sparse.sh rsvp 0 http://localhost:8355/v1
+bash scripts/run_winonly_sparse.sh fixed50 0 http://localhost:8355/v1
+bash scripts/run_winonly_sparse.sh fixed200 0 http://localhost:8355/v1
+```
+
+`USE_WANDB=True`로 계측 배치의 W&B를 켤 수 있다. 계정 entity는 본인이 지정한다.
+`RSVP_EXPERIMENT_TAG`/win-only GROUP으로 새로운 실행 이름을 정할 수 있다.
+동일 명령도 LLM 응답과 학습 stochasticity로 기존 곡선과 완전히 같지는 않을 수 있다.
+full LEHCA와 soft RSVP는 masking/test/보상 합성 경로까지 다르므로 scheduler 단독효과
+비교로 해석하지 않는다.
+
+## 원자료와 분석
+
+Git의 [final-results.json](final-results.json)은 주요24개 본실험의 평가 곡선, 설정 요약,
+완료 증거, config/info SHA256을 포함한다. 파일명과 Sacred ID는 immutable 식별자다.
+Slurm이 완료됐어도 과거 Sacred run.json은 RUNNING으로 남는 사례가 있으므로 평가
+step이나 Sacred 잔류 상태만으로 완료를 판단하지 않는다.
+
+서버에 별도 보존된 경로:
+
+- `results/sacred/<id>/config.json`, `info.json`: 실제 설정과 학습·평가 scalar.
+- `results/guidance/`, `results/validation/`: 지침 JSONL과 prediction/target/MRT gzip JSONL.
+- `results/source_snapshots/<campaign>/`: 당시 실행 코드, source-manifest.json, dirty diff.
+- `results/diagnostics/<campaign>/`: 제출 원장, launch provenance, server log.
+- `results/models/`, `wandb/`: 정책 checkpoint와 로컬 W&B 자료.
+
+원자료가 없는 clone에서는 제공된 JSON과 LLM 출력 문서를 읽을 수 있다. 아래 재집계
+명령은 서버 원자료를 가져온 뒤 사용한다. 해당 분석 자체는 학습이나 LLM 호출을 하지 않는다.
+
+```bash
+python analysis/summarize_experiments.py --runs 357 356 379 380 \
+  --jobs 976091 976094 982780 982781 --output results/comparison.json
+python analysis/summarize_rsvp_validation.py results/validation/<audit>.jsonl.gz --start 200000
+python analysis/summarize_rsvp_validation.py results/validation/<trial>.jsonl.gz --trials-only
+python analysis/summarize_refresh_replacement.py results/validation/<audit>.jsonl.gz \
+  --horizon 5 --gamma .8 --bootstrap 10000 --output results/replacement.json
+python analysis/audit_shaping_objective.py
+```
+
+`--jobs`를 생략하면 로컬 Sacred의 명시적 COMPLETED만 완료로 인정한다. Slurm이 없는
+장비에서 과거 RUNNING 메타데이터를 step 수만으로 완료로 바꾸지 않는다.
+지침 중복·상태 의존성은 `audit_guidance_duplicates.py`, `audit_guidance_state_dependence.py`,
+세부 trace 감사는 `audit_rsvp_mechanism.py`, functional grounding 감사는
+`audit_lehca_grounding.py`에 있다. `smoke_llm_pipeline.py`는 명시적으로 실행할 때 실제
+SC2/LLM 요청을 만들므로 순수 오프라인 분석과 구분한다.
+
+## 검증과 논문 초안
+
+```bash
+python -m unittest discover -s analysis -p 'test_*.py'
+python -m algorithm.rsvp.analysis.test_pursuit_pred
+bash AAMAS_draft/build.sh
+```
+
+선택적 pre-rename archive AST 검사는 `RSVP_PRE_RENAME_ARCHIVE`를 지정해야 수행한다.
+LaTeX는 XeLaTeX/BibTeX와 packages.tex의 한글 폰트를 필요로 한다. main.tex가 section
+파일을 조립하고 build/에 PDF·중간 파일을 모은다. 초안은 미완성 역사 자료로 보존했다.
+
+인계 시점의 기존 aamas 환경에서 회귀 테스트32개 통과/선택적 archive 검사1개 skip,
+Pursuit 검사 통과, LaTeX PDF 빌드를 확인했다. Python93파일의 AST, YAML17개와
+공유 JSON7개 파싱, Bash11개 문법과 문서 링크도 확인했다. 일반 실행기·ablation·
+최종 배치의 인자 전달은 stub으로 검사했으며 새 성능 실험이나 LLM 호출은 실행하지 않았다.
+
+## 정리와 보존
+
+끝난 제출·monitor·private-server 예약 wrapper와 cohort 고정 일회성 집계기는 공유 코드에서
+정리했다. 일반 진입점, 실제 검증 계측, 그 회귀 테스트, 중요한 감사 재현기는 유지했다.
+VIGIL 호환 및 공유 registry의 COMA/QTRAN/VDN, GRF/Pursuit는 실제 의존성이 있어 남겼다.
+정리 전 authored source/document 백업과 이동 원장은 서버의
+`results/diagnostics/repository-handoff-20260917/`에 있다. raw 실험 자료를 삭제하지 않았다.
+`before-cleanup.tar.gz`의 SHA256은
+`406594ca371f4700f0e4afb4fda02c7e330f24009b7c6bbe8caaf29bdbe9cf2a`다.

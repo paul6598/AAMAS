@@ -22,6 +22,7 @@ class LehcaQLearner(QLearner):
         # this environment step. This enables an exact shaping-only cutoff.
         self.lambda_zero_t = getattr(args, "lambda_zero_t", 0)
 
+    # 현재 λ를 갱신하고 필요시 리플레이 보상을 재합성한 뒤 QMIX를 학습한다.
     def train(self, batch, t_env, episode_num):
         if self.lambda_zero_t > 0:
             self.state.set_lambda_cosine_zero(t_env, self.lambda_zero_t)

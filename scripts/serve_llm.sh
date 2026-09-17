@@ -1,23 +1,12 @@
 #!/bin/bash
 # Serve the LLM Commander with vLLM (OpenAI-compatible API).
 # Usage: bash serve_llm.sh [MODEL] [PORT]
-# Run this on a GPU node (e.g. tmux session 37, RTX 6000 Ada 48GB).
+# Run this inside an allocated GPU job with the vLLM environment active.
+set -euo pipefail
 
-MODEL=$1
-PORT=$2
-
-if [ -z "$MODEL" ]; then
-    MODEL="openai/gpt-oss-20b"
-fi
-if [ -z "$PORT" ]; then
-    PORT=8355
-fi
-
-source ~/miniconda3/etc/profile.d/conda.sh
-conda activate vllm
-# vLLM 0.25/FlashInfer JIT-compiles sampling kernels during startup.
-# The cluster does not expose nvcc by default.
-module load cuda/13.1.1
+MODEL=${1:-openai/gpt-oss-20b}
+PORT=${2:-8355}
+command -v vllm >/dev/null || { echo 'Activate the vLLM environment before serving.' >&2; exit 1; }
 
 exec vllm serve "$MODEL" \
     --port "$PORT" \

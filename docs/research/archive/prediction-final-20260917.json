@@ -1,0 +1,712 @@
+[
+  {
+    "file": "results/validation/rsvp__2026-09-13_06-57-42__p2462395_rsvp_e1_20260913_v2_pilot_audit_shape_F200_H1000000_s1_p2462395.jsonl.gz",
+    "metadata": {
+      "kind": "metadata",
+      "schema": 1,
+      "library": [
+        [
+          "enemy_kill",
+          null
+        ],
+        [
+          "enemy_damage",
+          null
+        ],
+        [
+          "ally_survive",
+          null
+        ],
+        [
+          "focus_fire",
+          null
+        ],
+        [
+          "retreat_low_health",
+          null
+        ],
+        [
+          "kill_type",
+          "Stalker"
+        ],
+        [
+          "kill_type",
+          "Zealot"
+        ],
+        [
+          "damage_type",
+          "Stalker"
+        ],
+        [
+          "damage_type",
+          "Zealot"
+        ],
+        [
+          "protect_type",
+          "Stalker"
+        ],
+        [
+          "protect_type",
+          "Zealot"
+        ]
+      ],
+      "gamma": 0.8,
+      "config": {
+        "seed": 1,
+        "env": "sc2",
+        "scheduler": "vf",
+        "f_update": 200,
+        "sched_gamma": 0.8,
+        "sched_h": 3.0,
+        "sched_k": 0.6,
+        "t_max": 1000000,
+        "lambda_floor_frac": 0.4,
+        "beta": 0,
+        "prompt_style": "paper",
+        "use_action_masking": false,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "rsvp_trial_probability": 0.5,
+        "wandb_run": "rsvp_e1_20260913_v2_pilot_audit_shape_F200_H1000000_seed1",
+        "wandb_group": "rsvp_e1_20260913_v2_pilot_audit_shape_F200_H1000000",
+        "env_args": {
+          "continuing_episode": false,
+          "difficulty": "7",
+          "game_version": null,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": true,
+          "reward_scale_rate": 20,
+          "reward_sparse": false,
+          "sparse_win_only": false,
+          "reward_win": 200,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8,
+          "seed": 1,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "debug": false
+        },
+        "deduplicate_subgoals": true,
+        "sched_gate_interval": 20,
+        "shaping_in_learner": true
+      }
+    },
+    "episodes_read": 1415,
+    "start": 200000,
+    "stop": 1000000,
+    "partial_file": false,
+    "trials_only": false,
+    "heads": [
+      {
+        "head": [
+          "enemy_kill",
+          null
+        ],
+        "all": {
+          "n": 80185,
+          "mae": 0.08357765617507923,
+          "rmse": 0.17407158968738923,
+          "r2": 0.5300857710361362,
+          "baseline_skill": 0.515600647318271
+        },
+        "trusted": {
+          "n": 80185,
+          "mae": 0.08357765617507923,
+          "rmse": 0.17407158968738923,
+          "r2": 0.5300857710361362,
+          "baseline_skill": 0.515600647318271
+        }
+      },
+      {
+        "head": [
+          "enemy_damage",
+          null
+        ],
+        "all": {
+          "n": 80185,
+          "mae": 0.11800460097100195,
+          "rmse": 0.16818692886078612,
+          "r2": 0.80203011623598,
+          "baseline_skill": 0.793353881238724
+        },
+        "trusted": {
+          "n": 80185,
+          "mae": 0.11800460097100195,
+          "rmse": 0.16818692886078612,
+          "r2": 0.80203011623598,
+          "baseline_skill": 0.793353881238724
+        }
+      },
+      {
+        "head": [
+          "ally_survive",
+          null
+        ],
+        "all": {
+          "n": 80185,
+          "mae": 0.13673187430173944,
+          "rmse": 0.22749910435999982,
+          "r2": 0.6797120733431177,
+          "baseline_skill": 0.6696187067548747
+        },
+        "trusted": {
+          "n": 80185,
+          "mae": 0.13673187430173944,
+          "rmse": 0.22749910435999982,
+          "r2": 0.6797120733431177,
+          "baseline_skill": 0.6696187067548747
+        }
+      },
+      {
+        "head": [
+          "focus_fire",
+          null
+        ],
+        "all": {
+          "n": 80185,
+          "mae": 0.18040643442451199,
+          "rmse": 0.27065441736549845,
+          "r2": 0.551044220643911,
+          "baseline_skill": 0.5389833107812861
+        },
+        "trusted": {
+          "n": 80185,
+          "mae": 0.18040643442451199,
+          "rmse": 0.27065441736549845,
+          "r2": 0.551044220643911,
+          "baseline_skill": 0.5389833107812861
+        }
+      },
+      {
+        "head": [
+          "retreat_low_health",
+          null
+        ],
+        "all": {
+          "n": 80185,
+          "mae": 0.05856901544149787,
+          "rmse": 0.09866642146800363,
+          "r2": 0.2785867516778142,
+          "baseline_skill": 0.27394039137627346
+        },
+        "trusted": {
+          "n": 80185,
+          "mae": 0.05856901544149787,
+          "rmse": 0.09866642146800363,
+          "r2": 0.2785867516778142,
+          "baseline_skill": 0.27394039137627346
+        }
+      },
+      {
+        "head": [
+          "kill_type",
+          "Stalker"
+        ],
+        "all": {
+          "n": 80185,
+          "mae": 0.06397476708841807,
+          "rmse": 0.1698860658645125,
+          "r2": 0.6235470863742707,
+          "baseline_skill": 0.6192301319170692
+        },
+        "trusted": {
+          "n": 80185,
+          "mae": 0.06397476708841807,
+          "rmse": 0.1698860658645125,
+          "r2": 0.6235470863742707,
+          "baseline_skill": 0.6192301319170692
+        }
+      },
+      {
+        "head": [
+          "kill_type",
+          "Zealot"
+        ],
+        "all": {
+          "n": 80185,
+          "mae": 0.08169062644711811,
+          "rmse": 0.20025174875697918,
+          "r2": 0.46821531299428876,
+          "baseline_skill": 0.4589679498139807
+        },
+        "trusted": {
+          "n": 80185,
+          "mae": 0.08169062644711811,
+          "rmse": 0.20025174875697918,
+          "r2": 0.46821531299428876,
+          "baseline_skill": 0.4589679498139807
+        }
+      },
+      {
+        "head": [
+          "damage_type",
+          "Stalker"
+        ],
+        "all": {
+          "n": 80185,
+          "mae": 0.10538655170596065,
+          "rmse": 0.1770206412744133,
+          "r2": 0.7007184295002413,
+          "baseline_skill": 0.696982480847273
+        },
+        "trusted": {
+          "n": 80185,
+          "mae": 0.10538655170596065,
+          "rmse": 0.1770206412744133,
+          "r2": 0.7007184295002413,
+          "baseline_skill": 0.696982480847273
+        }
+      },
+      {
+        "head": [
+          "damage_type",
+          "Zealot"
+        ],
+        "all": {
+          "n": 80185,
+          "mae": 0.08666775858445631,
+          "rmse": 0.12790937795517804,
+          "r2": 0.6841305365266974,
+          "baseline_skill": 0.6737308866581329
+        },
+        "trusted": {
+          "n": 80185,
+          "mae": 0.08666775858445631,
+          "rmse": 0.12790937795517804,
+          "r2": 0.6841305365266974,
+          "baseline_skill": 0.6737308866581329
+        }
+      },
+      {
+        "head": [
+          "protect_type",
+          "Stalker"
+        ],
+        "all": {
+          "n": 80185,
+          "mae": 0.18169822578066425,
+          "rmse": 0.282131868332202,
+          "r2": 0.543360224387046,
+          "baseline_skill": 0.5308467135943109
+        },
+        "trusted": {
+          "n": 80185,
+          "mae": 0.18169822578066425,
+          "rmse": 0.282131868332202,
+          "r2": 0.543360224387046,
+          "baseline_skill": 0.5308467135943109
+        }
+      },
+      {
+        "head": [
+          "protect_type",
+          "Zealot"
+        ],
+        "all": {
+          "n": 80185,
+          "mae": 0.1678169415999104,
+          "rmse": 0.2876294923570667,
+          "r2": 0.7331560101155006,
+          "baseline_skill": 0.7251056746397538
+        },
+        "trusted": {
+          "n": 80185,
+          "mae": 0.1678169415999104,
+          "rmse": 0.2876294923570667,
+          "r2": 0.7331560101155006,
+          "baseline_skill": 0.7251056746397538
+        }
+      }
+    ],
+    "guidance_weighted": {
+      "n": 77818,
+      "mae": 0.2766352244002259,
+      "rmse": 0.4374970158427951,
+      "r2": 0.6274712096850983,
+      "baseline_skill": 0.5678015042849931
+    },
+    "selected_weighted": {
+      "n": 6000,
+      "mae": 0.39442795764430827,
+      "rmse": 0.5792708276835961,
+      "r2": 0.44763313906871316,
+      "baseline_skill": 0.513515271806388
+    },
+    "trial": {
+      "completed_blocks": 0,
+      "note": "block-level proximal ITT; trigger episode excluded and all refreshes locked during the following outcome window"
+    }
+  },
+  {
+    "file": "results/validation/rsvp__2026-09-13_06-57-52__p755662_rsvp_e1_20260913_v2_pilot_audit_shape_F200_H1000000_s0_p755662.jsonl.gz",
+    "metadata": {
+      "kind": "metadata",
+      "schema": 1,
+      "library": [
+        [
+          "enemy_kill",
+          null
+        ],
+        [
+          "enemy_damage",
+          null
+        ],
+        [
+          "ally_survive",
+          null
+        ],
+        [
+          "focus_fire",
+          null
+        ],
+        [
+          "retreat_low_health",
+          null
+        ],
+        [
+          "kill_type",
+          "Stalker"
+        ],
+        [
+          "kill_type",
+          "Zealot"
+        ],
+        [
+          "damage_type",
+          "Stalker"
+        ],
+        [
+          "damage_type",
+          "Zealot"
+        ],
+        [
+          "protect_type",
+          "Stalker"
+        ],
+        [
+          "protect_type",
+          "Zealot"
+        ]
+      ],
+      "gamma": 0.8,
+      "config": {
+        "seed": 0,
+        "env": "sc2",
+        "scheduler": "vf",
+        "f_update": 200,
+        "sched_gamma": 0.8,
+        "sched_h": 3.0,
+        "sched_k": 0.6,
+        "t_max": 1000000,
+        "lambda_floor_frac": 0.4,
+        "beta": 0,
+        "prompt_style": "paper",
+        "use_action_masking": false,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "rsvp_trial_probability": 0.5,
+        "wandb_run": "rsvp_e1_20260913_v2_pilot_audit_shape_F200_H1000000_seed0",
+        "wandb_group": "rsvp_e1_20260913_v2_pilot_audit_shape_F200_H1000000",
+        "env_args": {
+          "continuing_episode": false,
+          "difficulty": "7",
+          "game_version": null,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": true,
+          "reward_scale_rate": 20,
+          "reward_sparse": false,
+          "sparse_win_only": false,
+          "reward_win": 200,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8,
+          "seed": 0,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "debug": false
+        },
+        "deduplicate_subgoals": true,
+        "sched_gate_interval": 20,
+        "shaping_in_learner": true
+      }
+    },
+    "episodes_read": 1599,
+    "start": 200000,
+    "stop": 1000000,
+    "partial_file": false,
+    "trials_only": false,
+    "heads": [
+      {
+        "head": [
+          "enemy_kill",
+          null
+        ],
+        "all": {
+          "n": 80236,
+          "mae": 0.11060682433516349,
+          "rmse": 0.1950307995876272,
+          "r2": 0.5686018046565142,
+          "baseline_skill": 0.5469109328284134
+        },
+        "trusted": {
+          "n": 80236,
+          "mae": 0.11060682433516349,
+          "rmse": 0.1950307995876272,
+          "r2": 0.5686018046565142,
+          "baseline_skill": 0.5469109328284134
+        }
+      },
+      {
+        "head": [
+          "enemy_damage",
+          null
+        ],
+        "all": {
+          "n": 80236,
+          "mae": 0.12168016157656897,
+          "rmse": 0.16479131723242055,
+          "r2": 0.8386537052517385,
+          "baseline_skill": 0.8320961486691315
+        },
+        "trusted": {
+          "n": 80236,
+          "mae": 0.12168016157656897,
+          "rmse": 0.16479131723242055,
+          "r2": 0.8386537052517385,
+          "baseline_skill": 0.8320961486691315
+        }
+      },
+      {
+        "head": [
+          "ally_survive",
+          null
+        ],
+        "all": {
+          "n": 80236,
+          "mae": 0.1590208013259336,
+          "rmse": 0.25748024971983124,
+          "r2": 0.6670061554445827,
+          "baseline_skill": 0.6587562804771971
+        },
+        "trusted": {
+          "n": 80236,
+          "mae": 0.1590208013259336,
+          "rmse": 0.25748024971983124,
+          "r2": 0.6670061554445827,
+          "baseline_skill": 0.6587562804771971
+        }
+      },
+      {
+        "head": [
+          "focus_fire",
+          null
+        ],
+        "all": {
+          "n": 80236,
+          "mae": 0.2026089642221036,
+          "rmse": 0.27839402255288503,
+          "r2": 0.5427944371729381,
+          "baseline_skill": 0.5229132301210679
+        },
+        "trusted": {
+          "n": 80236,
+          "mae": 0.2026089642221036,
+          "rmse": 0.27839402255288503,
+          "r2": 0.5427944371729381,
+          "baseline_skill": 0.5229132301210679
+        }
+      },
+      {
+        "head": [
+          "retreat_low_health",
+          null
+        ],
+        "all": {
+          "n": 80236,
+          "mae": 0.04607255299590629,
+          "rmse": 0.07546607633902504,
+          "r2": 0.24831727127749803,
+          "baseline_skill": 0.2379337100853396
+        },
+        "trusted": {
+          "n": 80236,
+          "mae": 0.04607255299590629,
+          "rmse": 0.07546607633902504,
+          "r2": 0.24831727127749803,
+          "baseline_skill": 0.2379337100853396
+        }
+      },
+      {
+        "head": [
+          "kill_type",
+          "Stalker"
+        ],
+        "all": {
+          "n": 80236,
+          "mae": 0.06846838642717831,
+          "rmse": 0.1699321248638924,
+          "r2": 0.5548949842508064,
+          "baseline_skill": 0.5395329798846216
+        },
+        "trusted": {
+          "n": 80236,
+          "mae": 0.06846838642717831,
+          "rmse": 0.1699321248638924,
+          "r2": 0.5548949842508064,
+          "baseline_skill": 0.5395329798846216
+        }
+      },
+      {
+        "head": [
+          "kill_type",
+          "Zealot"
+        ],
+        "all": {
+          "n": 80236,
+          "mae": 0.12760233207236443,
+          "rmse": 0.24016702222307743,
+          "r2": 0.5989975166481254,
+          "baseline_skill": 0.5916406585140181
+        },
+        "trusted": {
+          "n": 80236,
+          "mae": 0.12760233207236443,
+          "rmse": 0.24016702222307743,
+          "r2": 0.5989975166481254,
+          "baseline_skill": 0.5916406585140181
+        }
+      },
+      {
+        "head": [
+          "damage_type",
+          "Stalker"
+        ],
+        "all": {
+          "n": 80236,
+          "mae": 0.10857892582894806,
+          "rmse": 0.16879597534242988,
+          "r2": 0.6810224444684364,
+          "baseline_skill": 0.6696807075010522
+        },
+        "trusted": {
+          "n": 80236,
+          "mae": 0.10857892582894806,
+          "rmse": 0.16879597534242988,
+          "r2": 0.6810224444684364,
+          "baseline_skill": 0.6696807075010522
+        }
+      },
+      {
+        "head": [
+          "damage_type",
+          "Zealot"
+        ],
+        "all": {
+          "n": 80236,
+          "mae": 0.09969371990454905,
+          "rmse": 0.14004494958803068,
+          "r2": 0.763692031788341,
+          "baseline_skill": 0.7602662190649981
+        },
+        "trusted": {
+          "n": 80236,
+          "mae": 0.09969371990454905,
+          "rmse": 0.14004494958803068,
+          "r2": 0.763692031788341,
+          "baseline_skill": 0.7602662190649981
+        }
+      },
+      {
+        "head": [
+          "protect_type",
+          "Stalker"
+        ],
+        "all": {
+          "n": 80236,
+          "mae": 0.17998994682536484,
+          "rmse": 0.2739980410734554,
+          "r2": 0.6333485566275943,
+          "baseline_skill": 0.6236157372832414
+        },
+        "trusted": {
+          "n": 80236,
+          "mae": 0.17998994682536484,
+          "rmse": 0.2739980410734554,
+          "r2": 0.6333485566275943,
+          "baseline_skill": 0.6236157372832414
+        }
+      },
+      {
+        "head": [
+          "protect_type",
+          "Zealot"
+        ],
+        "all": {
+          "n": 80236,
+          "mae": 0.21179501289432373,
+          "rmse": 0.3367277768326326,
+          "r2": 0.6254228935633346,
+          "baseline_skill": 0.616080417230874
+        },
+        "trusted": {
+          "n": 80236,
+          "mae": 0.21179501289432373,
+          "rmse": 0.3367277768326326,
+          "r2": 0.6254228935633346,
+          "baseline_skill": 0.616080417230874
+        }
+      }
+    ],
+    "guidance_weighted": {
+      "n": 78909,
+      "mae": 0.30917549786613724,
+      "rmse": 0.4617839538461649,
+      "r2": 0.6352692963695814,
+      "baseline_skill": 0.550482967272689
+    },
+    "selected_weighted": {
+      "n": 8733,
+      "mae": 0.39643347069024426,
+      "rmse": 0.5495766110373567,
+      "r2": 0.48514091888861055,
+      "baseline_skill": 0.4462123753577131
+    },
+    "trial": {
+      "completed_blocks": 0,
+      "note": "block-level proximal ITT; trigger episode excluded and all refreshes locked during the following outcome window"
+    }
+  }
+]

@@ -1,71 +1,11 @@
-# 프로젝트 온보딩 (먼저 읽을 것)
+# 프로젝트 안내
 
-새 세션은 **docs/research/README.md**를 먼저 읽는다. 현재 연구 질문, 문서 읽는 순서,
-검증 배치와 판정 규칙이 정리되어 있다. 수치와 실행 ID는
-**docs/research/experiments-log.md**를 단일 출처로 사용한다.
+이 저장소는 LEHCA 재구현과 RSVP의 종료된 연구 자료다. 연구 상태와 최종 해석은
+`docs/research/research-summary.md`, 실행법은 `docs/research/code-guide.md`를 먼저 읽는다.
 
-# CLAUDE.md
-
-Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
-
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
-
-## 1. Think Before Coding
-
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
-
-Before implementing:
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
-
-## 2. Simplicity First
-
-**Minimum code that solves the problem. Nothing speculative.**
-
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
-
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
-
-## 3. Surgical Changes
-
-**Touch only what you must. Clean up only your own mess.**
-
-When editing existing code:
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
-
-When your changes create orphans:
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
-
-The test: Every changed line should trace directly to the user's request.
-
-## 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
-Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
-
-For multi-step tasks, state a brief plan:
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
-
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
-
----
-
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+- 새 실험 제출·진행 중 작업의 변경은 사용자의 명시적인 요청이 있을 때만 한다.
+- `results/`와 `wandb/`의 원자료·checkpoint·동결 소스는 보존한다.
+- 과거 실험 ID, VIGIL 명칭과 historical 설정을 현재 결과와 합산하지 않는다.
+- 결과를 보고할 때 예측력, guidance 교체 진단, MRT 근접 효과, 전체 성능을 구분한다.
+- 기존 실험에서 생성한 로그를 새 구현의 검증 결과로 읽지 않는다.
+- 변경 후 관련 unittest, Python/shell 문법, 문서 링크와 `git diff --check`를 확인한다.

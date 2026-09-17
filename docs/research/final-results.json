@@ -1,0 +1,7959 @@
+{
+  "created_at": "2026-09-17T08:29:01.772838+00:00",
+  "metric_notes": {
+    "auc_observed": "trapezoidal y(0)=0, normalized by observed horizon; no tail extrapolation",
+    "auc_nominal_hold_last": "completed runs only; hold last evaluation to nominal t_max",
+    "final100k": "arithmetic mean of recorded evaluations in [t_max-100000, t_max]",
+    "final10pct": "arithmetic mean in [0.9*t_max, t_max]",
+    "calls": "last periodic training counter; excludes unlogged tail, evaluation, retries and tokens",
+    "completion": "Slurm COMPLETED/0:0 when provided; otherwise explicit Sacred COMPLETED"
+  },
+  "runs": [
+    {
+      "sacred": 356,
+      "job_id": 976094,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "09:42:49",
+        "ended_at": "2026-09-13T16:38:58"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 1,
+        "t_max": 1000000,
+        "wandb_group": "rsvp_e1_20260913_v2_pilot_audit_shape_F200_H1000000",
+        "wandb_run": "rsvp_e1_20260913_v2_pilot_audit_shape_F200_H1000000_seed1",
+        "scheduler": "vf",
+        "f_update": 200,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": false,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 0.4,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": true,
+          "reward_scale_rate": 20,
+          "reward_sparse": false,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": false,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "78631314f263df8f70e2dc0b2a91389165b1f1915d953426e2e5d8ec340f5e81",
+      "info_sha256": "78935ac766d3c832106d0c43c3ecc6e63d69c5832222f2d6b0fd61ffdc551406",
+      "metrics": {
+        "observed_horizon": 994009,
+        "evaluation_mean": 0.1484375,
+        "auc_observed": 0.1497358487196796,
+        "auc_nominal_hold_last": 0.14921321875,
+        "final100k": 0.45,
+        "final10pct": 0.45,
+        "peak": 0.625,
+        "last": 0.0625
+      },
+      "last_train_llm_calls": 7254.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          58,
+          0.0
+        ],
+        [
+          10079,
+          0.0
+        ],
+        [
+          20098,
+          0.03125
+        ],
+        [
+          30111,
+          0.34375
+        ],
+        [
+          40116,
+          0.15625
+        ],
+        [
+          50151,
+          0.1875
+        ],
+        [
+          60152,
+          0.15625
+        ],
+        [
+          70153,
+          0.21875
+        ],
+        [
+          80183,
+          0.15625
+        ],
+        [
+          90187,
+          0.0625
+        ],
+        [
+          100189,
+          0.0625
+        ],
+        [
+          110193,
+          0.09375
+        ],
+        [
+          120215,
+          0.0
+        ],
+        [
+          130239,
+          0.0
+        ],
+        [
+          140268,
+          0.0625
+        ],
+        [
+          150302,
+          0.0
+        ],
+        [
+          160317,
+          0.03125
+        ],
+        [
+          170339,
+          0.0
+        ],
+        [
+          180380,
+          0.0
+        ],
+        [
+          190395,
+          0.0
+        ],
+        [
+          200404,
+          0.03125
+        ],
+        [
+          210437,
+          0.0
+        ],
+        [
+          220439,
+          0.0
+        ],
+        [
+          230483,
+          0.0
+        ],
+        [
+          240511,
+          0.03125
+        ],
+        [
+          250588,
+          0.0
+        ],
+        [
+          260604,
+          0.125
+        ],
+        [
+          270654,
+          0.0
+        ],
+        [
+          280678,
+          0.0
+        ],
+        [
+          290697,
+          0.0
+        ],
+        [
+          300744,
+          0.0
+        ],
+        [
+          310806,
+          0.0
+        ],
+        [
+          320809,
+          0.0
+        ],
+        [
+          330845,
+          0.0
+        ],
+        [
+          340901,
+          0.0
+        ],
+        [
+          351002,
+          0.03125
+        ],
+        [
+          361015,
+          0.0
+        ],
+        [
+          371015,
+          0.03125
+        ],
+        [
+          381036,
+          0.03125
+        ],
+        [
+          391085,
+          0.0
+        ],
+        [
+          401085,
+          0.03125
+        ],
+        [
+          411166,
+          0.0
+        ],
+        [
+          421188,
+          0.125
+        ],
+        [
+          431248,
+          0.03125
+        ],
+        [
+          441269,
+          0.03125
+        ],
+        [
+          451299,
+          0.15625
+        ],
+        [
+          461328,
+          0.09375
+        ],
+        [
+          471373,
+          0.03125
+        ],
+        [
+          481455,
+          0.15625
+        ],
+        [
+          491463,
+          0.09375
+        ],
+        [
+          501482,
+          0.34375
+        ],
+        [
+          511577,
+          0.1875
+        ],
+        [
+          521686,
+          0.21875
+        ],
+        [
+          531762,
+          0.3125
+        ],
+        [
+          541804,
+          0.125
+        ],
+        [
+          551873,
+          0.25
+        ],
+        [
+          561975,
+          0.375
+        ],
+        [
+          572086,
+          0.28125
+        ],
+        [
+          582117,
+          0.28125
+        ],
+        [
+          592144,
+          0.21875
+        ],
+        [
+          602144,
+          0.25
+        ],
+        [
+          612159,
+          0.34375
+        ],
+        [
+          622247,
+          0.375
+        ],
+        [
+          632330,
+          0.625
+        ],
+        [
+          642348,
+          0.5625
+        ],
+        [
+          652452,
+          0.21875
+        ],
+        [
+          662517,
+          0.1875
+        ],
+        [
+          672597,
+          0.3125
+        ],
+        [
+          682612,
+          0.09375
+        ],
+        [
+          692667,
+          0.1875
+        ],
+        [
+          702753,
+          0.0
+        ],
+        [
+          712830,
+          0.09375
+        ],
+        [
+          722855,
+          0.0
+        ],
+        [
+          732870,
+          0.0
+        ],
+        [
+          742876,
+          0.0
+        ],
+        [
+          752931,
+          0.0
+        ],
+        [
+          762980,
+          0.0
+        ],
+        [
+          773047,
+          0.0
+        ],
+        [
+          783098,
+          0.0
+        ],
+        [
+          793127,
+          0.0
+        ],
+        [
+          803166,
+          0.0625
+        ],
+        [
+          813221,
+          0.0625
+        ],
+        [
+          823221,
+          0.125
+        ],
+        [
+          833278,
+          0.03125
+        ],
+        [
+          843288,
+          0.15625
+        ],
+        [
+          853302,
+          0.09375
+        ],
+        [
+          863404,
+          0.1875
+        ],
+        [
+          873431,
+          0.21875
+        ],
+        [
+          883506,
+          0.5
+        ],
+        [
+          893560,
+          0.46875
+        ],
+        [
+          903620,
+          0.5
+        ],
+        [
+          913698,
+          0.53125
+        ],
+        [
+          923699,
+          0.59375
+        ],
+        [
+          933742,
+          0.34375
+        ],
+        [
+          943845,
+          0.53125
+        ],
+        [
+          953856,
+          0.5625
+        ],
+        [
+          963897,
+          0.5625
+        ],
+        [
+          973936,
+          0.4375
+        ],
+        [
+          983990,
+          0.375
+        ],
+        [
+          994009,
+          0.0625
+        ]
+      ]
+    },
+    {
+      "sacred": 357,
+      "job_id": 976091,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "12:12:38",
+        "ended_at": "2026-09-13T19:08:47"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 0,
+        "t_max": 1000000,
+        "wandb_group": "rsvp_e1_20260913_v2_pilot_audit_shape_F200_H1000000",
+        "wandb_run": "rsvp_e1_20260913_v2_pilot_audit_shape_F200_H1000000_seed0",
+        "scheduler": "vf",
+        "f_update": 200,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": false,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 0.4,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": true,
+          "reward_scale_rate": 20,
+          "reward_sparse": false,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": false,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "3c088a23710f8fb8c125549f45859dd757570e1ffe4ca1fdb83f52dc2f8aa3bd",
+      "info_sha256": "ba4298fde5465ffa8f5e7526cac7b9c10250548c5cd79560f2133deec7899998",
+      "metrics": {
+        "observed_horizon": 993754,
+        "evaluation_mean": 0.2021875,
+        "auc_observed": 0.20059125233709751,
+        "auc_nominal_hold_last": 0.203827671875,
+        "final100k": 0.6375,
+        "final10pct": 0.6375,
+        "peak": 0.78125,
+        "last": 0.71875
+      },
+      "last_train_llm_calls": 7471.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          50,
+          0.0
+        ],
+        [
+          10117,
+          0.0
+        ],
+        [
+          20143,
+          0.1875
+        ],
+        [
+          30193,
+          0.78125
+        ],
+        [
+          40199,
+          0.53125
+        ],
+        [
+          50233,
+          0.40625
+        ],
+        [
+          60281,
+          0.4375
+        ],
+        [
+          70318,
+          0.4375
+        ],
+        [
+          80348,
+          0.125
+        ],
+        [
+          90361,
+          0.1875
+        ],
+        [
+          100394,
+          0.09375
+        ],
+        [
+          110421,
+          0.09375
+        ],
+        [
+          120442,
+          0.09375
+        ],
+        [
+          130481,
+          0.0
+        ],
+        [
+          140586,
+          0.03125
+        ],
+        [
+          150595,
+          0.0
+        ],
+        [
+          160625,
+          0.0
+        ],
+        [
+          170657,
+          0.0
+        ],
+        [
+          180700,
+          0.03125
+        ],
+        [
+          190707,
+          0.0
+        ],
+        [
+          200748,
+          0.0
+        ],
+        [
+          210785,
+          0.0
+        ],
+        [
+          220811,
+          0.0
+        ],
+        [
+          230834,
+          0.125
+        ],
+        [
+          240880,
+          0.0
+        ],
+        [
+          250890,
+          0.09375
+        ],
+        [
+          260915,
+          0.0625
+        ],
+        [
+          270918,
+          0.0
+        ],
+        [
+          280938,
+          0.0
+        ],
+        [
+          290972,
+          0.0
+        ],
+        [
+          300985,
+          0.0
+        ],
+        [
+          311008,
+          0.0
+        ],
+        [
+          321058,
+          0.0
+        ],
+        [
+          331058,
+          0.03125
+        ],
+        [
+          341093,
+          0.0
+        ],
+        [
+          351209,
+          0.0
+        ],
+        [
+          361236,
+          0.0
+        ],
+        [
+          371269,
+          0.03125
+        ],
+        [
+          381269,
+          0.03125
+        ],
+        [
+          391289,
+          0.0625
+        ],
+        [
+          401329,
+          0.03125
+        ],
+        [
+          411363,
+          0.0625
+        ],
+        [
+          421407,
+          0.1875
+        ],
+        [
+          431453,
+          0.125
+        ],
+        [
+          441474,
+          0.09375
+        ],
+        [
+          451478,
+          0.09375
+        ],
+        [
+          461519,
+          0.09375
+        ],
+        [
+          471563,
+          0.15625
+        ],
+        [
+          481575,
+          0.15625
+        ],
+        [
+          491591,
+          0.0625
+        ],
+        [
+          501620,
+          0.09375
+        ],
+        [
+          511660,
+          0.09375
+        ],
+        [
+          521716,
+          0.0625
+        ],
+        [
+          531780,
+          0.0625
+        ],
+        [
+          541843,
+          0.09375
+        ],
+        [
+          551911,
+          0.0625
+        ],
+        [
+          561937,
+          0.0
+        ],
+        [
+          571949,
+          0.09375
+        ],
+        [
+          581982,
+          0.03125
+        ],
+        [
+          592021,
+          0.21875
+        ],
+        [
+          602102,
+          0.03125
+        ],
+        [
+          612122,
+          0.03125
+        ],
+        [
+          622140,
+          0.09375
+        ],
+        [
+          632240,
+          0.09375
+        ],
+        [
+          642264,
+          0.0625
+        ],
+        [
+          652325,
+          0.0625
+        ],
+        [
+          662398,
+          0.1875
+        ],
+        [
+          672406,
+          0.0625
+        ],
+        [
+          682490,
+          0.125
+        ],
+        [
+          692493,
+          0.1875
+        ],
+        [
+          702611,
+          0.3125
+        ],
+        [
+          712628,
+          0.15625
+        ],
+        [
+          722644,
+          0.1875
+        ],
+        [
+          732676,
+          0.25
+        ],
+        [
+          742701,
+          0.15625
+        ],
+        [
+          752771,
+          0.28125
+        ],
+        [
+          762772,
+          0.25
+        ],
+        [
+          772857,
+          0.28125
+        ],
+        [
+          782873,
+          0.3125
+        ],
+        [
+          792926,
+          0.15625
+        ],
+        [
+          802998,
+          0.21875
+        ],
+        [
+          813059,
+          0.375
+        ],
+        [
+          823112,
+          0.5
+        ],
+        [
+          833157,
+          0.53125
+        ],
+        [
+          843221,
+          0.5625
+        ],
+        [
+          853266,
+          0.46875
+        ],
+        [
+          863297,
+          0.53125
+        ],
+        [
+          873345,
+          0.53125
+        ],
+        [
+          883394,
+          0.5625
+        ],
+        [
+          893439,
+          0.53125
+        ],
+        [
+          903494,
+          0.46875
+        ],
+        [
+          913541,
+          0.5625
+        ],
+        [
+          923600,
+          0.5625
+        ],
+        [
+          933625,
+          0.625
+        ],
+        [
+          943655,
+          0.59375
+        ],
+        [
+          953692,
+          0.71875
+        ],
+        [
+          963718,
+          0.6875
+        ],
+        [
+          973722,
+          0.71875
+        ],
+        [
+          983749,
+          0.71875
+        ],
+        [
+          993754,
+          0.71875
+        ]
+      ]
+    },
+    {
+      "sacred": 358,
+      "job_id": 976093,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "12:54:56",
+        "ended_at": "2026-09-13T19:51:05"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 0,
+        "t_max": 1000000,
+        "wandb_group": "rsvp_e1_20260913_v2_pilot_gate_timer_shape_F200_H1000000",
+        "wandb_run": "rsvp_e1_20260913_v2_pilot_gate_timer_shape_F200_H1000000_seed0",
+        "scheduler": "gate_timer",
+        "f_update": 200,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": false,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 0.4,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": true,
+          "reward_scale_rate": 20,
+          "reward_sparse": false,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": false,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "452e91f9272f969d8aa3d6f7365c8b8c6c654eabfef49ac09ebd45d9af679b45",
+      "info_sha256": "31165c61c7fa3f1f89313f9ccfcb323cb86f1cb67bae7c018ca3a83d67fa3fb6",
+      "metrics": {
+        "observed_horizon": 993303,
+        "evaluation_mean": 0.1603125,
+        "auc_observed": 0.1597155210947717,
+        "auc_nominal_hold_last": 0.161785125,
+        "final100k": 0.50625,
+        "final10pct": 0.50625,
+        "peak": 0.78125,
+        "last": 0.46875
+      },
+      "last_train_llm_calls": 9398.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          50,
+          0.0
+        ],
+        [
+          10057,
+          0.0
+        ],
+        [
+          20065,
+          0.09375
+        ],
+        [
+          30086,
+          0.65625
+        ],
+        [
+          40106,
+          0.65625
+        ],
+        [
+          50138,
+          0.25
+        ],
+        [
+          60170,
+          0.625
+        ],
+        [
+          70185,
+          0.28125
+        ],
+        [
+          80208,
+          0.03125
+        ],
+        [
+          90222,
+          0.1875
+        ],
+        [
+          100222,
+          0.1875
+        ],
+        [
+          110261,
+          0.0
+        ],
+        [
+          120263,
+          0.0625
+        ],
+        [
+          130269,
+          0.0
+        ],
+        [
+          140296,
+          0.03125
+        ],
+        [
+          150331,
+          0.0
+        ],
+        [
+          160341,
+          0.0
+        ],
+        [
+          170388,
+          0.0
+        ],
+        [
+          180422,
+          0.0
+        ],
+        [
+          190424,
+          0.0
+        ],
+        [
+          200436,
+          0.0
+        ],
+        [
+          210448,
+          0.0
+        ],
+        [
+          220488,
+          0.0
+        ],
+        [
+          230522,
+          0.0
+        ],
+        [
+          240544,
+          0.03125
+        ],
+        [
+          250552,
+          0.0
+        ],
+        [
+          260605,
+          0.0
+        ],
+        [
+          270635,
+          0.03125
+        ],
+        [
+          280653,
+          0.03125
+        ],
+        [
+          290672,
+          0.0
+        ],
+        [
+          300680,
+          0.0
+        ],
+        [
+          310712,
+          0.0
+        ],
+        [
+          320717,
+          0.0
+        ],
+        [
+          330722,
+          0.0
+        ],
+        [
+          340722,
+          0.0
+        ],
+        [
+          350821,
+          0.0
+        ],
+        [
+          360866,
+          0.0
+        ],
+        [
+          370891,
+          0.0
+        ],
+        [
+          380910,
+          0.03125
+        ],
+        [
+          390940,
+          0.0
+        ],
+        [
+          400997,
+          0.0
+        ],
+        [
+          411018,
+          0.0
+        ],
+        [
+          421072,
+          0.0
+        ],
+        [
+          431089,
+          0.0
+        ],
+        [
+          441107,
+          0.0
+        ],
+        [
+          451109,
+          0.0
+        ],
+        [
+          461109,
+          0.0
+        ],
+        [
+          471138,
+          0.0
+        ],
+        [
+          481189,
+          0.0
+        ],
+        [
+          491214,
+          0.0
+        ],
+        [
+          501231,
+          0.03125
+        ],
+        [
+          511255,
+          0.0
+        ],
+        [
+          521280,
+          0.0
+        ],
+        [
+          531329,
+          0.0
+        ],
+        [
+          541370,
+          0.0
+        ],
+        [
+          551388,
+          0.0
+        ],
+        [
+          561408,
+          0.03125
+        ],
+        [
+          571419,
+          0.03125
+        ],
+        [
+          581444,
+          0.0
+        ],
+        [
+          591499,
+          0.03125
+        ],
+        [
+          601537,
+          0.09375
+        ],
+        [
+          611581,
+          0.15625
+        ],
+        [
+          621597,
+          0.125
+        ],
+        [
+          631684,
+          0.15625
+        ],
+        [
+          641723,
+          0.15625
+        ],
+        [
+          651735,
+          0.28125
+        ],
+        [
+          661766,
+          0.125
+        ],
+        [
+          671779,
+          0.0625
+        ],
+        [
+          681789,
+          0.09375
+        ],
+        [
+          691790,
+          0.15625
+        ],
+        [
+          701816,
+          0.15625
+        ],
+        [
+          711837,
+          0.0
+        ],
+        [
+          721956,
+          0.25
+        ],
+        [
+          731974,
+          0.15625
+        ],
+        [
+          742024,
+          0.25
+        ],
+        [
+          752092,
+          0.21875
+        ],
+        [
+          762103,
+          0.1875
+        ],
+        [
+          772149,
+          0.3125
+        ],
+        [
+          782186,
+          0.375
+        ],
+        [
+          792289,
+          0.28125
+        ],
+        [
+          802310,
+          0.34375
+        ],
+        [
+          812368,
+          0.3125
+        ],
+        [
+          822405,
+          0.46875
+        ],
+        [
+          832443,
+          0.375
+        ],
+        [
+          842486,
+          0.375
+        ],
+        [
+          852575,
+          0.28125
+        ],
+        [
+          862577,
+          0.40625
+        ],
+        [
+          872577,
+          0.3125
+        ],
+        [
+          882628,
+          0.46875
+        ],
+        [
+          892653,
+          0.71875
+        ],
+        [
+          902684,
+          0.3125
+        ],
+        [
+          912803,
+          0.4375
+        ],
+        [
+          922849,
+          0.65625
+        ],
+        [
+          932896,
+          0.53125
+        ],
+        [
+          942928,
+          0.34375
+        ],
+        [
+          953024,
+          0.625
+        ],
+        [
+          963028,
+          0.78125
+        ],
+        [
+          973126,
+          0.46875
+        ],
+        [
+          983244,
+          0.4375
+        ],
+        [
+          993303,
+          0.46875
+        ]
+      ]
+    },
+    {
+      "sacred": 359,
+      "job_id": 976092,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "08:55:54",
+        "ended_at": "2026-09-13T15:52:03"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 0,
+        "t_max": 1000000,
+        "wandb_group": "rsvp_e1_20260913_v2_pilot_fixed_shape_F200_H1000000",
+        "wandb_run": "rsvp_e1_20260913_v2_pilot_fixed_shape_F200_H1000000_seed0",
+        "scheduler": "fixed",
+        "f_update": 200,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": false,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 0.4,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": true,
+          "reward_scale_rate": 20,
+          "reward_sparse": false,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": false,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "0dff0c702c10f593bcedb46b74bf310c85b17fb9bc0201a6f60c3ec4b5bcbef7",
+      "info_sha256": "9f5ba91cbd864f936a84453c0d9ae5746b960e712c71154dcf87b538f7d019bd",
+      "metrics": {
+        "observed_horizon": 993120,
+        "evaluation_mean": 0.064375,
+        "auc_observed": 0.06501494343583857,
+        "auc_nominal_hold_last": 0.064567640625,
+        "final100k": 0.025,
+        "final10pct": 0.025,
+        "peak": 0.5,
+        "last": 0.0
+      },
+      "last_train_llm_calls": 4966.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          50,
+          0.0
+        ],
+        [
+          10067,
+          0.0
+        ],
+        [
+          20085,
+          0.0
+        ],
+        [
+          30096,
+          0.0
+        ],
+        [
+          40149,
+          0.5
+        ],
+        [
+          50160,
+          0.15625
+        ],
+        [
+          60181,
+          0.40625
+        ],
+        [
+          70189,
+          0.3125
+        ],
+        [
+          80194,
+          0.09375
+        ],
+        [
+          90201,
+          0.15625
+        ],
+        [
+          100212,
+          0.0625
+        ],
+        [
+          110230,
+          0.0
+        ],
+        [
+          120269,
+          0.0
+        ],
+        [
+          130286,
+          0.0
+        ],
+        [
+          140325,
+          0.0
+        ],
+        [
+          150356,
+          0.0
+        ],
+        [
+          160376,
+          0.0
+        ],
+        [
+          170414,
+          0.0
+        ],
+        [
+          180416,
+          0.0
+        ],
+        [
+          190471,
+          0.0
+        ],
+        [
+          200515,
+          0.0
+        ],
+        [
+          210518,
+          0.0
+        ],
+        [
+          220542,
+          0.0
+        ],
+        [
+          230599,
+          0.0
+        ],
+        [
+          240629,
+          0.0625
+        ],
+        [
+          250648,
+          0.0
+        ],
+        [
+          260650,
+          0.03125
+        ],
+        [
+          270693,
+          0.15625
+        ],
+        [
+          280731,
+          0.25
+        ],
+        [
+          290765,
+          0.15625
+        ],
+        [
+          300820,
+          0.0625
+        ],
+        [
+          310836,
+          0.03125
+        ],
+        [
+          320846,
+          0.09375
+        ],
+        [
+          330852,
+          0.125
+        ],
+        [
+          340864,
+          0.1875
+        ],
+        [
+          350903,
+          0.03125
+        ],
+        [
+          360936,
+          0.21875
+        ],
+        [
+          370979,
+          0.03125
+        ],
+        [
+          380983,
+          0.0
+        ],
+        [
+          391014,
+          0.03125
+        ],
+        [
+          401038,
+          0.0
+        ],
+        [
+          411048,
+          0.0
+        ],
+        [
+          421082,
+          0.0
+        ],
+        [
+          431132,
+          0.0
+        ],
+        [
+          441132,
+          0.0
+        ],
+        [
+          451140,
+          0.0
+        ],
+        [
+          461173,
+          0.0
+        ],
+        [
+          471178,
+          0.0
+        ],
+        [
+          481212,
+          0.0
+        ],
+        [
+          491271,
+          0.0625
+        ],
+        [
+          501275,
+          0.03125
+        ],
+        [
+          511381,
+          0.0
+        ],
+        [
+          521391,
+          0.0
+        ],
+        [
+          531405,
+          0.03125
+        ],
+        [
+          541444,
+          0.125
+        ],
+        [
+          551492,
+          0.03125
+        ],
+        [
+          561494,
+          0.09375
+        ],
+        [
+          571499,
+          0.125
+        ],
+        [
+          581521,
+          0.15625
+        ],
+        [
+          591583,
+          0.15625
+        ],
+        [
+          601639,
+          0.03125
+        ],
+        [
+          611684,
+          0.28125
+        ],
+        [
+          621700,
+          0.21875
+        ],
+        [
+          631747,
+          0.125
+        ],
+        [
+          641752,
+          0.03125
+        ],
+        [
+          651768,
+          0.03125
+        ],
+        [
+          661790,
+          0.09375
+        ],
+        [
+          671832,
+          0.0625
+        ],
+        [
+          681924,
+          0.125
+        ],
+        [
+          691952,
+          0.125
+        ],
+        [
+          701974,
+          0.25
+        ],
+        [
+          712002,
+          0.3125
+        ],
+        [
+          722081,
+          0.125
+        ],
+        [
+          732122,
+          0.0625
+        ],
+        [
+          742142,
+          0.09375
+        ],
+        [
+          752204,
+          0.03125
+        ],
+        [
+          762273,
+          0.03125
+        ],
+        [
+          772282,
+          0.09375
+        ],
+        [
+          782303,
+          0.03125
+        ],
+        [
+          792312,
+          0.0625
+        ],
+        [
+          802315,
+          0.0
+        ],
+        [
+          812420,
+          0.0
+        ],
+        [
+          822435,
+          0.0
+        ],
+        [
+          832506,
+          0.0
+        ],
+        [
+          842514,
+          0.0
+        ],
+        [
+          852590,
+          0.0
+        ],
+        [
+          862632,
+          0.0
+        ],
+        [
+          872643,
+          0.0
+        ],
+        [
+          882684,
+          0.0
+        ],
+        [
+          892773,
+          0.0
+        ],
+        [
+          902819,
+          0.0
+        ],
+        [
+          912835,
+          0.0
+        ],
+        [
+          922841,
+          0.0
+        ],
+        [
+          932860,
+          0.03125
+        ],
+        [
+          942863,
+          0.0
+        ],
+        [
+          952931,
+          0.03125
+        ],
+        [
+          962995,
+          0.0625
+        ],
+        [
+          973016,
+          0.09375
+        ],
+        [
+          983049,
+          0.03125
+        ],
+        [
+          993120,
+          0.0
+        ]
+      ]
+    },
+    {
+      "sacred": 360,
+      "job_id": 976095,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "07:51:41",
+        "ended_at": "2026-09-13T23:43:45"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 1,
+        "t_max": 1000000,
+        "wandb_group": "rsvp_e1_20260913_v2_pilot_fixed_shape_F200_H1000000",
+        "wandb_run": "rsvp_e1_20260913_v2_pilot_fixed_shape_F200_H1000000_seed1",
+        "scheduler": "fixed",
+        "f_update": 200,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": false,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 0.4,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": true,
+          "reward_scale_rate": 20,
+          "reward_sparse": false,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": false,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "d9782459418cbfa7c00caa3448e3310135ebef4ce797f8bd38728d152b2b597b",
+      "info_sha256": "73d79f1a7be93e8629b802647d625bb62818c9aa4d92d84092c64735cf2467b6",
+      "metrics": {
+        "observed_horizon": 993167,
+        "evaluation_mean": 0.278125,
+        "auc_observed": 0.2769843685654074,
+        "auc_nominal_hold_last": 0.280430015625,
+        "final100k": 0.70625,
+        "final10pct": 0.70625,
+        "peak": 0.84375,
+        "last": 0.78125
+      },
+      "last_train_llm_calls": 4969.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          58,
+          0.0
+        ],
+        [
+          10108,
+          0.03125
+        ],
+        [
+          20111,
+          0.75
+        ],
+        [
+          30177,
+          0.53125
+        ],
+        [
+          40219,
+          0.03125
+        ],
+        [
+          50232,
+          0.03125
+        ],
+        [
+          60258,
+          0.3125
+        ],
+        [
+          70260,
+          0.5
+        ],
+        [
+          80275,
+          0.40625
+        ],
+        [
+          90309,
+          0.25
+        ],
+        [
+          100347,
+          0.21875
+        ],
+        [
+          110371,
+          0.03125
+        ],
+        [
+          120399,
+          0.03125
+        ],
+        [
+          130423,
+          0.0
+        ],
+        [
+          140457,
+          0.0
+        ],
+        [
+          150466,
+          0.0
+        ],
+        [
+          160501,
+          0.03125
+        ],
+        [
+          170524,
+          0.03125
+        ],
+        [
+          180526,
+          0.03125
+        ],
+        [
+          190544,
+          0.09375
+        ],
+        [
+          200568,
+          0.0
+        ],
+        [
+          210604,
+          0.03125
+        ],
+        [
+          220619,
+          0.0625
+        ],
+        [
+          230638,
+          0.0
+        ],
+        [
+          240638,
+          0.0
+        ],
+        [
+          250670,
+          0.0
+        ],
+        [
+          260679,
+          0.0
+        ],
+        [
+          270682,
+          0.0
+        ],
+        [
+          280708,
+          0.0
+        ],
+        [
+          290759,
+          0.0625
+        ],
+        [
+          300777,
+          0.0625
+        ],
+        [
+          310786,
+          0.0
+        ],
+        [
+          320845,
+          0.0625
+        ],
+        [
+          330948,
+          0.0
+        ],
+        [
+          340974,
+          0.03125
+        ],
+        [
+          351012,
+          0.0
+        ],
+        [
+          361080,
+          0.03125
+        ],
+        [
+          371080,
+          0.125
+        ],
+        [
+          381082,
+          0.0
+        ],
+        [
+          391092,
+          0.125
+        ],
+        [
+          401184,
+          0.0625
+        ],
+        [
+          411216,
+          0.0
+        ],
+        [
+          421266,
+          0.09375
+        ],
+        [
+          431268,
+          0.21875
+        ],
+        [
+          441288,
+          0.1875
+        ],
+        [
+          451289,
+          0.125
+        ],
+        [
+          461299,
+          0.125
+        ],
+        [
+          471376,
+          0.28125
+        ],
+        [
+          481376,
+          0.0625
+        ],
+        [
+          491434,
+          0.15625
+        ],
+        [
+          501478,
+          0.1875
+        ],
+        [
+          511510,
+          0.1875
+        ],
+        [
+          521539,
+          0.21875
+        ],
+        [
+          531579,
+          0.15625
+        ],
+        [
+          541638,
+          0.15625
+        ],
+        [
+          551662,
+          0.1875
+        ],
+        [
+          561692,
+          0.1875
+        ],
+        [
+          571692,
+          0.34375
+        ],
+        [
+          581704,
+          0.21875
+        ],
+        [
+          591785,
+          0.09375
+        ],
+        [
+          601836,
+          0.3125
+        ],
+        [
+          611853,
+          0.6875
+        ],
+        [
+          621863,
+          0.375
+        ],
+        [
+          631923,
+          0.46875
+        ],
+        [
+          641925,
+          0.40625
+        ],
+        [
+          651957,
+          0.3125
+        ],
+        [
+          662010,
+          0.375
+        ],
+        [
+          672044,
+          0.5
+        ],
+        [
+          682069,
+          0.375
+        ],
+        [
+          692106,
+          0.21875
+        ],
+        [
+          702166,
+          0.4375
+        ],
+        [
+          712201,
+          0.46875
+        ],
+        [
+          722240,
+          0.40625
+        ],
+        [
+          732249,
+          0.5
+        ],
+        [
+          742278,
+          0.5
+        ],
+        [
+          752299,
+          0.40625
+        ],
+        [
+          762349,
+          0.28125
+        ],
+        [
+          772383,
+          0.375
+        ],
+        [
+          782411,
+          0.375
+        ],
+        [
+          792466,
+          0.46875
+        ],
+        [
+          802476,
+          0.28125
+        ],
+        [
+          812582,
+          0.28125
+        ],
+        [
+          822630,
+          0.59375
+        ],
+        [
+          832690,
+          0.59375
+        ],
+        [
+          842742,
+          0.53125
+        ],
+        [
+          852777,
+          0.46875
+        ],
+        [
+          862832,
+          0.65625
+        ],
+        [
+          872837,
+          0.625
+        ],
+        [
+          882855,
+          0.625
+        ],
+        [
+          892898,
+          0.6875
+        ],
+        [
+          902913,
+          0.5625
+        ],
+        [
+          912946,
+          0.6875
+        ],
+        [
+          922981,
+          0.75
+        ],
+        [
+          932995,
+          0.75
+        ],
+        [
+          943015,
+          0.5625
+        ],
+        [
+          953021,
+          0.6875
+        ],
+        [
+          963057,
+          0.625
+        ],
+        [
+          973111,
+          0.84375
+        ],
+        [
+          983160,
+          0.8125
+        ],
+        [
+          993167,
+          0.78125
+        ]
+      ]
+    },
+    {
+      "sacred": 361,
+      "job_id": 976096,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "12:28:30",
+        "ended_at": "2026-09-14T06:08:35"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 1,
+        "t_max": 1000000,
+        "wandb_group": "rsvp_e1_20260913_v2_pilot_gate_timer_shape_F200_H1000000",
+        "wandb_run": "rsvp_e1_20260913_v2_pilot_gate_timer_shape_F200_H1000000_seed1",
+        "scheduler": "gate_timer",
+        "f_update": 200,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": false,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 0.4,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": true,
+          "reward_scale_rate": 20,
+          "reward_sparse": false,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": false,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "15b98790ec22477a9d8cecc05980b9e14aed06111bba542dcf9bbaad44a3e583",
+      "info_sha256": "1cb91cf8c2dc5e381f576a5800abca283db404f9b449a1ab9987830b8d6eb812",
+      "metrics": {
+        "observed_horizon": 994111,
+        "evaluation_mean": 0.228125,
+        "auc_observed": 0.22584572421993118,
+        "auc_nominal_hold_last": 0.229852625,
+        "final100k": 0.71875,
+        "final10pct": 0.71875,
+        "peak": 0.90625,
+        "last": 0.90625
+      },
+      "last_train_llm_calls": 10182.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          58,
+          0.0
+        ],
+        [
+          10100,
+          0.0
+        ],
+        [
+          20140,
+          0.0
+        ],
+        [
+          30145,
+          0.53125
+        ],
+        [
+          40146,
+          0.375
+        ],
+        [
+          50153,
+          0.5
+        ],
+        [
+          60184,
+          0.09375
+        ],
+        [
+          70236,
+          0.34375
+        ],
+        [
+          80251,
+          0.25
+        ],
+        [
+          90264,
+          0.21875
+        ],
+        [
+          100277,
+          0.125
+        ],
+        [
+          110296,
+          0.0625
+        ],
+        [
+          120333,
+          0.0
+        ],
+        [
+          130333,
+          0.0
+        ],
+        [
+          140343,
+          0.0
+        ],
+        [
+          150378,
+          0.0
+        ],
+        [
+          160431,
+          0.0
+        ],
+        [
+          170439,
+          0.0
+        ],
+        [
+          180490,
+          0.0
+        ],
+        [
+          190490,
+          0.0
+        ],
+        [
+          200498,
+          0.0
+        ],
+        [
+          210518,
+          0.0
+        ],
+        [
+          220610,
+          0.0
+        ],
+        [
+          230692,
+          0.0
+        ],
+        [
+          240734,
+          0.03125
+        ],
+        [
+          250748,
+          0.03125
+        ],
+        [
+          260778,
+          0.03125
+        ],
+        [
+          270800,
+          0.0
+        ],
+        [
+          280848,
+          0.0
+        ],
+        [
+          290897,
+          0.0
+        ],
+        [
+          300960,
+          0.0
+        ],
+        [
+          310974,
+          0.0
+        ],
+        [
+          321006,
+          0.03125
+        ],
+        [
+          331033,
+          0.0
+        ],
+        [
+          341050,
+          0.0
+        ],
+        [
+          351058,
+          0.03125
+        ],
+        [
+          361171,
+          0.03125
+        ],
+        [
+          371268,
+          0.0625
+        ],
+        [
+          381298,
+          0.0
+        ],
+        [
+          391365,
+          0.09375
+        ],
+        [
+          401373,
+          0.0
+        ],
+        [
+          411415,
+          0.03125
+        ],
+        [
+          421532,
+          0.0625
+        ],
+        [
+          431545,
+          0.0
+        ],
+        [
+          441601,
+          0.0
+        ],
+        [
+          451620,
+          0.0625
+        ],
+        [
+          461689,
+          0.0625
+        ],
+        [
+          471692,
+          0.0
+        ],
+        [
+          481792,
+          0.0
+        ],
+        [
+          491911,
+          0.0
+        ],
+        [
+          501942,
+          0.03125
+        ],
+        [
+          512013,
+          0.0
+        ],
+        [
+          522045,
+          0.0625
+        ],
+        [
+          532095,
+          0.0625
+        ],
+        [
+          542173,
+          0.0625
+        ],
+        [
+          552232,
+          0.1875
+        ],
+        [
+          562271,
+          0.25
+        ],
+        [
+          572288,
+          0.25
+        ],
+        [
+          582330,
+          0.40625
+        ],
+        [
+          592390,
+          0.4375
+        ],
+        [
+          602452,
+          0.4375
+        ],
+        [
+          612468,
+          0.34375
+        ],
+        [
+          622470,
+          0.3125
+        ],
+        [
+          632498,
+          0.25
+        ],
+        [
+          642526,
+          0.25
+        ],
+        [
+          652540,
+          0.3125
+        ],
+        [
+          662543,
+          0.25
+        ],
+        [
+          672574,
+          0.34375
+        ],
+        [
+          682594,
+          0.375
+        ],
+        [
+          692598,
+          0.25
+        ],
+        [
+          702601,
+          0.40625
+        ],
+        [
+          712632,
+          0.34375
+        ],
+        [
+          722641,
+          0.28125
+        ],
+        [
+          732668,
+          0.25
+        ],
+        [
+          742731,
+          0.4375
+        ],
+        [
+          752799,
+          0.3125
+        ],
+        [
+          762827,
+          0.40625
+        ],
+        [
+          772910,
+          0.34375
+        ],
+        [
+          782947,
+          0.21875
+        ],
+        [
+          792972,
+          0.28125
+        ],
+        [
+          803003,
+          0.21875
+        ],
+        [
+          813106,
+          0.46875
+        ],
+        [
+          823159,
+          0.46875
+        ],
+        [
+          833265,
+          0.46875
+        ],
+        [
+          843285,
+          0.46875
+        ],
+        [
+          853323,
+          0.625
+        ],
+        [
+          863378,
+          0.3125
+        ],
+        [
+          873459,
+          0.4375
+        ],
+        [
+          883557,
+          0.53125
+        ],
+        [
+          893668,
+          0.40625
+        ],
+        [
+          903764,
+          0.4375
+        ],
+        [
+          913793,
+          0.59375
+        ],
+        [
+          923893,
+          0.71875
+        ],
+        [
+          933906,
+          0.78125
+        ],
+        [
+          943919,
+          0.65625
+        ],
+        [
+          953953,
+          0.78125
+        ],
+        [
+          963984,
+          0.8125
+        ],
+        [
+          974029,
+          0.65625
+        ],
+        [
+          984109,
+          0.84375
+        ],
+        [
+          994111,
+          0.90625
+        ]
+      ]
+    },
+    {
+      "sacred": 362,
+      "job_id": 979454,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:38:53",
+        "ended_at": "2026-09-13T21:05:58"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "qmix_paper",
+        "env": "sc2",
+        "seed": 1,
+        "t_max": 300000,
+        "wandb_group": "winonly_sparse_gate_20260913_v1_2s3z_qmix_H300000",
+        "wandb_run": "winonly_sparse_gate_20260913_v1_2s3z_qmix_H300000_seed1",
+        "commander": "none",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": false,
+        "use_action_masking": false,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": false,
+          "reward_scale_rate": 20,
+          "reward_sparse": true,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": true,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "68ebb227ee7a3cf542af270c0c08df6ef0a8475d8dc5fc7e6f4906d584aa747e",
+      "info_sha256": "b021a7dee014d81a685a9b8ebcf4b73374a241d6d4f12d0214cba823c45bdec0",
+      "metrics": {
+        "observed_horizon": 291086,
+        "evaluation_mean": 0.0,
+        "auc_observed": 0.0,
+        "auc_nominal_hold_last": 0.0,
+        "final100k": 0.0,
+        "final10pct": 0.0,
+        "peak": 0.0,
+        "last": 0.0
+      },
+      "last_train_llm_calls": 0,
+      "last_train_llm_failures": 0,
+      "evaluation_curve": [
+        [
+          58,
+          0.0
+        ],
+        [
+          10062,
+          0.0
+        ],
+        [
+          20062,
+          0.0
+        ],
+        [
+          30065,
+          0.0
+        ],
+        [
+          40092,
+          0.0
+        ],
+        [
+          50110,
+          0.0
+        ],
+        [
+          60143,
+          0.0
+        ],
+        [
+          70143,
+          0.0
+        ],
+        [
+          80164,
+          0.0
+        ],
+        [
+          90202,
+          0.0
+        ],
+        [
+          100213,
+          0.0
+        ],
+        [
+          110232,
+          0.0
+        ],
+        [
+          120263,
+          0.0
+        ],
+        [
+          130280,
+          0.0
+        ],
+        [
+          140385,
+          0.0
+        ],
+        [
+          150406,
+          0.0
+        ],
+        [
+          160477,
+          0.0
+        ],
+        [
+          170494,
+          0.0
+        ],
+        [
+          180519,
+          0.0
+        ],
+        [
+          190569,
+          0.0
+        ],
+        [
+          200658,
+          0.0
+        ],
+        [
+          210692,
+          0.0
+        ],
+        [
+          220701,
+          0.0
+        ],
+        [
+          230729,
+          0.0
+        ],
+        [
+          240790,
+          0.0
+        ],
+        [
+          250869,
+          0.0
+        ],
+        [
+          260893,
+          0.0
+        ],
+        [
+          270951,
+          0.0
+        ],
+        [
+          280976,
+          0.0
+        ],
+        [
+          291086,
+          0.0
+        ]
+      ]
+    },
+    {
+      "sacred": 363,
+      "job_id": 979453,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:38:54",
+        "ended_at": "2026-09-13T21:05:59"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "qmix_paper",
+        "env": "sc2",
+        "seed": 0,
+        "t_max": 300000,
+        "wandb_group": "winonly_sparse_gate_20260913_v1_2s3z_qmix_H300000",
+        "wandb_run": "winonly_sparse_gate_20260913_v1_2s3z_qmix_H300000_seed0",
+        "commander": "none",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": false,
+        "use_action_masking": false,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": false,
+          "reward_scale_rate": 20,
+          "reward_sparse": true,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": true,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "f3300b83808c38203c37ab113658dd8da6d6272818d120c91b586de72c394dd0",
+      "info_sha256": "236c4920ddce2e3fc608965f6594150e31e2f60a6cb66c04837b3c5b046dec2f",
+      "metrics": {
+        "observed_horizon": 291071,
+        "evaluation_mean": 0.0,
+        "auc_observed": 0.0,
+        "auc_nominal_hold_last": 0.0,
+        "final100k": 0.0,
+        "final10pct": 0.0,
+        "peak": 0.0,
+        "last": 0.0
+      },
+      "last_train_llm_calls": 0,
+      "last_train_llm_failures": 0,
+      "evaluation_curve": [
+        [
+          50,
+          0.0
+        ],
+        [
+          10075,
+          0.0
+        ],
+        [
+          20119,
+          0.0
+        ],
+        [
+          30149,
+          0.0
+        ],
+        [
+          40187,
+          0.0
+        ],
+        [
+          50220,
+          0.0
+        ],
+        [
+          60238,
+          0.0
+        ],
+        [
+          70273,
+          0.0
+        ],
+        [
+          80392,
+          0.0
+        ],
+        [
+          90413,
+          0.0
+        ],
+        [
+          100418,
+          0.0
+        ],
+        [
+          110462,
+          0.0
+        ],
+        [
+          120501,
+          0.0
+        ],
+        [
+          130542,
+          0.0
+        ],
+        [
+          140570,
+          0.0
+        ],
+        [
+          150613,
+          0.0
+        ],
+        [
+          160640,
+          0.0
+        ],
+        [
+          170716,
+          0.0
+        ],
+        [
+          180716,
+          0.0
+        ],
+        [
+          190722,
+          0.0
+        ],
+        [
+          200775,
+          0.0
+        ],
+        [
+          210819,
+          0.0
+        ],
+        [
+          220837,
+          0.0
+        ],
+        [
+          230929,
+          0.0
+        ],
+        [
+          240932,
+          0.0
+        ],
+        [
+          250947,
+          0.0
+        ],
+        [
+          261029,
+          0.0
+        ],
+        [
+          271038,
+          0.0
+        ],
+        [
+          281047,
+          0.0
+        ],
+        [
+          291071,
+          0.0
+        ]
+      ]
+    },
+    {
+      "sacred": 364,
+      "job_id": 979456,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "07:49:20",
+        "ended_at": "2026-09-14T04:16:25"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "lehca",
+        "env": "sc2",
+        "seed": 1,
+        "t_max": 300000,
+        "wandb_group": "winonly_sparse_gate_20260913_v1_2s3z_lehca_H300000",
+        "wandb_run": "winonly_sparse_gate_20260913_v1_2s3z_lehca_H300000_seed1",
+        "f_update": 50,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": true,
+        "use_masking_at_test": true,
+        "beta": 0.1,
+        "shaping_in_learner": false,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 0,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": false,
+          "reward_scale_rate": 20,
+          "reward_sparse": true,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": true,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "f66d7eeb955ed542a7cc172f705026d050bd82389d0893d26ebb19e947b43e12",
+      "info_sha256": "7cc205156502439e69589972632b97a00b4e187beb1190e45386f37f0c8fa646",
+      "metrics": {
+        "observed_horizon": 290799,
+        "evaluation_mean": 0.009375,
+        "auc_observed": 0.009701933294130998,
+        "auc_nominal_hold_last": 0.009404375,
+        "final100k": 0.0,
+        "final10pct": 0.0,
+        "peak": 0.15625,
+        "last": 0.0
+      },
+      "last_train_llm_calls": 5817.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          58,
+          0.0
+        ],
+        [
+          10094,
+          0.0
+        ],
+        [
+          20096,
+          0.0
+        ],
+        [
+          30122,
+          0.0
+        ],
+        [
+          40134,
+          0.03125
+        ],
+        [
+          50163,
+          0.15625
+        ],
+        [
+          60204,
+          0.03125
+        ],
+        [
+          70236,
+          0.0625
+        ],
+        [
+          80254,
+          0.0
+        ],
+        [
+          90258,
+          0.0
+        ],
+        [
+          100271,
+          0.0
+        ],
+        [
+          110283,
+          0.0
+        ],
+        [
+          120297,
+          0.0
+        ],
+        [
+          130338,
+          0.0
+        ],
+        [
+          140368,
+          0.0
+        ],
+        [
+          150385,
+          0.0
+        ],
+        [
+          160424,
+          0.0
+        ],
+        [
+          170425,
+          0.0
+        ],
+        [
+          180462,
+          0.0
+        ],
+        [
+          190500,
+          0.0
+        ],
+        [
+          200534,
+          0.0
+        ],
+        [
+          210576,
+          0.0
+        ],
+        [
+          220580,
+          0.0
+        ],
+        [
+          230606,
+          0.0
+        ],
+        [
+          240657,
+          0.0
+        ],
+        [
+          250705,
+          0.0
+        ],
+        [
+          260734,
+          0.0
+        ],
+        [
+          270747,
+          0.0
+        ],
+        [
+          280756,
+          0.0
+        ],
+        [
+          290799,
+          0.0
+        ]
+      ]
+    },
+    {
+      "sacred": 365,
+      "job_id": 979455,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "08:16:14",
+        "ended_at": "2026-09-14T04:43:19"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "lehca",
+        "env": "sc2",
+        "seed": 0,
+        "t_max": 300000,
+        "wandb_group": "winonly_sparse_gate_20260913_v1_2s3z_lehca_H300000",
+        "wandb_run": "winonly_sparse_gate_20260913_v1_2s3z_lehca_H300000_seed0",
+        "f_update": 50,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": true,
+        "use_masking_at_test": true,
+        "beta": 0.1,
+        "shaping_in_learner": false,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 0,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": false,
+          "reward_scale_rate": 20,
+          "reward_sparse": true,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": true,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "db683ed577af033b956ad3c08debf109e9317e1281f876ad5d2bd946fe6e341b",
+      "info_sha256": "a0d4db6f00b8f632a0f7cb3062b5c4b3951dd15de1bad28def73ae6090a25038",
+      "metrics": {
+        "observed_horizon": 291052,
+        "evaluation_mean": 0.013541666666666667,
+        "auc_observed": 0.014004799829583718,
+        "auc_nominal_hold_last": 0.013587083333333333,
+        "final100k": 0.003125,
+        "final10pct": 0.0,
+        "peak": 0.125,
+        "last": 0.0
+      },
+      "last_train_llm_calls": 5827.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          50,
+          0.0
+        ],
+        [
+          10052,
+          0.0
+        ],
+        [
+          20089,
+          0.0
+        ],
+        [
+          30122,
+          0.09375
+        ],
+        [
+          40165,
+          0.0625
+        ],
+        [
+          50185,
+          0.0
+        ],
+        [
+          60214,
+          0.0625
+        ],
+        [
+          70229,
+          0.03125
+        ],
+        [
+          80266,
+          0.125
+        ],
+        [
+          90303,
+          0.0
+        ],
+        [
+          100321,
+          0.0
+        ],
+        [
+          110339,
+          0.0
+        ],
+        [
+          120373,
+          0.0
+        ],
+        [
+          130402,
+          0.0
+        ],
+        [
+          140428,
+          0.0
+        ],
+        [
+          150438,
+          0.0
+        ],
+        [
+          160452,
+          0.0
+        ],
+        [
+          170471,
+          0.0
+        ],
+        [
+          180513,
+          0.0
+        ],
+        [
+          190603,
+          0.0
+        ],
+        [
+          200645,
+          0.0
+        ],
+        [
+          210739,
+          0.0
+        ],
+        [
+          220788,
+          0.0
+        ],
+        [
+          230822,
+          0.0
+        ],
+        [
+          240871,
+          0.03125
+        ],
+        [
+          250904,
+          0.0
+        ],
+        [
+          260935,
+          0.0
+        ],
+        [
+          271023,
+          0.0
+        ],
+        [
+          281026,
+          0.0
+        ],
+        [
+          291052,
+          0.0
+        ]
+      ]
+    },
+    {
+      "sacred": 366,
+      "job_id": 979940,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:50:57",
+        "ended_at": "2026-09-13T23:16:44"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "qmix_paper",
+        "env": "sc2",
+        "seed": 3,
+        "t_max": 300000,
+        "wandb_group": "winonly_sparse_gate_20260913_v1_n4_2s3z_qmix_H300000",
+        "wandb_run": "winonly_sparse_gate_20260913_v1_n4_2s3z_qmix_H300000_seed3",
+        "commander": "none",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": false,
+        "use_action_masking": false,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": false,
+          "reward_scale_rate": 20,
+          "reward_sparse": true,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": true,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "1651d8e10a94537a4324ab96ea64f86c119fbf30a53812a3187cb3cfecd7ce09",
+      "info_sha256": "2f71d6c6850e488b915c24d4b36d3cbbd5157648aa2190cebd5a4bae9cc6f7ff",
+      "metrics": {
+        "observed_horizon": 290891,
+        "evaluation_mean": 0.0,
+        "auc_observed": 0.0,
+        "auc_nominal_hold_last": 0.0,
+        "final100k": 0.0,
+        "final10pct": 0.0,
+        "peak": 0.0,
+        "last": 0.0
+      },
+      "last_train_llm_calls": 0,
+      "last_train_llm_failures": 0,
+      "evaluation_curve": [
+        [
+          59,
+          0.0
+        ],
+        [
+          10064,
+          0.0
+        ],
+        [
+          20103,
+          0.0
+        ],
+        [
+          30128,
+          0.0
+        ],
+        [
+          40227,
+          0.0
+        ],
+        [
+          50270,
+          0.0
+        ],
+        [
+          60274,
+          0.0
+        ],
+        [
+          70300,
+          0.0
+        ],
+        [
+          80306,
+          0.0
+        ],
+        [
+          90326,
+          0.0
+        ],
+        [
+          100344,
+          0.0
+        ],
+        [
+          110369,
+          0.0
+        ],
+        [
+          120412,
+          0.0
+        ],
+        [
+          130429,
+          0.0
+        ],
+        [
+          140448,
+          0.0
+        ],
+        [
+          150480,
+          0.0
+        ],
+        [
+          160505,
+          0.0
+        ],
+        [
+          170510,
+          0.0
+        ],
+        [
+          180594,
+          0.0
+        ],
+        [
+          190600,
+          0.0
+        ],
+        [
+          200609,
+          0.0
+        ],
+        [
+          210626,
+          0.0
+        ],
+        [
+          220641,
+          0.0
+        ],
+        [
+          230678,
+          0.0
+        ],
+        [
+          240678,
+          0.0
+        ],
+        [
+          250718,
+          0.0
+        ],
+        [
+          260801,
+          0.0
+        ],
+        [
+          270803,
+          0.0
+        ],
+        [
+          280804,
+          0.0
+        ],
+        [
+          290891,
+          0.0
+        ]
+      ]
+    },
+    {
+      "sacred": 367,
+      "job_id": 979939,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:48:56",
+        "ended_at": "2026-09-13T23:14:43"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "qmix_paper",
+        "env": "sc2",
+        "seed": 2,
+        "t_max": 300000,
+        "wandb_group": "winonly_sparse_gate_20260913_v1_n4_2s3z_qmix_H300000",
+        "wandb_run": "winonly_sparse_gate_20260913_v1_n4_2s3z_qmix_H300000_seed2",
+        "commander": "none",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": false,
+        "use_action_masking": false,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": false,
+          "reward_scale_rate": 20,
+          "reward_sparse": true,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": true,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "5671c81ebfd8ff4b6d5c8f916586818ce8db2e0e12706a30bec91fc50d9d81c1",
+      "info_sha256": "c80df3f6e8e3df72e6c78305184668b7942055ba11f42005715ed7100d569be1",
+      "metrics": {
+        "observed_horizon": 291339,
+        "evaluation_mean": 0.0,
+        "auc_observed": 0.0,
+        "auc_nominal_hold_last": 0.0,
+        "final100k": 0.0,
+        "final10pct": 0.0,
+        "peak": 0.0,
+        "last": 0.0
+      },
+      "last_train_llm_calls": 0,
+      "last_train_llm_failures": 0,
+      "evaluation_curve": [
+        [
+          53,
+          0.0
+        ],
+        [
+          10103,
+          0.0
+        ],
+        [
+          20124,
+          0.0
+        ],
+        [
+          30137,
+          0.0
+        ],
+        [
+          40164,
+          0.0
+        ],
+        [
+          50197,
+          0.0
+        ],
+        [
+          60253,
+          0.0
+        ],
+        [
+          70275,
+          0.0
+        ],
+        [
+          80312,
+          0.0
+        ],
+        [
+          90373,
+          0.0
+        ],
+        [
+          100424,
+          0.0
+        ],
+        [
+          110464,
+          0.0
+        ],
+        [
+          120472,
+          0.0
+        ],
+        [
+          130487,
+          0.0
+        ],
+        [
+          140559,
+          0.0
+        ],
+        [
+          150640,
+          0.0
+        ],
+        [
+          160680,
+          0.0
+        ],
+        [
+          170750,
+          0.0
+        ],
+        [
+          180780,
+          0.0
+        ],
+        [
+          190789,
+          0.0
+        ],
+        [
+          200867,
+          0.0
+        ],
+        [
+          210922,
+          0.0
+        ],
+        [
+          220941,
+          0.0
+        ],
+        [
+          230954,
+          0.0
+        ],
+        [
+          241001,
+          0.0
+        ],
+        [
+          251032,
+          0.0
+        ],
+        [
+          261089,
+          0.0
+        ],
+        [
+          271187,
+          0.0
+        ],
+        [
+          281296,
+          0.0
+        ],
+        [
+          291339,
+          0.0
+        ]
+      ]
+    },
+    {
+      "sacred": 368,
+      "job_id": 979941,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "07:54:00",
+        "ended_at": "2026-09-14T06:19:47"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "lehca",
+        "env": "sc2",
+        "seed": 2,
+        "t_max": 300000,
+        "wandb_group": "winonly_sparse_gate_20260913_v1_n4_2s3z_lehca_H300000",
+        "wandb_run": "winonly_sparse_gate_20260913_v1_n4_2s3z_lehca_H300000_seed2",
+        "f_update": 50,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": true,
+        "use_masking_at_test": true,
+        "beta": 0.1,
+        "shaping_in_learner": false,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 0,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": false,
+          "reward_scale_rate": 20,
+          "reward_sparse": true,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": true,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "0085097afab1158a247e7e84da96e9e01c7ed382351970f293f4f583ad02cefd",
+      "info_sha256": "11aff25271483c32f460d60ac629eb589369392a52ce906e7dc74ac4d616e39b",
+      "metrics": {
+        "observed_horizon": 290788,
+        "evaluation_mean": 0.034375,
+        "auc_observed": 0.035560539379204094,
+        "auc_nominal_hold_last": 0.03446859375,
+        "final100k": 0.0125,
+        "final10pct": 0.0,
+        "peak": 0.21875,
+        "last": 0.0
+      },
+      "last_train_llm_calls": 5817.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          53,
+          0.0
+        ],
+        [
+          10079,
+          0.0
+        ],
+        [
+          20139,
+          0.0
+        ],
+        [
+          30145,
+          0.03125
+        ],
+        [
+          40184,
+          0.0
+        ],
+        [
+          50187,
+          0.03125
+        ],
+        [
+          60233,
+          0.125
+        ],
+        [
+          70274,
+          0.21875
+        ],
+        [
+          80300,
+          0.0625
+        ],
+        [
+          90310,
+          0.125
+        ],
+        [
+          100323,
+          0.0625
+        ],
+        [
+          110334,
+          0.0
+        ],
+        [
+          120362,
+          0.03125
+        ],
+        [
+          130397,
+          0.03125
+        ],
+        [
+          140438,
+          0.09375
+        ],
+        [
+          150483,
+          0.03125
+        ],
+        [
+          160511,
+          0.0
+        ],
+        [
+          170546,
+          0.03125
+        ],
+        [
+          180557,
+          0.03125
+        ],
+        [
+          190602,
+          0.0
+        ],
+        [
+          200623,
+          0.03125
+        ],
+        [
+          210629,
+          0.03125
+        ],
+        [
+          220641,
+          0.0
+        ],
+        [
+          230675,
+          0.03125
+        ],
+        [
+          240677,
+          0.0
+        ],
+        [
+          250698,
+          0.0
+        ],
+        [
+          260708,
+          0.03125
+        ],
+        [
+          270719,
+          0.0
+        ],
+        [
+          280763,
+          0.0
+        ],
+        [
+          290788,
+          0.0
+        ]
+      ]
+    },
+    {
+      "sacred": 369,
+      "job_id": 979942,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "08:02:28",
+        "ended_at": "2026-09-14T07:17:35"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "lehca",
+        "env": "sc2",
+        "seed": 3,
+        "t_max": 300000,
+        "wandb_group": "winonly_sparse_gate_20260913_v1_n4_2s3z_lehca_H300000",
+        "wandb_run": "winonly_sparse_gate_20260913_v1_n4_2s3z_lehca_H300000_seed3",
+        "f_update": 50,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": true,
+        "use_masking_at_test": true,
+        "beta": 0.1,
+        "shaping_in_learner": false,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 0,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": false,
+          "reward_scale_rate": 20,
+          "reward_sparse": true,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": true,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "08c5a269f2dafa73dda0c162e38fbd4049b61de8ed36c65f4cda7592e0edfff5",
+      "info_sha256": "52015c2dfde3966557c4cdab4ff31fb8075f8517d74bf792b3fce0a2b9d8d7a8",
+      "metrics": {
+        "observed_horizon": 290924,
+        "evaluation_mean": 0.005208333333333333,
+        "auc_observed": 0.004840074211821644,
+        "auc_nominal_hold_last": 0.0056390625,
+        "final100k": 0.003125,
+        "final10pct": 0.010416666666666666,
+        "peak": 0.0625,
+        "last": 0.03125
+      },
+      "last_train_llm_calls": 5821.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          59,
+          0.0
+        ],
+        [
+          10089,
+          0.0
+        ],
+        [
+          20116,
+          0.0
+        ],
+        [
+          30154,
+          0.0
+        ],
+        [
+          40196,
+          0.0
+        ],
+        [
+          50197,
+          0.0
+        ],
+        [
+          60222,
+          0.0625
+        ],
+        [
+          70231,
+          0.0625
+        ],
+        [
+          80238,
+          0.0
+        ],
+        [
+          90265,
+          0.0
+        ],
+        [
+          100274,
+          0.0
+        ],
+        [
+          110307,
+          0.0
+        ],
+        [
+          120329,
+          0.0
+        ],
+        [
+          130369,
+          0.0
+        ],
+        [
+          140440,
+          0.0
+        ],
+        [
+          150459,
+          0.0
+        ],
+        [
+          160503,
+          0.0
+        ],
+        [
+          170523,
+          0.0
+        ],
+        [
+          180549,
+          0.0
+        ],
+        [
+          190581,
+          0.0
+        ],
+        [
+          200621,
+          0.0
+        ],
+        [
+          210685,
+          0.0
+        ],
+        [
+          220709,
+          0.0
+        ],
+        [
+          230711,
+          0.0
+        ],
+        [
+          240739,
+          0.0
+        ],
+        [
+          250791,
+          0.0
+        ],
+        [
+          260842,
+          0.0
+        ],
+        [
+          270850,
+          0.0
+        ],
+        [
+          280906,
+          0.0
+        ],
+        [
+          290924,
+          0.03125
+        ]
+      ]
+    },
+    {
+      "sacred": 371,
+      "job_id": 980261,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "02:55:17",
+        "ended_at": "2026-09-14T02:41:24"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 1,
+        "t_max": 300000,
+        "wandb_group": "winonly_soft_rsvp_gate_20260913_v1_2s3z_rsvp_H300000",
+        "wandb_run": "winonly_soft_rsvp_gate_20260913_v1_2s3z_rsvp_H300000_seed1",
+        "scheduler": "vf",
+        "f_update": 200,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": true,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0.1,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 1.33333333333,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "rsvp_trial_start_t": 200000,
+        "rsvp_trial_window_episodes": 5,
+        "rsvp_trial_max_per_kind": 50,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": false,
+          "reward_scale_rate": 20,
+          "reward_sparse": true,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": true,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "0ebbe86d90b0c1a7302b1e1dc0681db2cd6f6ac280a7ad19d113582e021ec31a",
+      "info_sha256": "73211185ff8b1cc95a4074d6f621cbb8c1b1cf01f686de035f0eaf85ce1d4e67",
+      "metrics": {
+        "observed_horizon": 291069,
+        "evaluation_mean": 0.0010416666666666667,
+        "auc_observed": 0.001074863262662805,
+        "auc_nominal_hold_last": 0.0010428645833333334,
+        "final100k": 0.0,
+        "final10pct": 0.0,
+        "peak": 0.03125,
+        "last": 0.0
+      },
+      "last_train_llm_calls": 1943.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          58,
+          0.0
+        ],
+        [
+          10098,
+          0.0
+        ],
+        [
+          20153,
+          0.0
+        ],
+        [
+          30172,
+          0.03125
+        ],
+        [
+          40176,
+          0.0
+        ],
+        [
+          50192,
+          0.0
+        ],
+        [
+          60198,
+          0.0
+        ],
+        [
+          70230,
+          0.0
+        ],
+        [
+          80268,
+          0.0
+        ],
+        [
+          90282,
+          0.0
+        ],
+        [
+          100299,
+          0.0
+        ],
+        [
+          110319,
+          0.0
+        ],
+        [
+          120354,
+          0.0
+        ],
+        [
+          130363,
+          0.0
+        ],
+        [
+          140374,
+          0.0
+        ],
+        [
+          150411,
+          0.0
+        ],
+        [
+          160446,
+          0.0
+        ],
+        [
+          170482,
+          0.0
+        ],
+        [
+          180525,
+          0.0
+        ],
+        [
+          190560,
+          0.0
+        ],
+        [
+          200611,
+          0.0
+        ],
+        [
+          210629,
+          0.0
+        ],
+        [
+          220680,
+          0.0
+        ],
+        [
+          230779,
+          0.0
+        ],
+        [
+          240789,
+          0.0
+        ],
+        [
+          250882,
+          0.0
+        ],
+        [
+          260953,
+          0.0
+        ],
+        [
+          271001,
+          0.0
+        ],
+        [
+          281043,
+          0.0
+        ],
+        [
+          291069,
+          0.0
+        ]
+      ]
+    },
+    {
+      "sacred": 372,
+      "job_id": 980258,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "03:01:18",
+        "ended_at": "2026-09-14T02:47:25"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 0,
+        "t_max": 300000,
+        "wandb_group": "winonly_soft_rsvp_gate_20260913_v1_2s3z_rsvp_H300000",
+        "wandb_run": "winonly_soft_rsvp_gate_20260913_v1_2s3z_rsvp_H300000_seed0",
+        "scheduler": "vf",
+        "f_update": 200,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": true,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0.1,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 1.33333333333,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "rsvp_trial_start_t": 200000,
+        "rsvp_trial_window_episodes": 5,
+        "rsvp_trial_max_per_kind": 50,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": false,
+          "reward_scale_rate": 20,
+          "reward_sparse": true,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": true,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "b4bace9eb48156d6926cbbce2918a88b98f37bcac680253d58479f225f768537",
+      "info_sha256": "04078676f3d519093ed06caca72edea92588ba7142a72665b8224007b637661e",
+      "metrics": {
+        "observed_horizon": 290986,
+        "evaluation_mean": 0.023958333333333335,
+        "auc_observed": 0.02479350381117992,
+        "auc_nominal_hold_last": 0.024048541666666666,
+        "final100k": 0.0,
+        "final10pct": 0.0,
+        "peak": 0.25,
+        "last": 0.0
+      },
+      "last_train_llm_calls": 1972.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          50,
+          0.0
+        ],
+        [
+          10098,
+          0.0
+        ],
+        [
+          20135,
+          0.0
+        ],
+        [
+          30149,
+          0.25
+        ],
+        [
+          40174,
+          0.125
+        ],
+        [
+          50274,
+          0.1875
+        ],
+        [
+          60285,
+          0.03125
+        ],
+        [
+          70320,
+          0.0625
+        ],
+        [
+          80332,
+          0.03125
+        ],
+        [
+          90367,
+          0.03125
+        ],
+        [
+          100399,
+          0.0
+        ],
+        [
+          110412,
+          0.0
+        ],
+        [
+          120421,
+          0.0
+        ],
+        [
+          130451,
+          0.0
+        ],
+        [
+          140473,
+          0.0
+        ],
+        [
+          150490,
+          0.0
+        ],
+        [
+          160515,
+          0.0
+        ],
+        [
+          170540,
+          0.0
+        ],
+        [
+          180572,
+          0.0
+        ],
+        [
+          190578,
+          0.0
+        ],
+        [
+          200621,
+          0.0
+        ],
+        [
+          210662,
+          0.0
+        ],
+        [
+          220671,
+          0.0
+        ],
+        [
+          230677,
+          0.0
+        ],
+        [
+          240687,
+          0.0
+        ],
+        [
+          250688,
+          0.0
+        ],
+        [
+          260807,
+          0.0
+        ],
+        [
+          270841,
+          0.0
+        ],
+        [
+          280956,
+          0.0
+        ],
+        [
+          290986,
+          0.0
+        ]
+      ]
+    },
+    {
+      "sacred": 373,
+      "job_id": 980098,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "10:23:52",
+        "ended_at": "2026-09-14T10:38:58"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 0,
+        "t_max": 1000000,
+        "wandb_group": "rsvp_refresh_mrt_20260913_v1_pilot_trial_shape_F200_H1000000",
+        "wandb_run": "rsvp_refresh_mrt_20260913_v1_pilot_trial_shape_F200_H1000000_seed0",
+        "scheduler": "vf",
+        "f_update": 200,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": false,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 0.4,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 1,
+        "rsvp_refresh_trial": true,
+        "rsvp_trial_start_t": 200000,
+        "rsvp_trial_window_episodes": 5,
+        "rsvp_trial_max_per_kind": 50,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": true,
+          "reward_scale_rate": 20,
+          "reward_sparse": false,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": false,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "22ab3ecdc99af838bf97a5ca629ef20f213e2f10086e5aee117552103b606fb4",
+      "info_sha256": "92cb12875f54afad8a053b4ed1c0d98d3e20f79fd14a33f93ae0ed13ff1dab77",
+      "metrics": {
+        "observed_horizon": 993741,
+        "evaluation_mean": 0.0303125,
+        "auc_observed": 0.0304353857041221,
+        "auc_nominal_hold_last": 0.030440484375,
+        "final100k": 0.01875,
+        "final10pct": 0.01875,
+        "peak": 0.5625,
+        "last": 0.03125
+      },
+      "last_train_llm_calls": 6736.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          50,
+          0.0
+        ],
+        [
+          10062,
+          0.0
+        ],
+        [
+          20074,
+          0.03125
+        ],
+        [
+          30090,
+          0.5625
+        ],
+        [
+          40138,
+          0.28125
+        ],
+        [
+          50151,
+          0.4375
+        ],
+        [
+          60159,
+          0.3125
+        ],
+        [
+          70181,
+          0.25
+        ],
+        [
+          80223,
+          0.4375
+        ],
+        [
+          90234,
+          0.03125
+        ],
+        [
+          100255,
+          0.09375
+        ],
+        [
+          110265,
+          0.0
+        ],
+        [
+          120301,
+          0.0
+        ],
+        [
+          130331,
+          0.0
+        ],
+        [
+          140360,
+          0.0
+        ],
+        [
+          150361,
+          0.0
+        ],
+        [
+          160439,
+          0.0625
+        ],
+        [
+          170455,
+          0.0
+        ],
+        [
+          180486,
+          0.0
+        ],
+        [
+          190520,
+          0.0
+        ],
+        [
+          200521,
+          0.0
+        ],
+        [
+          210537,
+          0.0
+        ],
+        [
+          220542,
+          0.0
+        ],
+        [
+          230560,
+          0.0
+        ],
+        [
+          240588,
+          0.0
+        ],
+        [
+          250625,
+          0.0
+        ],
+        [
+          260662,
+          0.0
+        ],
+        [
+          270715,
+          0.0
+        ],
+        [
+          280730,
+          0.0
+        ],
+        [
+          290733,
+          0.0
+        ],
+        [
+          300743,
+          0.0
+        ],
+        [
+          310753,
+          0.0
+        ],
+        [
+          320768,
+          0.0
+        ],
+        [
+          330807,
+          0.0
+        ],
+        [
+          340818,
+          0.0
+        ],
+        [
+          350878,
+          0.0
+        ],
+        [
+          360967,
+          0.0
+        ],
+        [
+          370986,
+          0.0
+        ],
+        [
+          381034,
+          0.0
+        ],
+        [
+          391112,
+          0.0
+        ],
+        [
+          401212,
+          0.0
+        ],
+        [
+          411251,
+          0.0
+        ],
+        [
+          421278,
+          0.0
+        ],
+        [
+          431348,
+          0.0
+        ],
+        [
+          441353,
+          0.0
+        ],
+        [
+          451358,
+          0.0
+        ],
+        [
+          461386,
+          0.0
+        ],
+        [
+          471429,
+          0.0
+        ],
+        [
+          481442,
+          0.0
+        ],
+        [
+          491495,
+          0.0
+        ],
+        [
+          501507,
+          0.0
+        ],
+        [
+          511527,
+          0.0
+        ],
+        [
+          521530,
+          0.0
+        ],
+        [
+          531564,
+          0.0
+        ],
+        [
+          541678,
+          0.0
+        ],
+        [
+          551719,
+          0.0
+        ],
+        [
+          561769,
+          0.0
+        ],
+        [
+          571806,
+          0.0
+        ],
+        [
+          581895,
+          0.03125
+        ],
+        [
+          591945,
+          0.0
+        ],
+        [
+          601980,
+          0.0
+        ],
+        [
+          612016,
+          0.03125
+        ],
+        [
+          622056,
+          0.0
+        ],
+        [
+          632093,
+          0.0
+        ],
+        [
+          642108,
+          0.0
+        ],
+        [
+          652157,
+          0.0
+        ],
+        [
+          662161,
+          0.0
+        ],
+        [
+          672170,
+          0.0
+        ],
+        [
+          682258,
+          0.0
+        ],
+        [
+          692269,
+          0.0
+        ],
+        [
+          702296,
+          0.0
+        ],
+        [
+          712372,
+          0.0
+        ],
+        [
+          722456,
+          0.0
+        ],
+        [
+          732507,
+          0.0
+        ],
+        [
+          742565,
+          0.03125
+        ],
+        [
+          752676,
+          0.0
+        ],
+        [
+          762709,
+          0.03125
+        ],
+        [
+          772767,
+          0.09375
+        ],
+        [
+          782855,
+          0.03125
+        ],
+        [
+          792876,
+          0.03125
+        ],
+        [
+          802908,
+          0.03125
+        ],
+        [
+          812957,
+          0.0
+        ],
+        [
+          823004,
+          0.0
+        ],
+        [
+          833051,
+          0.0
+        ],
+        [
+          843112,
+          0.0
+        ],
+        [
+          853181,
+          0.0
+        ],
+        [
+          863188,
+          0.0
+        ],
+        [
+          873236,
+          0.0
+        ],
+        [
+          883274,
+          0.03125
+        ],
+        [
+          893301,
+          0.0
+        ],
+        [
+          903344,
+          0.0
+        ],
+        [
+          913379,
+          0.0
+        ],
+        [
+          923425,
+          0.03125
+        ],
+        [
+          933479,
+          0.0
+        ],
+        [
+          943518,
+          0.03125
+        ],
+        [
+          953528,
+          0.0
+        ],
+        [
+          963541,
+          0.03125
+        ],
+        [
+          973600,
+          0.03125
+        ],
+        [
+          983701,
+          0.03125
+        ],
+        [
+          993741,
+          0.03125
+        ]
+      ]
+    },
+    {
+      "sacred": 374,
+      "job_id": 980262,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "02:24:50",
+        "ended_at": "2026-09-14T05:06:38"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 1,
+        "t_max": 300000,
+        "wandb_group": "winonly_soft_rsvp_gate_20260913_v1_2s3z_fixed200_H300000",
+        "wandb_run": "winonly_soft_rsvp_gate_20260913_v1_2s3z_fixed200_H300000_seed1",
+        "scheduler": "fixed",
+        "f_update": 200,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": true,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0.1,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 1.33333333333,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "rsvp_trial_start_t": 200000,
+        "rsvp_trial_window_episodes": 5,
+        "rsvp_trial_max_per_kind": 50,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": false,
+          "reward_scale_rate": 20,
+          "reward_sparse": true,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": true,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "4df0e7a4dd78df86bb4ad76894fdb822296ee0a9d42853c1f8ed04791676ef19",
+      "info_sha256": "1a6b5cf87281f4c6074866015cdc01fa70eea1e8289ebe7140c4a5fc175814d9",
+      "metrics": {
+        "observed_horizon": 290742,
+        "evaluation_mean": 0.004166666666666667,
+        "auc_observed": 0.004306492096085189,
+        "auc_nominal_hold_last": 0.00417359375,
+        "final100k": 0.0,
+        "final10pct": 0.0,
+        "peak": 0.09375,
+        "last": 0.0
+      },
+      "last_train_llm_calls": 1454.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          58,
+          0.0
+        ],
+        [
+          10076,
+          0.0
+        ],
+        [
+          20076,
+          0.0
+        ],
+        [
+          30110,
+          0.0
+        ],
+        [
+          40120,
+          0.03125
+        ],
+        [
+          50150,
+          0.0
+        ],
+        [
+          60193,
+          0.0
+        ],
+        [
+          70224,
+          0.09375
+        ],
+        [
+          80224,
+          0.0
+        ],
+        [
+          90263,
+          0.0
+        ],
+        [
+          100308,
+          0.0
+        ],
+        [
+          110311,
+          0.0
+        ],
+        [
+          120318,
+          0.0
+        ],
+        [
+          130332,
+          0.0
+        ],
+        [
+          140334,
+          0.0
+        ],
+        [
+          150384,
+          0.0
+        ],
+        [
+          160384,
+          0.0
+        ],
+        [
+          170407,
+          0.0
+        ],
+        [
+          180455,
+          0.0
+        ],
+        [
+          190463,
+          0.0
+        ],
+        [
+          200472,
+          0.0
+        ],
+        [
+          210480,
+          0.0
+        ],
+        [
+          220484,
+          0.0
+        ],
+        [
+          230564,
+          0.0
+        ],
+        [
+          240603,
+          0.0
+        ],
+        [
+          250646,
+          0.0
+        ],
+        [
+          260723,
+          0.0
+        ],
+        [
+          270723,
+          0.0
+        ],
+        [
+          280742,
+          0.0
+        ],
+        [
+          290742,
+          0.0
+        ]
+      ]
+    },
+    {
+      "sacred": 375,
+      "job_id": 980259,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "02:27:20",
+        "ended_at": "2026-09-14T05:15:12"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 0,
+        "t_max": 300000,
+        "wandb_group": "winonly_soft_rsvp_gate_20260913_v1_2s3z_fixed200_H300000",
+        "wandb_run": "winonly_soft_rsvp_gate_20260913_v1_2s3z_fixed200_H300000_seed0",
+        "scheduler": "fixed",
+        "f_update": 200,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": true,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0.1,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 1.33333333333,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "rsvp_trial_start_t": 200000,
+        "rsvp_trial_window_episodes": 5,
+        "rsvp_trial_max_per_kind": 50,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": false,
+          "reward_scale_rate": 20,
+          "reward_sparse": true,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": true,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "6848201eebc91c848d29ea21c2474a3b299e5635c0584589b536b46196efab7b",
+      "info_sha256": "f0d6a97631a56d17894926082d62203edb15602db67b91429bb5d783b9ed9dc4",
+      "metrics": {
+        "observed_horizon": 291084,
+        "evaluation_mean": 0.0,
+        "auc_observed": 0.0,
+        "auc_nominal_hold_last": 0.0,
+        "final100k": 0.0,
+        "final10pct": 0.0,
+        "peak": 0.0,
+        "last": 0.0
+      },
+      "last_train_llm_calls": 1457.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          50,
+          0.0
+        ],
+        [
+          10084,
+          0.0
+        ],
+        [
+          20126,
+          0.0
+        ],
+        [
+          30147,
+          0.0
+        ],
+        [
+          40154,
+          0.0
+        ],
+        [
+          50168,
+          0.0
+        ],
+        [
+          60233,
+          0.0
+        ],
+        [
+          70269,
+          0.0
+        ],
+        [
+          80314,
+          0.0
+        ],
+        [
+          90316,
+          0.0
+        ],
+        [
+          100355,
+          0.0
+        ],
+        [
+          110373,
+          0.0
+        ],
+        [
+          120415,
+          0.0
+        ],
+        [
+          130443,
+          0.0
+        ],
+        [
+          140463,
+          0.0
+        ],
+        [
+          150523,
+          0.0
+        ],
+        [
+          160552,
+          0.0
+        ],
+        [
+          170581,
+          0.0
+        ],
+        [
+          180613,
+          0.0
+        ],
+        [
+          190659,
+          0.0
+        ],
+        [
+          200727,
+          0.0
+        ],
+        [
+          210775,
+          0.0
+        ],
+        [
+          220818,
+          0.0
+        ],
+        [
+          230829,
+          0.0
+        ],
+        [
+          240926,
+          0.0
+        ],
+        [
+          250952,
+          0.0
+        ],
+        [
+          260958,
+          0.0
+        ],
+        [
+          271043,
+          0.0
+        ],
+        [
+          281074,
+          0.0
+        ],
+        [
+          291084,
+          0.0
+        ]
+      ]
+    },
+    {
+      "sacred": 376,
+      "job_id": 980099,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "10:21:54",
+        "ended_at": "2026-09-14T15:05:44"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 1,
+        "t_max": 1000000,
+        "wandb_group": "rsvp_refresh_mrt_20260913_v1_pilot_trial_shape_F200_H1000000",
+        "wandb_run": "rsvp_refresh_mrt_20260913_v1_pilot_trial_shape_F200_H1000000_seed1",
+        "scheduler": "vf",
+        "f_update": 200,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": false,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 0.4,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 1,
+        "rsvp_refresh_trial": true,
+        "rsvp_trial_start_t": 200000,
+        "rsvp_trial_window_episodes": 5,
+        "rsvp_trial_max_per_kind": 50,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": true,
+          "reward_scale_rate": 20,
+          "reward_sparse": false,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": false,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "4d37fa80df58b67e4cb4ca9c504e451cfdc6adcb39d66a5be89f93ab09fd9491",
+      "info_sha256": "ad6101d0fa7b14ea5bd73ca88dd9625583fea2b327beae61fd4e5bc4f91e2cbe",
+      "metrics": {
+        "observed_horizon": 993161,
+        "evaluation_mean": 0.27875,
+        "auc_observed": 0.277941702679626,
+        "auc_nominal_hold_last": 0.280956390625,
+        "final100k": 0.7,
+        "final10pct": 0.7,
+        "peak": 0.78125,
+        "last": 0.71875
+      },
+      "last_train_llm_calls": 7568.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          58,
+          0.0
+        ],
+        [
+          10069,
+          0.0
+        ],
+        [
+          20081,
+          0.0625
+        ],
+        [
+          30122,
+          0.5
+        ],
+        [
+          40142,
+          0.46875
+        ],
+        [
+          50147,
+          0.34375
+        ],
+        [
+          60176,
+          0.4375
+        ],
+        [
+          70219,
+          0.21875
+        ],
+        [
+          80220,
+          0.125
+        ],
+        [
+          90250,
+          0.15625
+        ],
+        [
+          100254,
+          0.25
+        ],
+        [
+          110270,
+          0.03125
+        ],
+        [
+          120306,
+          0.0625
+        ],
+        [
+          130338,
+          0.03125
+        ],
+        [
+          140380,
+          0.0
+        ],
+        [
+          150393,
+          0.03125
+        ],
+        [
+          160405,
+          0.0
+        ],
+        [
+          170410,
+          0.0
+        ],
+        [
+          180434,
+          0.09375
+        ],
+        [
+          190483,
+          0.0
+        ],
+        [
+          200484,
+          0.03125
+        ],
+        [
+          210503,
+          0.0
+        ],
+        [
+          220540,
+          0.0
+        ],
+        [
+          230541,
+          0.0
+        ],
+        [
+          240580,
+          0.0
+        ],
+        [
+          250603,
+          0.0
+        ],
+        [
+          260632,
+          0.0
+        ],
+        [
+          270706,
+          0.0
+        ],
+        [
+          280707,
+          0.0
+        ],
+        [
+          290754,
+          0.0
+        ],
+        [
+          300780,
+          0.0
+        ],
+        [
+          310871,
+          0.03125
+        ],
+        [
+          320874,
+          0.0
+        ],
+        [
+          330874,
+          0.0
+        ],
+        [
+          340927,
+          0.03125
+        ],
+        [
+          350970,
+          0.0625
+        ],
+        [
+          360995,
+          0.0
+        ],
+        [
+          371040,
+          0.03125
+        ],
+        [
+          381081,
+          0.03125
+        ],
+        [
+          391164,
+          0.0
+        ],
+        [
+          401212,
+          0.0
+        ],
+        [
+          411236,
+          0.03125
+        ],
+        [
+          421278,
+          0.0
+        ],
+        [
+          431284,
+          0.0
+        ],
+        [
+          441318,
+          0.125
+        ],
+        [
+          451342,
+          0.15625
+        ],
+        [
+          461390,
+          0.0625
+        ],
+        [
+          471445,
+          0.46875
+        ],
+        [
+          481492,
+          0.3125
+        ],
+        [
+          491503,
+          0.40625
+        ],
+        [
+          501510,
+          0.09375
+        ],
+        [
+          511555,
+          0.3125
+        ],
+        [
+          521561,
+          0.34375
+        ],
+        [
+          531562,
+          0.46875
+        ],
+        [
+          541620,
+          0.625
+        ],
+        [
+          551641,
+          0.25
+        ],
+        [
+          561646,
+          0.375
+        ],
+        [
+          571647,
+          0.28125
+        ],
+        [
+          581698,
+          0.15625
+        ],
+        [
+          591755,
+          0.4375
+        ],
+        [
+          601774,
+          0.03125
+        ],
+        [
+          611827,
+          0.125
+        ],
+        [
+          621885,
+          0.09375
+        ],
+        [
+          631933,
+          0.0625
+        ],
+        [
+          641993,
+          0.28125
+        ],
+        [
+          652036,
+          0.125
+        ],
+        [
+          662044,
+          0.15625
+        ],
+        [
+          672062,
+          0.28125
+        ],
+        [
+          682105,
+          0.0625
+        ],
+        [
+          692169,
+          0.4375
+        ],
+        [
+          702184,
+          0.625
+        ],
+        [
+          712203,
+          0.46875
+        ],
+        [
+          722220,
+          0.28125
+        ],
+        [
+          732244,
+          0.4375
+        ],
+        [
+          742271,
+          0.40625
+        ],
+        [
+          752288,
+          0.5
+        ],
+        [
+          762327,
+          0.59375
+        ],
+        [
+          772443,
+          0.75
+        ],
+        [
+          782528,
+          0.34375
+        ],
+        [
+          792563,
+          0.71875
+        ],
+        [
+          802627,
+          0.625
+        ],
+        [
+          812681,
+          0.65625
+        ],
+        [
+          822685,
+          0.625
+        ],
+        [
+          832748,
+          0.65625
+        ],
+        [
+          842769,
+          0.6875
+        ],
+        [
+          852813,
+          0.625
+        ],
+        [
+          862861,
+          0.59375
+        ],
+        [
+          872879,
+          0.53125
+        ],
+        [
+          882884,
+          0.5625
+        ],
+        [
+          892922,
+          0.59375
+        ],
+        [
+          902926,
+          0.65625
+        ],
+        [
+          912966,
+          0.6875
+        ],
+        [
+          923002,
+          0.625
+        ],
+        [
+          933004,
+          0.59375
+        ],
+        [
+          943029,
+          0.78125
+        ],
+        [
+          953031,
+          0.6875
+        ],
+        [
+          963084,
+          0.75
+        ],
+        [
+          973108,
+          0.71875
+        ],
+        [
+          983113,
+          0.78125
+        ],
+        [
+          993161,
+          0.71875
+        ]
+      ]
+    },
+    {
+      "sacred": 377,
+      "job_id": 980263,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "06:36:28",
+        "ended_at": "2026-09-14T11:43:31"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 1,
+        "t_max": 300000,
+        "wandb_group": "winonly_soft_rsvp_gate_20260913_v1_2s3z_fixed50_H300000",
+        "wandb_run": "winonly_soft_rsvp_gate_20260913_v1_2s3z_fixed50_H300000_seed1",
+        "scheduler": "fixed",
+        "f_update": 50,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": true,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0.1,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 1.33333333333,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "rsvp_trial_start_t": 200000,
+        "rsvp_trial_window_episodes": 5,
+        "rsvp_trial_max_per_kind": 50,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": false,
+          "reward_scale_rate": 20,
+          "reward_sparse": true,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": true,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "a2d67aa318c2ad8ce8da098c7de6aecd783f49fdd07440bafe68c91cee761965",
+      "info_sha256": "22f1bdaedd676d1ad6287a01647ac445c6c00a08c78013c94ee297e98edd7436",
+      "metrics": {
+        "observed_horizon": 291149,
+        "evaluation_mean": 0.003125,
+        "auc_observed": 0.0032290704244218598,
+        "auc_nominal_hold_last": 0.0031338020833333335,
+        "final100k": 0.0,
+        "final10pct": 0.0,
+        "peak": 0.03125,
+        "last": 0.0
+      },
+      "last_train_llm_calls": 5825.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          58,
+          0.0
+        ],
+        [
+          10086,
+          0.0
+        ],
+        [
+          20126,
+          0.0
+        ],
+        [
+          30140,
+          0.0
+        ],
+        [
+          40148,
+          0.03125
+        ],
+        [
+          50174,
+          0.03125
+        ],
+        [
+          60187,
+          0.0
+        ],
+        [
+          70228,
+          0.03125
+        ],
+        [
+          80283,
+          0.0
+        ],
+        [
+          90393,
+          0.0
+        ],
+        [
+          100441,
+          0.0
+        ],
+        [
+          110473,
+          0.0
+        ],
+        [
+          120487,
+          0.0
+        ],
+        [
+          130502,
+          0.0
+        ],
+        [
+          140539,
+          0.0
+        ],
+        [
+          150578,
+          0.0
+        ],
+        [
+          160594,
+          0.0
+        ],
+        [
+          170673,
+          0.0
+        ],
+        [
+          180718,
+          0.0
+        ],
+        [
+          190744,
+          0.0
+        ],
+        [
+          200776,
+          0.0
+        ],
+        [
+          210780,
+          0.0
+        ],
+        [
+          220787,
+          0.0
+        ],
+        [
+          230809,
+          0.0
+        ],
+        [
+          240906,
+          0.0
+        ],
+        [
+          250922,
+          0.0
+        ],
+        [
+          261037,
+          0.0
+        ],
+        [
+          271126,
+          0.0
+        ],
+        [
+          281143,
+          0.0
+        ],
+        [
+          291149,
+          0.0
+        ]
+      ]
+    },
+    {
+      "sacred": 378,
+      "job_id": 980260,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "06:44:39",
+        "ended_at": "2026-09-14T12:00:47"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 0,
+        "t_max": 300000,
+        "wandb_group": "winonly_soft_rsvp_gate_20260913_v1_2s3z_fixed50_H300000",
+        "wandb_run": "winonly_soft_rsvp_gate_20260913_v1_2s3z_fixed50_H300000_seed0",
+        "scheduler": "fixed",
+        "f_update": 50,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": true,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0.1,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 1.33333333333,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "rsvp_trial_start_t": 200000,
+        "rsvp_trial_window_episodes": 5,
+        "rsvp_trial_max_per_kind": 50,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": false,
+          "reward_scale_rate": 20,
+          "reward_sparse": true,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": true,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "b13213df0cf2ff0d407d4de5b4e0daed13580dd18647be231d5c70bd22057202",
+      "info_sha256": "5cc96376b4f11deb6d02ba6ec202ac286cb0a298fc9a14cfef45b16ca186032b",
+      "metrics": {
+        "observed_horizon": 290863,
+        "evaluation_mean": 0.0020833333333333333,
+        "auc_observed": 0.0021516787972344366,
+        "auc_nominal_hold_last": 0.0020861458333333335,
+        "final100k": 0.0,
+        "final10pct": 0.0,
+        "peak": 0.03125,
+        "last": 0.0
+      },
+      "last_train_llm_calls": 5820.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          50,
+          0.0
+        ],
+        [
+          10092,
+          0.0
+        ],
+        [
+          20110,
+          0.0
+        ],
+        [
+          30137,
+          0.0
+        ],
+        [
+          40176,
+          0.0
+        ],
+        [
+          50183,
+          0.03125
+        ],
+        [
+          60192,
+          0.03125
+        ],
+        [
+          70221,
+          0.0
+        ],
+        [
+          80227,
+          0.0
+        ],
+        [
+          90233,
+          0.0
+        ],
+        [
+          100281,
+          0.0
+        ],
+        [
+          110285,
+          0.0
+        ],
+        [
+          120296,
+          0.0
+        ],
+        [
+          130307,
+          0.0
+        ],
+        [
+          140316,
+          0.0
+        ],
+        [
+          150361,
+          0.0
+        ],
+        [
+          160364,
+          0.0
+        ],
+        [
+          170403,
+          0.0
+        ],
+        [
+          180406,
+          0.0
+        ],
+        [
+          190424,
+          0.0
+        ],
+        [
+          200490,
+          0.0
+        ],
+        [
+          210515,
+          0.0
+        ],
+        [
+          220555,
+          0.0
+        ],
+        [
+          230616,
+          0.0
+        ],
+        [
+          240734,
+          0.0
+        ],
+        [
+          250752,
+          0.0
+        ],
+        [
+          260772,
+          0.0
+        ],
+        [
+          270790,
+          0.0
+        ],
+        [
+          280836,
+          0.0
+        ],
+        [
+          290863,
+          0.0
+        ]
+      ]
+    },
+    {
+      "sacred": 379,
+      "job_id": 982780,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "10:55:31",
+        "ended_at": "2026-09-14T22:10:06"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 0,
+        "t_max": 1000000,
+        "wandb_group": "rsvp_e1_fmatch136_20260914_v1_fixed_shape_F136_H1000000",
+        "wandb_run": "rsvp_e1_fmatch136_20260914_v1_fixed_shape_F136_H1000000_seed0",
+        "scheduler": "fixed",
+        "f_update": 136,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": false,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 0.4,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "rsvp_trial_start_t": 200000,
+        "rsvp_trial_window_episodes": 5,
+        "rsvp_trial_max_per_kind": 50,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": true,
+          "reward_scale_rate": 20,
+          "reward_sparse": false,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": false,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "b68729ebefe7bc379d63efc15a9fe435146ba1af4e6a481674e27dd42f336f09",
+      "info_sha256": "5b29e68419ba505abf9e0c297338d9a7a2bfd58a603ce9bb045e0e6eae56c5a7",
+      "metrics": {
+        "observed_horizon": 994149,
+        "evaluation_mean": 0.0215625,
+        "auc_observed": 0.021160874778327995,
+        "auc_nominal_hold_last": 0.0217684375,
+        "final100k": 0.08125,
+        "final10pct": 0.08125,
+        "peak": 0.5,
+        "last": 0.125
+      },
+      "last_train_llm_calls": 7314.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          50,
+          0.0
+        ],
+        [
+          10083,
+          0.0
+        ],
+        [
+          20137,
+          0.0
+        ],
+        [
+          30178,
+          0.0
+        ],
+        [
+          40213,
+          0.1875
+        ],
+        [
+          50251,
+          0.5
+        ],
+        [
+          60292,
+          0.15625
+        ],
+        [
+          70334,
+          0.0625
+        ],
+        [
+          80352,
+          0.0625
+        ],
+        [
+          90378,
+          0.03125
+        ],
+        [
+          100410,
+          0.0
+        ],
+        [
+          110441,
+          0.0
+        ],
+        [
+          120482,
+          0.0
+        ],
+        [
+          130514,
+          0.0
+        ],
+        [
+          140542,
+          0.0
+        ],
+        [
+          150565,
+          0.0
+        ],
+        [
+          160571,
+          0.0
+        ],
+        [
+          170576,
+          0.0
+        ],
+        [
+          180598,
+          0.0
+        ],
+        [
+          190604,
+          0.0
+        ],
+        [
+          200614,
+          0.0
+        ],
+        [
+          210636,
+          0.0
+        ],
+        [
+          220667,
+          0.0
+        ],
+        [
+          230684,
+          0.0
+        ],
+        [
+          240697,
+          0.0
+        ],
+        [
+          250703,
+          0.0
+        ],
+        [
+          260749,
+          0.0
+        ],
+        [
+          270784,
+          0.0
+        ],
+        [
+          280836,
+          0.0
+        ],
+        [
+          290927,
+          0.0
+        ],
+        [
+          300968,
+          0.0
+        ],
+        [
+          311075,
+          0.0
+        ],
+        [
+          321097,
+          0.0
+        ],
+        [
+          331152,
+          0.0
+        ],
+        [
+          341263,
+          0.0
+        ],
+        [
+          351299,
+          0.0
+        ],
+        [
+          361389,
+          0.0
+        ],
+        [
+          371487,
+          0.0
+        ],
+        [
+          381502,
+          0.0
+        ],
+        [
+          391595,
+          0.0
+        ],
+        [
+          401639,
+          0.0
+        ],
+        [
+          411645,
+          0.0
+        ],
+        [
+          421760,
+          0.0625
+        ],
+        [
+          431797,
+          0.0
+        ],
+        [
+          441805,
+          0.0
+        ],
+        [
+          451808,
+          0.0
+        ],
+        [
+          461854,
+          0.0
+        ],
+        [
+          471898,
+          0.0
+        ],
+        [
+          481959,
+          0.0
+        ],
+        [
+          492018,
+          0.0
+        ],
+        [
+          502037,
+          0.0
+        ],
+        [
+          512058,
+          0.0
+        ],
+        [
+          522130,
+          0.0
+        ],
+        [
+          532183,
+          0.0
+        ],
+        [
+          542229,
+          0.0
+        ],
+        [
+          552286,
+          0.0
+        ],
+        [
+          562311,
+          0.0
+        ],
+        [
+          572408,
+          0.0
+        ],
+        [
+          582454,
+          0.0
+        ],
+        [
+          592455,
+          0.0
+        ],
+        [
+          602482,
+          0.0
+        ],
+        [
+          612540,
+          0.0
+        ],
+        [
+          622605,
+          0.0
+        ],
+        [
+          632625,
+          0.0
+        ],
+        [
+          642691,
+          0.0
+        ],
+        [
+          652694,
+          0.0
+        ],
+        [
+          662772,
+          0.0
+        ],
+        [
+          672780,
+          0.03125
+        ],
+        [
+          682791,
+          0.0
+        ],
+        [
+          692825,
+          0.0
+        ],
+        [
+          702864,
+          0.0
+        ],
+        [
+          712883,
+          0.0
+        ],
+        [
+          722966,
+          0.0
+        ],
+        [
+          732987,
+          0.0
+        ],
+        [
+          743019,
+          0.0
+        ],
+        [
+          753072,
+          0.0
+        ],
+        [
+          763127,
+          0.0
+        ],
+        [
+          773142,
+          0.0
+        ],
+        [
+          783152,
+          0.0
+        ],
+        [
+          793154,
+          0.0
+        ],
+        [
+          803163,
+          0.0
+        ],
+        [
+          813279,
+          0.0
+        ],
+        [
+          823371,
+          0.03125
+        ],
+        [
+          833412,
+          0.0
+        ],
+        [
+          843455,
+          0.0
+        ],
+        [
+          853460,
+          0.0
+        ],
+        [
+          863462,
+          0.09375
+        ],
+        [
+          873465,
+          0.0625
+        ],
+        [
+          883482,
+          0.03125
+        ],
+        [
+          893556,
+          0.03125
+        ],
+        [
+          903667,
+          0.09375
+        ],
+        [
+          913724,
+          0.03125
+        ],
+        [
+          923794,
+          0.0625
+        ],
+        [
+          933802,
+          0.03125
+        ],
+        [
+          943820,
+          0.0
+        ],
+        [
+          953877,
+          0.03125
+        ],
+        [
+          963923,
+          0.15625
+        ],
+        [
+          973997,
+          0.15625
+        ],
+        [
+          984097,
+          0.125
+        ],
+        [
+          994149,
+          0.125
+        ]
+      ]
+    },
+    {
+      "sacred": 380,
+      "job_id": 982781,
+      "slurm": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "09:36:37",
+        "ended_at": "2026-09-14T20:51:12"
+      },
+      "sacred_status": "RUNNING",
+      "complete": true,
+      "config": {
+        "name": "rsvp",
+        "env": "sc2",
+        "seed": 1,
+        "t_max": 1000000,
+        "wandb_group": "rsvp_e1_fmatch136_20260914_v1_fixed_shape_F136_H1000000",
+        "wandb_run": "rsvp_e1_fmatch136_20260914_v1_fixed_shape_F136_H1000000_seed1",
+        "scheduler": "fixed",
+        "f_update": 136,
+        "commander": "llm",
+        "epsilon_anneal_time": 300000,
+        "use_reward_shaping": true,
+        "use_action_masking": false,
+        "use_masking_at_test": false,
+        "soft_guidance_only": true,
+        "beta": 0,
+        "shaping_in_learner": true,
+        "lambda_start": 0.5,
+        "lambda_min": 0.05,
+        "lambda_decay": 0.9995,
+        "lambda_floor_frac": 0.4,
+        "lambda_zero_t": 0,
+        "deduplicate_subgoals": true,
+        "prompt_style": "paper",
+        "commander_include_training_stats": false,
+        "llm_model": "openai/gpt-oss-20b",
+        "llm_temperature": 0.2,
+        "llm_cache": false,
+        "sched_gamma": 0.8,
+        "sched_k": 0.6,
+        "sched_h": 3.0,
+        "sched_min_interval": 10,
+        "sched_gate_interval": 20,
+        "sched_target_early_per_ep": 0.0,
+        "rsvp_validation_every": 10,
+        "rsvp_refresh_trial": false,
+        "rsvp_trial_start_t": 200000,
+        "rsvp_trial_window_episodes": 5,
+        "rsvp_trial_max_per_kind": 50,
+        "test_interval": 10000,
+        "test_nepisode": 32,
+        "env_args": {
+          "continuing_episode": false,
+          "debug": false,
+          "difficulty": "7",
+          "game_version": null,
+          "heuristic_ai": false,
+          "heuristic_rest": false,
+          "map_name": "2s3z",
+          "move_amount": 2,
+          "obs_all_health": true,
+          "obs_instead_of_state": false,
+          "obs_last_action": false,
+          "obs_own_health": true,
+          "obs_pathing_grid": false,
+          "obs_terrain_height": false,
+          "obs_timestep_number": false,
+          "replay_dir": "",
+          "replay_prefix": "",
+          "reward_death_value": 10,
+          "reward_defeat": 0,
+          "reward_negative_scale": 0.5,
+          "reward_only_positive": true,
+          "reward_scale": true,
+          "reward_scale_rate": 20,
+          "reward_sparse": false,
+          "reward_win": 200,
+          "seed": null,
+          "sparse_win_only": false,
+          "state_last_action": true,
+          "state_timestep_number": false,
+          "step_mul": 8
+        }
+      },
+      "config_sha256": "f7f1dfaff26065b33f7a7ca9a406e88891643a7b71c37e9aaebe67b804f63baa",
+      "info_sha256": "0c89776a54d274a91c2a4cbd92d5ca26421db7d1fea1850f6a4daf2cd27b85ea",
+      "metrics": {
+        "observed_horizon": 994442,
+        "evaluation_mean": 0.03625,
+        "auc_observed": 0.03624034571649226,
+        "auc_nominal_hold_last": 0.036386296875,
+        "final100k": 0.021875,
+        "final10pct": 0.021875,
+        "peak": 0.6875,
+        "last": 0.0625
+      },
+      "last_train_llm_calls": 7314.0,
+      "last_train_llm_failures": 0.0,
+      "evaluation_curve": [
+        [
+          58,
+          0.0
+        ],
+        [
+          10089,
+          0.0
+        ],
+        [
+          20102,
+          0.3125
+        ],
+        [
+          30127,
+          0.6875
+        ],
+        [
+          40155,
+          0.59375
+        ],
+        [
+          50190,
+          0.1875
+        ],
+        [
+          60215,
+          0.1875
+        ],
+        [
+          70229,
+          0.1875
+        ],
+        [
+          80235,
+          0.1875
+        ],
+        [
+          90238,
+          0.03125
+        ],
+        [
+          100266,
+          0.0625
+        ],
+        [
+          110295,
+          0.03125
+        ],
+        [
+          120301,
+          0.1875
+        ],
+        [
+          130341,
+          0.09375
+        ],
+        [
+          140361,
+          0.03125
+        ],
+        [
+          150369,
+          0.0
+        ],
+        [
+          160386,
+          0.03125
+        ],
+        [
+          170393,
+          0.03125
+        ],
+        [
+          180404,
+          0.0
+        ],
+        [
+          190448,
+          0.0
+        ],
+        [
+          200492,
+          0.0
+        ],
+        [
+          210525,
+          0.0
+        ],
+        [
+          220623,
+          0.0
+        ],
+        [
+          230641,
+          0.0
+        ],
+        [
+          240659,
+          0.03125
+        ],
+        [
+          250688,
+          0.0
+        ],
+        [
+          260739,
+          0.03125
+        ],
+        [
+          270744,
+          0.03125
+        ],
+        [
+          280818,
+          0.0
+        ],
+        [
+          290857,
+          0.0
+        ],
+        [
+          300878,
+          0.03125
+        ],
+        [
+          310956,
+          0.0
+        ],
+        [
+          321057,
+          0.0
+        ],
+        [
+          331067,
+          0.0
+        ],
+        [
+          341162,
+          0.0
+        ],
+        [
+          351234,
+          0.0
+        ],
+        [
+          361352,
+          0.0
+        ],
+        [
+          371353,
+          0.0
+        ],
+        [
+          381390,
+          0.0
+        ],
+        [
+          391478,
+          0.0
+        ],
+        [
+          401595,
+          0.0
+        ],
+        [
+          411626,
+          0.0
+        ],
+        [
+          421647,
+          0.0
+        ],
+        [
+          431748,
+          0.0
+        ],
+        [
+          441752,
+          0.03125
+        ],
+        [
+          451843,
+          0.0
+        ],
+        [
+          461945,
+          0.0
+        ],
+        [
+          471948,
+          0.0
+        ],
+        [
+          481996,
+          0.0
+        ],
+        [
+          492076,
+          0.0
+        ],
+        [
+          502165,
+          0.0
+        ],
+        [
+          512240,
+          0.0
+        ],
+        [
+          522267,
+          0.0
+        ],
+        [
+          532287,
+          0.03125
+        ],
+        [
+          542390,
+          0.0
+        ],
+        [
+          552390,
+          0.0
+        ],
+        [
+          562400,
+          0.0
+        ],
+        [
+          572414,
+          0.0
+        ],
+        [
+          582523,
+          0.0
+        ],
+        [
+          592609,
+          0.0
+        ],
+        [
+          602645,
+          0.0
+        ],
+        [
+          612683,
+          0.0
+        ],
+        [
+          622696,
+          0.0
+        ],
+        [
+          632800,
+          0.0
+        ],
+        [
+          642803,
+          0.03125
+        ],
+        [
+          652841,
+          0.03125
+        ],
+        [
+          662899,
+          0.0
+        ],
+        [
+          672930,
+          0.0
+        ],
+        [
+          682960,
+          0.0
+        ],
+        [
+          692992,
+          0.0625
+        ],
+        [
+          702996,
+          0.03125
+        ],
+        [
+          713021,
+          0.0
+        ],
+        [
+          723094,
+          0.0
+        ],
+        [
+          733212,
+          0.0625
+        ],
+        [
+          743227,
+          0.0
+        ],
+        [
+          753319,
+          0.0625
+        ],
+        [
+          763411,
+          0.03125
+        ],
+        [
+          773416,
+          0.0
+        ],
+        [
+          783459,
+          0.0
+        ],
+        [
+          793487,
+          0.0
+        ],
+        [
+          803547,
+          0.0
+        ],
+        [
+          813549,
+          0.0
+        ],
+        [
+          823596,
+          0.0
+        ],
+        [
+          833613,
+          0.0
+        ],
+        [
+          843674,
+          0.0
+        ],
+        [
+          853710,
+          0.0
+        ],
+        [
+          863716,
+          0.03125
+        ],
+        [
+          873810,
+          0.0
+        ],
+        [
+          883875,
+          0.0
+        ],
+        [
+          893934,
+          0.03125
+        ],
+        [
+          904053,
+          0.0
+        ],
+        [
+          914094,
+          0.03125
+        ],
+        [
+          924148,
+          0.0
+        ],
+        [
+          934231,
+          0.0
+        ],
+        [
+          944272,
+          0.03125
+        ],
+        [
+          954332,
+          0.03125
+        ],
+        [
+          964342,
+          0.0
+        ],
+        [
+          974348,
+          0.0
+        ],
+        [
+          984405,
+          0.0625
+        ],
+        [
+          994442,
+          0.0625
+        ]
+      ]
+    }
+  ]
+}

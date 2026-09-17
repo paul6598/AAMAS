@@ -14,3 +14,10 @@ __pycache__/
 .vscode/
 .DS_Store
 .claude/
+
+# LaTeX intermediate files and compiled PDF
+AAMAS_draft/build/
+.pytest_cache/
+.venv/
+.env
+.env.*

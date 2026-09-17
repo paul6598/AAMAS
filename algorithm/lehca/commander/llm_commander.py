@@ -16,6 +16,7 @@ import requests
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 from .base import Commander, sanitize_guidance
+from .paper_prompt_v2 import PAPER_V2_SYSTEM_PROMPT
 from ..shaping.predicates import SIMPLE_PREDICATES, TYPED_PREDICATES
 
 SYSTEM_PROMPT = """You are the strategic Commander of an allied combat team in a StarCraft II micromanagement battle (SMAC benchmark). You do NOT control units directly. Low-level reinforcement-learning agents execute actions at high frequency; your job is coarse-timescale strategic guidance: assess the situation, choose sub-goals that shape their reward, and constrain/bias their action selection.
@@ -103,6 +104,7 @@ Action tokens: "stop", "move_north", "move_south", "move_east", "move_west", "mo
 Do not infer or mention the simulator's true reward function. Drop generic/typed duplicate predicates on homogeneous maps. "forbid" MUST NOT contain "noop", "stop", "move_all", or "attack_all", and a token cannot be both forbidden and preferred."""
 
 
+# LLM 응답에서 지침 JSON을 추출한다.
 def extract_json(text):
     if text is None:
         return None
@@ -130,6 +132,8 @@ class LLMCommander(Commander):
         self.use_cache = getattr(args, "llm_cache", True)
         self.reasoning_effort = getattr(args, "llm_reasoning_effort", "low")
         self.prompt_style = getattr(args, "prompt_style", "default")
+        self.deduplicate_subgoals = getattr(
+            args, "deduplicate_subgoals", True)
         self._ground_prompt = None
         self.last_plan_text = None
         # Built lazily: unit info only exists after the env has been reset.
@@ -142,10 +146,15 @@ class LLMCommander(Commander):
         self.n_failures = 0
         self.total_latency = 0.0
 
+    # 환경 요약으로 지침을 요청하고 캐시·재시도·정제와 호출 통계를 관리한다.
     def __call__(self, summary, cache_key, iface):
         if self.system_prompt is None:
             ctx = iface.prompt_context()
-            if self.prompt_style == "paper":
+            if self.prompt_style == "paper_v2":
+                self.system_prompt = PAPER_V2_SYSTEM_PROMPT.format(
+                    env_context=ctx,
+                    refresh_steps=getattr(self.args, "f_update", "unspecified"))
+            elif self.prompt_style == "paper":
                 self.system_prompt = PAPER_SYSTEM_PROMPT.format(env_context=ctx)
             elif self.prompt_style == "twostage":
                 self.system_prompt = PLAN_SYSTEM_PROMPT.format(env_context=ctx)
@@ -186,7 +195,8 @@ class LLMCommander(Commander):
                 content = r.json()["choices"][0]["message"]["content"]
                 self.n_calls += 1
                 self.total_latency += time.time() - t0
-                guidance = sanitize_guidance(extract_json(content))
+                guidance = sanitize_guidance(
+                    extract_json(content), self.deduplicate_subgoals)
                 if guidance is not None:
                     break
             except (requests.RequestException, KeyError, IndexError, ValueError):
@@ -199,6 +209,7 @@ class LLMCommander(Commander):
                 self._cache.pop(next(iter(self._cache)))
         return guidance
 
+    # OpenAI 호환 서버에 메시지를 보내고 응답을 받는다.
     def _chat(self, system, user, max_tokens):
         payload = {"model": self.model,
                    "messages": [{"role": "system", "content": system},
@@ -233,7 +244,8 @@ class LLMCommander(Commander):
                     1024)
                 self.n_calls += 1
                 self.total_latency += time.time() - t0
-                guidance = sanitize_guidance(extract_json(grounded))
+                guidance = sanitize_guidance(
+                    extract_json(grounded), self.deduplicate_subgoals)
                 if guidance is not None:
                     break
             except (requests.RequestException, KeyError, IndexError, ValueError):

@@ -39,11 +39,12 @@ explore_soft_bias: False    # True: bias epsilon-random draws by W_soft too
 dt_observable: True         # d_t from ally sight range only (paper: observable info); False = full state
 mask_vocab: "full"          # full | strategic (no move-direction forbids, no micro tokens)
 mask_consistency_w: 0.0     # >1: soft weight for keeping last attack target (Eq.7 u_t)
-prompt_style: "paper"        # paper-aligned staged reasoning + risk-only hard constraints
+prompt_style: "paper"        # legacy; opt-in paper_v2 adds explicit SMAC grounding semantics
+deduplicate_subgoals: True   # identical semantic predicates are one reward feature
 commander_include_training_stats: False  # paper: Commander receives d_t, not rolling win/t_env
 test_guidance_mode: "fresh"  # fresh | frozen (legacy) | off; eval state never contaminates training
 llm_reasoning_effort: "low"  # gpt-oss reasoning effort: low | medium | high
-beta: 0.5                   # soft-mask tilt coefficient (Eq. 5)
+beta: 0.1                   # paper omits beta; diagnostics show 0.5 overwhelms the learned Q-gap
 lambda_start: 0.5           # initial shaping weight lambda_0
 lambda_min: 0.05            # lambda floor
 lambda_decay: 0.9995        # multiplicative decay per training update

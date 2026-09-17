@@ -6,9 +6,11 @@
 #   RUN          wandb run/group name: 알고리즘_(디테일)  (default <SCHEDULER>)
 #   LLM_API_BASE OpenAI-compatible endpoint (default http://localhost:8356/v1)
 # SEEDS="1" 처럼 시드 지정 가능 (기본 0 1 2). Extra pymarl overrides via EXTRA, e.g. EXTRA="f_update=200 sched_h=6" bash run_rsvp_sc2.sh
+set -eo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
-export SC2PATH=${SC2PATH:-/gpfs/home1/paul6598/StarCraftII}
+export SC2PATH=${SC2PATH:-${HOME}/StarCraftII}
+PY=${AAMAS_PYTHON:-python}
 
 MAP=${1:-MMM2}
 SCHEDULER=${2:-vf}
@@ -26,8 +28,8 @@ if [ -n "$EXTRA" ]; then read -ra USER_EXTRA <<< "$EXTRA"; EXTRA_ARGS+=("${USER_
 
 for SEED in ${SEEDS:-0 1 2}
 do
-    python main.py --config=rsvp --env-config=sc2 with \
-        "use_wandb=$USE_WANDB" "wandb_run=$RUN" "seed=$SEED" \
+    "$PY" main.py --config=rsvp --env-config=sc2 with \
+        "use_wandb=$USE_WANDB" "wandb_group=$RUN" "wandb_run=${RUN}_seed${SEED}" "seed=$SEED" \
         "env_args.map_name=$MAP" "t_max=$t_max" \
         "test_interval=10000" "test_nepisode=32" \
         "scheduler=$SCHEDULER" "llm_api_base=$LLM_API_BASE" \

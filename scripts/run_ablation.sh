@@ -3,7 +3,7 @@
 # Usage: bash run_ablation.sh [MAP] [REWARD] [MASK] [USE_WANDB] [GN] [LLM_API_BASE] [LLM_MODEL]
 #   REWARD, MASK: true/false
 
-cd ./
+cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 MAP=$1
 REWARD=$2
 MASK=$3
@@ -29,4 +29,4 @@ if [ -z "$GN" ]; then
 fi
 
 EXTRA="use_reward_shaping=$REWARD use_action_masking=$MASK ${EXTRA}" \
-    bash run_lehca.sh "$MAP" "$USE_WANDB" "$GN" llm "$LLM_API_BASE" "$LLM_MODEL"
+    bash scripts/run_lehca.sh "$MAP" "$USE_WANDB" "$GN" llm "$LLM_API_BASE" "$LLM_MODEL"

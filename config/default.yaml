@@ -19,9 +19,9 @@ buffer_cpu_only: True # If true we won't keep all of the replay buffer in vram
 # --- Logging options ---
 use_wandb: False # Log results to Weights & Biases
 wandb_project: "AAMAS-LEHCA"
-wandb_entity: "joonhuk6598-university-of-seoul"
-wandb_group: "default"
-wandb_run: "" # new naming: group=<this>, run=<this>_seed<k>, project=AAMAS_<ENV>_<MAP> (legacy path when empty)
+wandb_entity: null # Set your own entity when enabling W&B
+wandb_group: "default" # seed-invariant experimental condition
+wandb_run: "" # explicit run name; with default group, legacy shorthand appends _seed<k>
 use_tensorboard: False # Log results to tensorboard
 save_model: False # Save the models to disk
 save_model_interval: 2000000 # Save models after this many timesteps

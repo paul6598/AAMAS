@@ -29,9 +29,11 @@ guidance_replay_offset: 0
 f_update: 100               # fixed period (scheduler=fixed) / hard ceiling (scheduler=vf)
 use_reward_shaping: True
 use_action_masking: False
+soft_guidance_only: False
 use_masking_at_test: False
 shaping_in_learner: True   # replay-time lambda composition (prevents stale-lambda buffer rot)
 dt_observable: True
+deduplicate_subgoals: True
 mask_vocab: "full"
 prompt_style: "default"
 commander_include_training_stats: False
@@ -46,7 +48,8 @@ sched_trace: False          # opt-in per-step scheduler trace (diagnostics only)
 shaping_clip: 3.0
 
 # --- adaptive refresh scheduler ---
-scheduler: "vf"             # fixed | vf
+scheduler: "vf"             # fixed | vf | gate_timer (diagnostic control)
+sched_gate_interval: 20
 sched_k: 0.6                # normal fraction of issuance value
 sched_h: 3.0                # CUSUM threshold (calls budget knob)
 sched_min_interval: 10
@@ -61,12 +64,21 @@ critic_lr: 0.001
 critic_iters: 50
 critic_buffer: 60000
 
+# Passive prequential validation; kept identical to the RSVP alias.
+rsvp_validation_every: 10
+rsvp_refresh_trial: False
+rsvp_trial_probability: 0.5
+rsvp_trial_window_episodes: 5
+rsvp_trial_control_probability: 0.1
+rsvp_trial_max_per_kind: 50
+rsvp_trial_start_t: 200000
+
 # --- LLM Commander ---
 llm_model: "openai/gpt-oss-20b"
 llm_api_base: "http://localhost:8355/v1"
 llm_temperature: 0.0
 llm_max_tokens: 3072
 llm_timeout: 90
-llm_cache: True
+llm_cache: False
 
 name: "rsvp"

@@ -15,6 +15,7 @@ import numpy as np
 MIN_W, MAX_W = 1.0, 5.0
 
 
+# 의미적 행동 규칙을 현재 상태의 행동 인덱스에 대응시켜 제약과 선호를 만든다.
 def build_masks(rules, snap, iface, n_agents, n_actions):
     hard = np.ones((n_agents, n_actions), dtype=np.float32)
     soft = np.ones((n_agents, n_actions), dtype=np.float32)

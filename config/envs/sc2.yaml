@@ -20,6 +20,7 @@ env_args:
   reward_scale: True
   reward_scale_rate: 20
   reward_sparse: False
+  sparse_win_only: False   # with reward_sparse: drop the -1 defeat penalty (win:+1 else 0)
   reward_win: 200
   replay_dir: ""
   replay_prefix: ""

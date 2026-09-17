@@ -29,11 +29,13 @@ guidance_replay_offset: 0
 f_update: 100               # fixed period (scheduler=fixed) / hard ceiling (scheduler=vf)
 use_reward_shaping: True
 use_action_masking: False
+soft_guidance_only: False   # when masking enabled, discard all hard prohibitions
 use_masking_at_test: False
 shaping_in_learner: True   # replay-time lambda composition (prevents stale-lambda buffer rot)
 dt_observable: True
 mask_vocab: "full"
-prompt_style: "default"
+prompt_style: "default"     # opt-in paper_v2 for revised SMAC prompt; keep old runs unchanged
+deduplicate_subgoals: True   # identical semantic predicates are one reward feature
 commander_include_training_stats: False
 llm_reasoning_effort: "low"
 beta: 0.0
@@ -46,7 +48,8 @@ sched_trace: False          # opt-in per-step scheduler trace (diagnostics only)
 shaping_clip: 3.0
 
 # --- adaptive refresh scheduler ---
-scheduler: "vf"             # fixed | vf
+scheduler: "vf"             # fixed | vf | gate_timer (diagnostic control)
+sched_gate_interval: 20     # gate_timer: fixed delay once issuance gate opens
 sched_k: 0.6                # normal fraction of issuance value
 sched_h: 3.0                # CUSUM threshold (calls budget knob)
 sched_min_interval: 10
@@ -61,12 +64,21 @@ critic_lr: 0.001
 critic_iters: 50
 critic_buffer: 60000
 
+# Passive, RNG-neutral prequential audit on every tenth training episode.
+rsvp_validation_every: 10  # 0 disables; 1 records every episode
+rsvp_refresh_trial: False  # opt-in experimental intervention, never ordinary training
+rsvp_trial_probability: 0.5
+rsvp_trial_window_episodes: 5       # trigger episode 제외 후 outcome episode 수
+rsvp_trial_control_probability: 0.1 # episode당 matched non-trigger probe 후보 확률
+rsvp_trial_max_per_kind: 50         # seed별 trigger/control block 상한
+rsvp_trial_start_t: 200000          # critic warm-up 이전에는 개입하지 않음
+
 # --- LLM Commander ---
 llm_model: "openai/gpt-oss-20b"
 llm_api_base: "http://localhost:8355/v1"
 llm_temperature: 0.0
 llm_max_tokens: 3072
 llm_timeout: 90
-llm_cache: True
+llm_cache: False
 
 name: "rsvp"

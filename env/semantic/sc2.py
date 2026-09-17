@@ -84,6 +84,7 @@ class SC2SemanticInterface(SemanticInterface):
         return STANDARD_TYPE_NAMES.get(unit.unit_type, "Unit%d" % unit.unit_type)
 
     # ------------------------------------------------------------ snapshot
+    # 현재 아군·적 상태를 공통 스냅샷 구조로 변환한다.
     def snapshot(self):
         allies, enemies = [], []
         for aid in range(self.env.n_agents):
@@ -150,6 +151,7 @@ class SC2SemanticInterface(SemanticInterface):
         return (sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts))
 
     # ------------------------------------------------------------- summary
+    # 관측 가능한 정보를 LLM 입력용 텍스트로 요약한다.
     def summary(self, snap, extra_stats=None):
         lines = []
         lines.append("Scenario: SMAC map '%s' (%d allied vs %d enemy units)."
@@ -211,6 +213,7 @@ class SC2SemanticInterface(SemanticInterface):
             return None
         return "engaged" if math.hypot(ca[0] - ce[0], ca[1] - ce[1]) < 8 else "approaching"
 
+    # 상태를 거친 구간으로 묶어 지침 캐시 키를 만든다.
     def cache_key(self, snap):
         # Coarse state: per-type alive counts + bucketed avg health + phase.
         parts = [self.env.map_name]
@@ -249,6 +252,7 @@ class SC2SemanticInterface(SemanticInterface):
         )
 
     # ------------------------------------------------------------ grounding
+    # 의미적 행동 토큰을 현재 에이전트가 수행할 수 있는 행동 인덱스로 변환한다.
     def resolve_action_token(self, token, agent_idx, snap):
         """Return concrete action indices for a symbolic token; [] if empty."""
         n_actions = snap["n_actions"]

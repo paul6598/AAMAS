@@ -34,6 +34,7 @@ class LehcaMAC(BasicMAC):
                     "move_category_removed_rate": [],
                     "mask_fallback_rate": []}
 
+    # 누적된 행동 개입 통계를 반환하고 다음 집계를 위해 초기화한다.
     def pop_mask_stats(self):
         out = {k: float(sum(v) / len(v)) for k, v in self._st.items() if v}
         for v in self._st.values():
@@ -77,11 +78,13 @@ class LehcaMAC(BasicMAC):
         super(LehcaMAC, self).init_hidden(batch_size)
         self._last_actions = None
 
+    # 이번 스텝에 사용할 hard mask와 soft preference를 저장한다.
     def set_guidance(self, hard, soft):
         """hard/soft: (n_agents, n_actions) numpy arrays, or None to disable."""
         self._hard = hard
         self._soft = soft
 
+    # 행동 가용성과 지침 편향을 Q값에 반영하여 행동을 선택한다.
     def select_actions(self, ep_batch, t_ep, t_env, bs=slice(None), test_mode=False):
         avail_actions = ep_batch["avail_actions"][:, t_ep]
         agent_outputs = self.forward(ep_batch, t_ep, test_mode=test_mode)

@@ -38,6 +38,7 @@ def _damage(pre_units, post_units, type_name=None):
     return dmg, max(tot, 1e-6)
 
 
+# 전이 전후 상태에서 지정한 서브골의 수치 신호를 계산한다.
 def evaluate_predicate(pred, unit_type, pre, post, actions):
     tname = unit_type.lower() if unit_type else None
 
@@ -96,6 +97,7 @@ def evaluate_predicate(pred, unit_type, pre, post, actions):
     return 0.0
 
 
+# 지침별 신호를 가중합하고 절댓값 상한을 적용해 보조 보상을 만든다.
 def compute_shaping(subgoals, pre, post, actions, clip=3.0):
     """Weighted sum of active sub-goal predicates, clipped for stability."""
     total = 0.0

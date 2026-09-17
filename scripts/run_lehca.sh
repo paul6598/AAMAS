@@ -8,9 +8,11 @@
 #   LLM_MODEL    model id as served (default openai/gpt-oss-20b)
 # Extra pymarl overrides can be appended via the EXTRA env var, e.g.
 #   EXTRA="f_update=400 beta=1.0" bash run_lehca.sh 2s3z
+set -eo pipefail
 
-cd ../
-export SC2PATH=${SC2PATH:-/gpfs/home1/paul6598/StarCraftII}
+cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
+export SC2PATH=${SC2PATH:-${HOME}/StarCraftII}
+PY=${AAMAS_PYTHON:-python}
 
 MAP=$1
 USE_WANDB=$2
@@ -63,11 +65,12 @@ if [ -n "$EXTRA" ]; then
     EXTRA_ARGS+=("${USER_EXTRA[@]}")
 fi
 
-for SEED in 0 1 2 3 4
+for SEED in ${SEEDS:-0 1 2 3 4}
 do
     ARGS=(
         "use_wandb=$USE_WANDB"
         "wandb_group=$GN"
+        "wandb_run=${GN}_seed${SEED}"
         "seed=$SEED"
         "env_args.map_name=$MAP"
         "t_max=$t_max"
@@ -75,5 +78,5 @@ do
         "test_nepisode=$test_nepisode"
         "${EXTRA_ARGS[@]}"
     )
-    python main.py --config=lehca --env-config=sc2 with "${ARGS[@]}"
+    "$PY" main.py --config=lehca --env-config=sc2 with "${ARGS[@]}"
 done

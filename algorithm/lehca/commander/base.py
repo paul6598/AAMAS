@@ -45,25 +45,49 @@ def _valid_token(tok):
         for p in VALID_TOKEN_PREFIXES)
 
 
-def sanitize_guidance(g):
+# 출력 스키마와 허용 어휘를 검증하고 설정에 따라 중복 서브골을 제거한다.
+def sanitize_guidance(g, deduplicate_subgoals=True):
     """Validate/clean raw parsed guidance; returns None if unusable."""
     if not isinstance(g, dict):
         return None
     out = {"strategy": str(g.get("strategy", ""))[:300],
            "subgoals": [], "action_rules": []}
-    for sg in (g.get("subgoals") or [])[:MAX_SUBGOALS]:
+    # A predicate is a semantic feature, not a separate reward term each time
+    # it appears in the LLM response.  Exact repeats would otherwise be summed
+    # by compute_shaping and silently multiply that feature's reward.  Dedup
+    # before applying MAX_SUBGOALS so repeats also cannot crowd out later,
+    # distinct features.  For repeats, keep the strongest requested weight.
+    subgoal_index = {}
+    for sg in (g.get("subgoals") or []):
         if not isinstance(sg, dict):
             continue
         pred = sg.get("predicate")
         if pred not in ALL_PREDICATES:
             continue
-        item = {"predicate": pred,
-                "weight": max(0.0, min(1.0, float(sg.get("weight", 0.5))))}
+        try:
+            weight = max(0.0, min(1.0, float(sg.get("weight", 0.5))))
+        except (TypeError, ValueError):
+            weight = 0.5
+        item = {"predicate": pred, "weight": weight}
+        unit_key = None
         if pred in TYPED_PREDICATES:
             ut = sg.get("unit_type")
             if not isinstance(ut, str) or not ut:
                 continue
+            ut = ut.strip()
+            if not ut:
+                continue
             item["unit_type"] = ut
+            unit_key = ut.casefold()
+        key = (pred, unit_key)
+        if deduplicate_subgoals and key in subgoal_index:
+            old = out["subgoals"][subgoal_index[key]]
+            old["weight"] = max(old["weight"], item["weight"])
+            continue
+        if len(out["subgoals"]) >= MAX_SUBGOALS:
+            continue
+        if deduplicate_subgoals:
+            subgoal_index[key] = len(out["subgoals"])
         out["subgoals"].append(item)
     for r in (g.get("action_rules") or [])[:MAX_RULES]:
         if not isinstance(r, dict):

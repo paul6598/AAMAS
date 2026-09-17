@@ -1,0 +1,13 @@
+# Python 3.10; versions recorded from the completed SMAC experiments.
+# Select the appropriate PyTorch wheel/index for the target CUDA installation.
+torch==2.5.1
+numpy==2.2.6
+PyYAML==6.0.3
+sacred==0.8.7
+requests==2.34.2
+wandb==0.25.0
+matplotlib==3.10.9
+pysc2==4.0.0
+protobuf==3.20.3
+# The PyPI package named smac is different; use the MARL environment source.
+smac @ git+https://github.com/oxwhirl/smac.git@d6aab33f76abc3849c50463a8592a84f59a5ef84

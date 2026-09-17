@@ -26,6 +26,7 @@ from algorithm.lehca.masking import build_masks
 from algorithm.lehca.state import get_state
 from algorithm.rsvp import predlib
 from algorithm.rsvp.critic import ValueCritic
+from algorithm.rsvp.validation import ValidationLog
 
 
 class RSVPRunner:
@@ -107,6 +108,7 @@ class RSVPRunner:
             "f_nonzero", "f_at_clip", "lambda_f_abs")}
         self._guidance_log = None
         self._trace = None
+        self._validation = None
         if self.commander is not None:
             repo_root = os.path.dirname(os.path.dirname(os.path.dirname(
                 os.path.abspath(__file__))))
@@ -117,6 +119,10 @@ class RSVPRunner:
                 getattr(args, "wandb_group", "nogroup"),
                 getattr(args, "seed", "x"), os.getpid())
             self._guidance_log = open(os.path.join(gdir, fname), "a")
+            if (getattr(args, 'rsvp_validation_every', 0) > 0
+                    or getattr(args, 'rsvp_refresh_trial', False)):
+                self._validation = ValidationLog(
+                    os.path.join(repo_root, 'results', 'validation', fname + '.gz'), args)
             # per-step phase trace: cache_key changes give rule-based state
             # transitions (nu labels) to score refresh timing against offline
             pdir = os.path.join(repo_root, "results", "phase")
@@ -144,7 +150,11 @@ class RSVPRunner:
         self.env.save_replay()
 
     def close_env(self):
-        self.env.close()
+        try:
+            self.env.close()
+        finally:
+            if getattr(self, '_validation', None) is not None:
+                self._validation.close()
 
     def reset(self):
         self.batch = self.new_batch()
@@ -169,6 +179,7 @@ class RSVPRunner:
         return masking or self._shaping_active(test_mode)
 
     # ------------------------------------------------------------ scheduler
+    # 첫 환경 상태로 predicate 목록·특징 추출기·다중 출력 예측기를 구성한다.
     def _lazy_init(self, snap):
         if self.lib is not None:
             return
@@ -180,6 +191,7 @@ class RSVPRunner:
             lr=getattr(self.args, "critic_lr", 1e-3),
             buffer_steps=getattr(self.args, "critic_buffer", 60000))
 
+    # 현재 지침을 해석 가능한 head에 연결하고 타깃 분산 및 가중치 비율을 검사한다.
     def _guidance_heads(self, guidance):
         """[(head_idx, weight)] for trusted, library-resolvable sub-goals."""
         out, w_all = [], 0.0
@@ -194,17 +206,19 @@ class RSVPRunner:
             return None
         return out
 
+    # 선택된 head의 예측값을 지침 가중치로 합성한다.
     def _vF(self, x, heads):
         pred = self.critic.predict(x)
         return float(sum(w * pred[hi] for hi, w in heads))
 
+    # 최대 주기와 CUSUM 또는 gate timer로 갱신을 결정하고 성공 시 기준 상태를 교체한다.
     def _maybe_refresh(self, snap, x, test_mode):
         if self.commander is None or test_mode or not self._guidance_needed(test_mode):
             return
         t_global = self.t_env + self.t
         since = None if self.last_refresh_t is None else t_global - self.last_refresh_t
         due, early = self.last_refresh_t is None or since >= self.f_max, False
-        ready = (self.scheduler == "vf" and self._episodes_seen >= self.warmup_eps
+        ready = (self.scheduler in ("vf", "gate_timer") and self._episodes_seen >= self.warmup_eps
                  and self._v_ref is not None)
         v_num = v_den_raw = v = None
         if ready:
@@ -221,8 +235,39 @@ class RSVPRunner:
             v = min(1.0, v_num / max(v_den_raw, 1e-3))
             self._log_v.append(v)
             self._S = max(0.0, self._S + self.k - v)
-            if self._S >= self.h and since >= self.min_interval:
+            trigger = (self._S >= self.h if self.scheduler == 'vf' else
+                       since >= getattr(self.args, 'sched_gate_interval', 20))
+            if trigger and since >= self.min_interval:
                 due, early = True, True
+        candidate = early
+        validation = getattr(self, '_validation', None)
+        trial = validation.trial if validation and validation.trial else None
+        trial_assignment = None
+        trial_end_refresh = False
+        if trial:
+            if trial.force_refresh:
+                # 두 처치 팔의 outcome window가 끝난 뒤 공통으로 정상 지침을 발급한다.
+                due, early, trial_end_refresh = True, False, True
+            elif trial.locked:
+                # 비중첩 block 안에서는 early와 hard-ceiling 갱신을 모두 막는다.
+                due, early = False, False
+            elif candidate or not due:
+                trial_assignment = trial.propose(
+                    candidate, ready, since, self.min_interval, t_global, self.t,
+                    dict(armed=bool(ready), since=since, v=v, S=self._S, h=self.h,
+                         candidate_early=bool(candidate)), self.state.guidance)
+                if trial_assignment is not None:
+                    # trigger와 control 후보 모두 같은 방식으로 새 지침을 한 번 생성한다.
+                    due = True
+                    if not trial_assignment['refresh']:
+                        early = False
+        self._audit_decision = dict(armed=bool(ready), since=since, num=v_num,
+            den_raw=v_den_raw, v=v, S=self._S, h=self.h, candidate_early=candidate,
+            early=early, due=due, refresh_success=False,
+            old_selected_heads=self._ref_heads, gate_reason=None,
+            trial_kind=trial_assignment['kind'] if trial_assignment else None,
+            trial_refresh=trial_assignment['refresh'] if trial_assignment else None,
+            trial_end_refresh=trial_end_refresh)
         if self._trace is not None:
             self._trace.write(json.dumps({
                 "t": t_global, "ep": self._episodes_seen, "t_ep": self.t,
@@ -243,33 +288,62 @@ class RSVPRunner:
         hits_before = getattr(self.commander, "n_cache_hits", 0)
         guidance = self.commander(summary, key, self.iface)
         if guidance is None:
+            if trial_assignment is not None:
+                trial.candidate_result(None)
+                self._audit_decision['trial_candidate_success'] = False
+            if trial_end_refresh:
+                trial.end_refresh_result(False)
             # failed call: keep the old guidance AND the schedule state; retry soon
             self._retry_after = t_global + getattr(self.args, "sched_fail_retry", 5)
             return
+        if trial_assignment is not None:
+            trial.candidate_result(guidance)
+            self._audit_decision['trial_candidate_success'] = True
+            self._audit_decision['trial_applied'] = bool(trial_assignment['refresh'])
+            if not trial_assignment['refresh']:
+                # Hold도 동일 candidate를 생성하지만 학습 상태에는 적용하지 않는다.
+                if self._guidance_log is not None:
+                    self._guidance_log.write(json.dumps({
+                        "t_env": self.t_env, "t_global": t_global,
+                        "cache_key": key, "early": bool(candidate),
+                        "cache_hit": getattr(self.commander, "n_cache_hits", 0) > hits_before,
+                        "guidance": guidance, "trial_kind": trial_assignment['kind'],
+                        "trial_refresh": False, "trial_applied": False}) + "\n")
+                    self._guidance_log.flush()
+                return
         self.state.guidance = guidance
+        self._audit_decision['refresh_success'] = True
+        if trial_end_refresh:
+            trial.end_refresh_result(True)
         self.last_refresh_t = t_global
         self._S = 0.0
         self._log_refresh += 1
         self._log_early += int(early)
         self._ep_early += int(early)
         self._v_ref, self._ref_heads, self._x_ref = None, None, None
-        if self.scheduler == "vf" and self.critic is not None:
+        if self.scheduler in ("vf", "gate_timer") and self.critic is not None:
             if self._episodes_seen < self.warmup_eps:
                 self._why["warmup"] += 1
+                self._audit_decision['gate_reason'] = 'warmup'
             else:
                 heads = self._guidance_heads(self.state.guidance)
                 if not heads:
                     self._why["no_heads"] += 1
+                    self._audit_decision['gate_reason'] = 'no_heads'
                 else:
                     vr = self._vF(x, heads)
                     mu = self.critic.mu.numpy()
                     base = sum(w * max(float(mu[hi]), 0.0) for hi, w in heads)
+                    self._audit_decision.update(issuance_value=vr, issuance_base=base,
+                                                issuance_heads=heads)
                     if base < 1e-3 or vr < self.eps_frac * base:
                         self._why["low_vref"] += 1
+                        self._audit_decision['gate_reason'] = 'low_base' if base < 1e-3 else 'low_value'
                     else:
                         self._ref_heads, self._v_ref = heads, vr
                         self._x_ref = np.array(x, dtype=np.float32, copy=True)
                         self._why["ok"] += 1
+                        self._audit_decision['gate_reason'] = 'ok'
                         self._ep_armed = True
         if self._guidance_log is not None:
             self._guidance_log.write(json.dumps({
@@ -280,8 +354,12 @@ class RSVPRunner:
             self._guidance_log.flush()
 
     # ------------------------------------------------------------------ run
+    # 전이·지침·검증 예측을 수집한 뒤 에피소드 정답 기록과 critic 학습을 순서대로 수행한다.
     def run(self, test_mode=False):
         self.reset()
+        validation = getattr(self, '_validation', None) if not test_mode else None
+        if validation:
+            validation.begin(self._episodes_seen)
 
         terminated = False
         episode_return = 0
@@ -290,6 +368,7 @@ class RSVPRunner:
 
         while not terminated:
             snap_pre = self.iface.snapshot()
+            self._audit_decision = {}
             guidance_active = self._guidance_needed(test_mode)
             x_pre = None
             if guidance_active:
@@ -298,12 +377,20 @@ class RSVPRunner:
                 self._maybe_refresh(snap_pre, x_pre, test_mode)
 
             guidance = self.state.guidance
+            validation_record = None
+            if validation and validation.active and self.critic is not None:
+                validation_record = validation.capture(
+                    self.critic, x_pre if x_pre is not None else self.fx(snap_pre),
+                    self.lib, guidance, self._ref_heads, self._audit_decision,
+                    self.t_env + self.t, self.t, self.iface.cache_key(snap_pre))
             mask_active = self.use_masking and guidance is not None \
                 and (not test_mode or self.mask_at_test)
             if mask_active:
                 hard, soft = build_masks(guidance.get("action_rules"), snap_pre,
                                          self.iface, self.args.n_agents,
                                          snap_pre["n_actions"])
+                if getattr(self.args, "soft_guidance_only", False):
+                    hard.fill(1.0)
                 self.mac.set_guidance(hard, soft)
             else:
                 self.mac.set_guidance(None, None)
@@ -365,6 +452,10 @@ class RSVPRunner:
                 "shaping_f": [(f_t,)],
                 "terminated": [(terminated != env_info.get("episode_limit", False),)],
             }
+            if validation_record is not None:
+                validation.observe(validation_record,
+                    self._ep_F[-1] if guidance_active else predlib.f_vector(
+                        self.args.env, self.lib, snap_pre, snap_post, acts), reward, f_t)
             self.batch.update(post_transition_data, ts=self.t)
             self.t += 1
 
@@ -387,6 +478,13 @@ class RSVPRunner:
         cur_stats["ep_length"] = self.t + cur_stats.get("ep_length", 0)
 
         if not test_mode:
+            if validation and self.critic is not None:
+                # Must precede add_episode/train: targets from unseen episode.
+                validation_metrics = validation.finish(
+                    self._episodes_seen, self.lib, self.critic.gamma, env_info,
+                    episode_return=episode_return)
+                for key, value in (validation_metrics or {}).items():
+                    self.logger.log_stat(key, value, self.t_env + self.t)
             self.t_env += self.t
             self.recent_wins.append(1.0 if env_info.get("battle_won", False) else 0.0)
             self._shaping_sums.append(shaped_return)

@@ -1,0 +1,44 @@
+% !TeX root = main.tex
+\section{Experimental Plan and Current Status}
+
+\subsection{Staged Validation Questions}
+
+RSVP의 최종 비교 전에 다음 세 연결고리를 순서대로 검증한다.
+
+\begin{enumerate}
+  \item \textbf{기반 지침의 유용성:} 동일한 QMIX backbone에서 실제 LLM 지침이
+        무지침 QMIX 및 상태와 무관하게 섞은 지침보다 외부 성능을 높이는가?
+  \item \textbf{시간순 예측력:} critic이 아직 학습하지 않은 episode의 predicate
+        접미합을 평균 또는 지수이동평균 기준선보다 정확하게 예측하는가?
+  \item \textbf{갱신의 인과적 효용:} 낮은 $v_t$ 또는 높은 $S_t$에서 지침을
+        갱신한 이후의 추가 학습 성능이 같은 상태에서 지침을 유지한 경우보다 좋은가?
+\end{enumerate}
+
+첫 단계가 실패하면 갱신기 파라미터 탐색보다 지시문, 접지, 셰이핑 크기와 학습 통합을
+먼저 수정해야 한다. 두 번째 단계가 실패하면 잔여 가치 대신 더 단순한
+상태 변화 또는 성과 기반 trigger를 고려한다. 예측력이 있더라도 세 번째 단계가
+성립하지 않으면 RSVP의 성능 기여를 주장하지 않는다.
+
+\subsection{Baselines and Evaluation Metrics}
+
+실험은 StarCraft Multi-Agent Challenge(SMAC)~\cite{samvelyan2019smac}의 서로 다른
+난이도와 병력 구성을 가진 맵에서 수행하며, QMIX, 고정 주기 LEHCA, RSVP를 비교한다.
+기반 지침이 확인된 뒤에는 동일 호출 예산의 고정 주기, 무작위 갱신,
+상태 변화 trigger를 추가한다. 모든 주요 비교는 동일 환경 설정, 학습 지평, 탐색
+스케줄과 seed를 공유한다.
+
+최종 승률뿐 아니라 전체 및 초기 학습 곡선의 AUC, seed 간 분산, 최초 승리 시점,
+외부 보상과 $\lambda_tF_t$의 상대 크기를 보고한다. 시스템 비용은 논리적 refresh 수,
+실제 LLM 요청 수, cache hit, 토큰, 지연을 분리한다. Scheduler 내부에서는 critic의
+시간순 오차, 학습 가능한 head coverage, $v_t$와 $S_t$의 분포, 조기/fallback 호출
+비율 및 환경 국면 전환과의 정렬을 측정한다.
+
+\subsection{Current Status}
+
+현재까지의 결과만으로 RSVP가 고정 주기 또는 QMIX보다 우수하다고 결론 내릴 수 없다.
+가장 큰 병목은 RSVP의 감지기보다 기반 LEHCA 지침 채널이 QMIX를 안정적으로 개선하지
+못한다는 점이다. 특히 SMAC의 dense damage/kill 보상이 semantic shaping과 중복되어
+LEHCA의 상대적 이득을 가렸을 가능성과, 논문이 전제한 희소 보상 조건의 정확한 설정이
+충분히 공개되지 않았다는 문제가 있다. 이에 따라 현재는 sparse terminal reward에서
+QMIX와 원형 LEHCA를 동일 조건으로 비교하여 기반 채널의 유효성을 우선 검증하고 있다.
+이 결과가 확보되기 전에는 성능 우위에 관한 표와 문구를 확정하지 않는다.
